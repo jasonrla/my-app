@@ -51,8 +51,8 @@ app.get('/store', async (req, res) => {
   });
 
 
-  const AmazonCognitoIdentity = require('.libs/amazon-cognito-identity.min.js');
-  const AWSCognito = require('.libs/aws-cognito-sdk.min.js');
+  const AmazonCognitoIdentity = require('./libs/amazon-cognito-identity.min.js');
+  const AWSCognito = require('./libs/aws-cognito-sdk.min.js');
   
   AWSCognito.config.region = 'us-east-1';
   
