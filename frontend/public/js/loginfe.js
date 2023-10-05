@@ -1,3 +1,5 @@
+AWSCognito.config.region = 'us-east-1';
+
 document.getElementById('login-button').addEventListener('click', async function() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
