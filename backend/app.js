@@ -50,11 +50,11 @@ app.get('/store', async (req, res) => {
     res.json(newEmployee);
   });
 
-const AWSCognito = require('./libs/aws-cognito-sdk.min.js');
-const AmazonCognitoIdentity = require('./libs/amazon-cognito-identity.min.js');
+//const AWSCognito = require('./libs/aws-cognito-sdk.min.js');
+//const AmazonCognitoIdentity = require('./libs/amazon-cognito-identity.min.js');
 
 //AWS.config.update({region: 'us-east-1'});
-//AWSCognito.config.region = 'us-east-1';
+AWSCognito.config.region = 'us-east-1';
   
 const poolData = {
       UserPoolId: 'us-east-1_ekaFmTqIv',
