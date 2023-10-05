@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login-script', (req, res) => {
-  res.sendFile(path.join(__dirname, './login-script.js'));
+  res.sendFile(path.join(__dirname, './JS/login-script.js'));
 });
 
 
