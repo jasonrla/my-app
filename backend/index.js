@@ -7,13 +7,14 @@ const port = 3000;
 
 const app = express();
 
+
 // Load config.yml
 const config = yaml.load(fs.readFileSync('config.yml', 'utf8'));
 
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('Hello, World!');
+  res.sendFile(__dirname + '/index.html');
 });
 
 app.get('/store', async (req, res) => {

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación con Cognito</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/login-styles.css">
+    <script src="js/const.js" charset="UTF-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10" charset="UTF-8"></script>
+    <title>Cargar Imagen</title>
+    <style>
+        /* Estilo CSS */
+        .imagen-derecha {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+        }
+    </style>
+</head>
+
+<body>
+    <img class="imagen-derecha" src="img/logo.svg" alt="Descripción de la imagen">
+    <div class="login-form">
+        <h2>Iniciar Sesión</h2>
+        <input type="text" id="username" placeholder="Usuario">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button id="login-button">Iniciar Sesión</button>   
+        <a href="#" id="forgot-password-link">¿Olvidaste tu contraseña?</a>
+        <h4 class="error-message" style="display: none;">Contraseña incorrecta</h4>
+        <h4 class="error-message-notUser" style="display: none;">Ingresa tu nombre de usuario</h4>
+
+    </div>
+    
+    <div class="change-password-form" style="display: none;">
+        <h4 class="alert-message" style="display: none;">Por favor, ingresa una nueva contraseña</h4>
+        <h2>Cambiar Contraseña</h2>
+        <input type="password" id="new-password" placeholder="Nueva Contraseña">
+        <button id="change-password-button">Cambiar Contraseña</button>
+        <h4 class="error-message-2" style="display: none;">Ingrese al menos una mayúscula y un caracter especial</h4>
+    </div>
+
+    <div class="reset-password-form" style="display: none;">
+        <h4 class="alert-message-reset" style="display: none;">Por favor, introduce el código de verificación y la nueva contraseña</h4>
+        <h2>Recuperar Contraseña</h2>
+        <input type="text" id="verification-code" placeholder="Código de verificación">
+        <input type="password" id="reset-password" placeholder="Nueva Contraseña">
+        <button id="reset-password-button">Cambiar Contraseña</button>
+        <h4 class="error-message-reset" style="display: none;">Ocurrió un error al cambiar la contraseña</h4>
+        <h4 class="success-message-reset" style="display: none;">Contraseña cambiada con éxito</h4>
+    </div>
+
+    <script src="libs/aws-cognito-sdk.min.js" charset="UTF-8"></script>
+    <script src="libs/amazon-cognito-identity.min.js" charset="UTF-8"></script>
+    <script src="js/login-script.js" charset="UTF-8"></script>
+</body>
+</html>
