@@ -29,14 +29,14 @@ app.get('/img', (req, res) => {
 });
 
 app.use('/libs', express.static(path.join(__dirname, 'libs')));
-
+/*
 app.get('/libs/aws-cognito', (req, res) => {
   res.sendFile(path.join(__dirname, './libs/amazon-cognito-identity.min.js'));
 });
 
 app.get('/libs/aws-cognito-sdk', (req, res) => {
   res.sendFile(path.join(__dirname, './libs/aws-cognito-sdk.min.js'));
-});
+});*/
 
 app.get('/const', (req, res) => {
   res.sendFile(path.join(__dirname, './JS/const.js'));
