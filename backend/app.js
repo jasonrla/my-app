@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const yaml = require('js-yaml');
 const fs = require('fs');
@@ -11,13 +12,18 @@ const app = express();
 // Load config.yml
 const config = yaml.load(fs.readFileSync('config.yml', 'utf8'));
 
-app.use(express.static('frontend/public'));
+app.use(express.static(path.join(__dirname, '../frontend/public')));
 
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/html/login.html');
+  res.sendFile(path.join(__dirname, '../frontend/public/html/login.html'));
 });
+
+app.get('/login-script', (req, res) => {
+  res.sendFile(path.join(__dirname, './login-script.js'));
+});
+
 
 app.get('/store', async (req, res) => {
     const id_empleado = 1;  // ejemplo
