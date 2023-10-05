@@ -3,6 +3,7 @@ const cors = require('cors');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const db = require('./db');
+const port = 3000;
 
 const app = express();
 
@@ -20,6 +21,6 @@ app.get('/store', async (req, res) => {
     res.json({ value });
 });
 
-app.listen(config.port, () => {
-    console.log(`Server running on http://localhost:${config.port}`);
-});
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${port}`);
+  });
