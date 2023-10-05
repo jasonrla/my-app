@@ -11,7 +11,7 @@ const app = express();
 // Load config.yml
 const config = yaml.load(fs.readFileSync('config.yml', 'utf8'));
 
-app.use(express.static('backend/public'));
+app.use('backend/JS-NP',express.static('backend/public'));
 
 app.use(cors());
 
