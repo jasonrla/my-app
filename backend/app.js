@@ -55,6 +55,7 @@ const AWS = require('aws-sdk');  // Añadir esto
 
 const AWSCognito = require('./libs/aws-cognito-sdk.min.js');
 const AmazonCognitoIdentity = require('./libs/amazon-cognito-identity.min.js');
+console.log('AWSCognito:', AWSCognito);
 
 // Comprueba si AWSCognito está definido
 if (typeof AWSCognito === "undefined") {
