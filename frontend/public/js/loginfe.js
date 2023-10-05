@@ -3,7 +3,7 @@ document.getElementById('login-button').addEventListener('click', async function
     const password = document.getElementById('password').value;
   
     try {
-      const response = await fetch('http://0.0.0.0:3000/login', {
+      const response = await fetch('http://44.204.146.87:3000/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

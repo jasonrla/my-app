@@ -50,18 +50,21 @@ app.get('/store', async (req, res) => {
     res.json(newEmployee);
   });
 
-const AWSCognito = require('./libs/aws-cognito-sdk.min.js');
+const bodyParser = require('body-parser');
 const AmazonCognitoIdentity = require('./libs/amazon-cognito-identity.min.js');
-
-//AWS.config.update({region: 'us-east-1'});
+const AWSCognito = require('./libs/aws-cognito-sdk.min.js');
+  
 AWSCognito.config.region = 'us-east-1';
+
   
 const poolData = {
       UserPoolId: 'us-east-1_ekaFmTqIv',
       ClientId: '69i8c6c0mnq066d71qc2a8gm74'
 };
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-  
+
+app.use(bodyParser.json());
+
   app.post('/login', (req, res) => {
       const { username, password } = req.body;
   
@@ -82,7 +85,7 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
       cognitoUser.authenticateUser(authenticationDetails, {
           onSuccess: function(result) {
               // El usuario se ha autenticado correctamente
-              res.json({ success: true, token: result.getIdToken().getJwtToken() });
+              res.json({ success: true});
           },
           onFailure: function(err) {
               // Error en la autenticación
