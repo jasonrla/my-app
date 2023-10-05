@@ -13,7 +13,30 @@ const config = yaml.load(fs.readFileSync('config.yml', 'utf8'));
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('Hello, World!');
+    const dynamicContent = "Hello, Dynamic World!";
+    const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Dynamic Page</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 20px;
+                }
+                h1 {
+                    color: blue;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>${dynamicContent}</h1>
+        </body>
+        </html>
+    `;
+    res.send(html);
 });
 
 app.get('/store', async (req, res) => {
@@ -22,5 +45,5 @@ app.get('/store', async (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Server running on http://0.0.0.0:${port}`);
-  });
+  console.log(`Server running on http://0.0.0.0:${port}`);
+});
