@@ -14,7 +14,7 @@ const config = yaml.load(fs.readFileSync('config.yml', 'utf8'));
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/login.html');
 });
 
 app.get('/store', async (req, res) => {
