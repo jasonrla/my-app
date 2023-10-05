@@ -24,6 +24,21 @@ app.get('/login-script', (req, res) => {
   res.sendFile(path.join(__dirname, './JS/login-script.js'));
 });
 
+app.get('/img', (req, res) => {
+  res.sendFile(path.join(__dirname, './img/logo.svg'));
+});
+
+app.get('/libs/aws-cognito', (req, res) => {
+  res.sendFile(path.join(__dirname, './libs/amazon-cognito-identity.min.js'));
+});
+
+app.get('/libs/aws-cognito-sdk', (req, res) => {
+  res.sendFile(path.join(__dirname, './libs/aws-cognito-sdk.min.js'));
+});
+
+app.get('/const', (req, res) => {
+  res.sendFile(path.join(__dirname, './JS/const.js'));
+});
 
 app.get('/store', async (req, res) => {
     const id_empleado = 1;  // ejemplo
