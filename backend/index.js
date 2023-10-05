@@ -11,10 +11,12 @@ const app = express();
 // Load config.yml
 const config = yaml.load(fs.readFileSync('config.yml', 'utf8'));
 
+app.use(express.static('backend/public'));
+
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/login.html');
+  res.sendFile(__dirname + '/backend/public/html/login.html');
 });
 
 app.get('/store', async (req, res) => {
