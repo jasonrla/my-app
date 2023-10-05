@@ -16,7 +16,7 @@ app.use(express.static('backend/public'));
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/backend/public/html/login.html');
+  res.sendFile(__dirname + '/public/html/login.html');
 });
 
 app.get('/store', async (req, res) => {
