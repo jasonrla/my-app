@@ -51,10 +51,18 @@ app.get('/store', async (req, res) => {
   });
 
 const bodyParser = require('body-parser');
-const AmazonCognitoIdentity = require('./libs/amazon-cognito-identity.min.js');
+const AWS = require('aws-sdk');  // Añadir esto
+
 const AWSCognito = require('./libs/aws-cognito-sdk.min.js');
-  
-AWSCognito.config.region = 'us-east-1';
+const AmazonCognitoIdentity = require('./libs/amazon-cognito-identity.min.js');
+
+// Comprueba si AWSCognito está definido
+if (typeof AWSCognito === "undefined") {
+  console.error("AWSCognito está undefined. Asegúrate de que las rutas y las versiones sean correctas.");
+  process.exit(1);
+}
+
+AWSCognito.config.region = 'us-east-1'; 
 
   
 const poolData = {
