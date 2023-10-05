@@ -50,6 +50,54 @@ app.get('/store', async (req, res) => {
     res.json(newEmployee);
   });
 
+
+  const AmazonCognitoIdentity = require('.libs/amazon-cognito-identity.min.js');
+  const AWSCognito = require('.libs/aws-cognito-sdk.min.js');
+  
+  AWSCognito.config.region = 'us-east-1';
+  
+  const poolData = {
+      UserPoolId: 'us-east-1_ekaFmTqIv',
+      ClientId: '69i8c6c0mnq066d71qc2a8gm74'
+  };
+  const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+  
+  app.post('/login', (req, res) => {
+      const { username, password } = req.body;
+  
+      const authenticationData = {
+          Username: username,
+          Password: password,
+      };
+  
+      const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
+  
+      const userData = {
+          Username: username,
+          Pool: userPool
+      };
+  
+      const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+  
+      cognitoUser.authenticateUser(authenticationDetails, {
+          onSuccess: function(result) {
+              // El usuario se ha autenticado correctamente
+              res.json({ success: true, token: result.getIdToken().getJwtToken() });
+          },
+          onFailure: function(err) {
+              // Error en la autenticación
+              res.status(400).json({ success: false, message: err.message });
+          },
+          newPasswordRequired: function(userAttributes, requiredAttributes) {
+              // El usuario necesita establecer una nueva contraseña
+              res.status(400).json({ success: false, message: 'New password required' });
+          }
+      });
+  });
+  
+
+
+
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on http://0.0.0.0:${port}`);
 });
