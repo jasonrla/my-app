@@ -153,3 +153,9 @@ body {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     transform: scale(0.98);
 }
+
+.imagen-derecha {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}

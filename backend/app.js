@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-
+const port = 3000;
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -31,7 +31,7 @@ app.post('/login', (req, res) => {
   cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (session) => {
           console.log('Authentication Successful!', session);
-          res.redirect('/welcome');
+          res.redirect('/auditoria');
       },
       onFailure: (err) => {
           console.error('Authentication failed', err);
@@ -57,7 +57,7 @@ app.post('/new-password', (req, res) => {
   cognitoUser.completeNewPasswordChallenge(req.body.newPassword, {}, {
       onSuccess: (session) => {
           console.log('Password change successful!', session);
-          res.redirect('/welcome');
+          res.redirect('/auditoria');
       },
       onFailure: (err) => {
           console.error('Password change failed', err);
@@ -111,10 +111,10 @@ app.post('/confirm-password', (req, res) => {
 });
 
 
-app.get('/welcome', (req, res) => {
-    res.send('Welcome, you are logged in!');
+app.get('/auditoria', (req, res) => {
+    res.sendFile(__dirname + '/public/html/Auditoria/auditoria.html');
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
-});
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on http://0.0.0.0:${port}`);
+  });
