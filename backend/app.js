@@ -5,6 +5,7 @@ const jwksClient = require('jwks-rsa');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const port = 3000;
 const app = express();
+require('dotenv').config();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -12,14 +13,13 @@ app.use(bodyParser.json());
 app.use('/public', express.static('backend/public'));
 
 const poolData = {
-    UserPoolId: 'us-east-1_ekaFmTqIv',
-    ClientId: '69i8c6c0mnq066d71qc2a8gm74'
+    UserPoolId: process.env.UserPoolId,
+    ClientId: process.env.ClientId
 };
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
-const region = "us-east-1";
+const region = process.env.region;
 const userPoolId = poolData['UserPoolId'];
-const YOUR_SECRET_KEY = "Hola_como_estas";
 let accessToken = "";
 
 app.get('/', (req, res) => {
@@ -27,8 +27,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    console.log("reqBody: "+req.body.username);
-    console.log("reqBody: "+req.body.password);
   const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
       Username: req.body.username,
       Password: req.body.password,
@@ -52,17 +50,10 @@ app.post('/login', (req, res) => {
           res.redirect('/');
       },
       newPasswordRequired: (userAttributes, requiredAttributes) => {
-          // User is being asked for a new password
           res.redirect('/new-password');
       }
   });
 });
-
-app.get('/welcome', (req, res) => {
-    res.send('Welcome, you are logged in!');
-});
-
-
 
 app.get('/new-password', (req, res) => {
   res.sendFile(__dirname + '/public/html/new-password.html');
@@ -143,13 +134,8 @@ function getKey(header, callback){
 }
 
 const verifyAccessToken = (req, res, next) => {
-    console.log(accessToken);
-
-    const authHeader = accessToken;//req.headers['authorization'];
-    const token = accessToken;//authHeader && authHeader.split(' ')[1];
-
-    console.log("authHeader: " + authHeader);
-    console.log("token: " + token);
+    
+    const token = accessToken;
 
     if (token == null) return res.sendStatus(401);
 
