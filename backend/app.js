@@ -3,9 +3,13 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const port = 3000;
-const app = express();
+
+
 require('dotenv').config();
+const gvars = require('./const.js');
+
+const app = express();
+const port = 3000;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -40,9 +44,14 @@ app.post('/login', (req, res) => {
   cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (session) => {
           console.log('Authentication Successful!', session);
-          
           accessToken = session.getAccessToken().getJwtToken();
           //res.json({ accessToken: accessToken });
+
+          const idToken = session.getIdToken().getJwtToken();
+          const decodedToken = jwt.decode(idToken);
+          const fullName = decodedToken.name;
+          gvars.auditor = fullName;
+
           res.redirect('/auditoria');
       },
       onFailure: (err) => {
@@ -140,10 +149,10 @@ const verifyAccessToken = (req, res, next) => {
     if (token == null) return res.sendStatus(401);
 
     jwt.verify(token, getKey, { algorithms: ['RS256'] }, (err, user) => {
-        if (err) return res.sendStatus(403);
+        if (err) {
+            return res.sendStatus(403);
+        }
         req.user = user;
-        console.log("jwtverify");
-        console.log(req.user);
         next();
     });
 };

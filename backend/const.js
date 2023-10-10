@@ -1,46 +1,54 @@
-let fontH = "18px";
-let font = "13px";
-let fontC = "12px";
+module.exports = {
 
-let linkIDCounter = 0;
-let linkSelections = {};
+fontH: "18px", 
+font: "13px", 
+fontC: "12px", 
 
-let data = [];
-let invoice = {};
-let fechaCal = "";
-let aName = "";
+linkIDCounter: 0, 
+linkSelections: {}, 
 
-let nombreUsuario = "";
+auditor: "", 
+data: [], 
+invoice: {}, 
+fechaCal: "", 
+aName: "", 
 
-const peso1 = 10;
-const peso2 = 20;
-const peso3 = 10;
-const peso4 = 5;
-const peso5 = 25;
-const peso6 = 10;
-const peso7 = 20;
+nombreUsuario: "", 
+
+peso1: 10, 
+peso2: 20, 
+peso3: 10, 
+peso4: 5, 
+peso5: 25, 
+peso6: 10, 
+peso7: 20, 
 
 //VERIFICACION
 
-const speach = "Recuerde que nuestros productos no estan diseñados para sanar sino para aliviar";
-const producto = "El producto es lo que el vendedor le vendera al cliente (analiza bien si hubo una venta o no), considera que durante la llamada el vendedor le puede ofrecer distintos productos, frascos, cantidades, paquetes pero solo debes mapear aqui la cantidad de productos, frascos, cantidades, paquetes que se vendieron (por ejemplo 4 frascos del producto X, siempre en este formato) , ";
-const monto = "El monto es el monto que el vendedor cerro finalmente con el cliente (analiza bien si hubo una venta o no) (si se indica el currency agrega el simbolo de dicho currency),ten en cuenta que vendedor le puede ofrecer distintos productos pero solo debes mapear aqui el o los montos de los productos que finalmente se vendieron y se cargaron al cliente mediante su tarjeta o por correo al cliente segun se indique en el texto";
-const autorizacion = "Para la autorización, en caso el producto se esta vendiendo a un precio menor a 169.95 deberas indicar 'REQ  AUTH DE ANA VALADEZ POR BP (POR DEBAJO DEL MONTO MINIMO DE CAMPAÑA) Y EP' de lo contrario mostraras vacio";
-const observaciones = "Si el vendedor ofrece el precio en 219.95 luego en 199.95 y luego en 169.95 entonces no hay observaciones, pero si defrente se ofrece el precio a 169,95 entonces como observación deberá 'No cumple con la escala de precios definida para el canal'"//"Observaciones sera indicar si el vendedor cumplio o no cumplio con decir el speach " + speach + ". Si lo dijo correctamente esto va vacio, pero sino indica si lo dijo a medias, si no lo dijo o simplemente dijo otra cosa indicar el texto 'NO REALIZO LA GESTION CORRECTAMENTE' " ;
-const tipoDeVenta = "El tipo de venta sera lo que tu consideres, por lo general sera venta telefonica, ";
-const sintomas = "Sintomas sera un breve detalle de los sintomas o problemas que el cliente indique";
+speach: "Recuerde que nuestros productos no estan diseñados para sanar sino para aliviar", 
+producto: "El producto es lo que el vendedor le vendera al cliente (analiza bien si hubo una venta o no), considera que durante la llamada el vendedor le puede ofrecer distintos productos, frascos, cantidades, paquetes pero solo debes mapear aqui la cantidad de productos, frascos, cantidades, paquetes que se vendieron (por ejemplo 4 frascos del producto X, siempre en este formato) , ", 
+monto: "El monto es el monto que el vendedor cerro finalmente con el cliente (analiza bien si hubo una venta o no) (si se indica el currency agrega el simbolo de dicho currency),ten en cuenta que vendedor le puede ofrecer distintos productos pero solo debes mapear aqui el o los montos de los productos que finalmente se vendieron y se cargaron al cliente mediante su tarjeta o por correo al cliente segun se indique en el texto", 
+autorizacion: "Para la autorización, en caso el producto se esta vendiendo a un precio menor a 169.95 deberas indicar 'REQ  AUTH DE ANA VALADEZ POR BP (POR DEBAJO DEL MONTO MINIMO DE CAMPAÑA) Y EP' de lo contrario mostraras vacio", 
+observaciones: "Si el vendedor ofrece el precio en 219.95 luego en 199.95 y luego en 169.95 entonces no hay observaciones, pero si defrente se ofrece el precio a 169,95 entonces como observación deberá 'No cumple con la escala de precios definida para el canal'",//"Observaciones sera indicar si el vendedor cumplio o no cumplio con decir el speach " + speach + ". Si lo dijo correctamente esto va vacio, pero sino indica si lo dijo a medias, si no lo dijo o simplemente dijo otra cosa indicar el texto 'NO REALIZO LA GESTION CORRECTAMENTE' " , 
+tipoDeVenta: "El tipo de venta sera lo que tu consideres, por lo general sera venta telefonica, ", 
+sintomas: "Sintomas sera un breve detalle de los sintomas o problemas que el cliente indique", 
 
-//const verif_complement = 
+//verif_complement: 
 
-//const ver_role = "Eres un vendedor de productos medicinales que debe seguir esta escala de precios: 219.95, 199.95 , 169.95. Es decir si el cliente quiere una rebaja o no le parece el precio o no tiene suficiente dinero puedes ofrecerle el siguiente precio mas bajo y seguir con la negociación hasta llegar como maximo al tercer monto que es el mas bajo. Por ningun motivo puedes saltarte esta escala de precios, debes seguir en orden.";
-const escala = `
+//ver_role: "Eres un vendedor de productos medicinales que debe seguir esta escala de precios: 219.95, 199.95 , 169.95. Es decir si el cliente quiere una rebaja o no le parece el precio o no tiene suficiente dinero puedes ofrecerle el siguiente precio mas bajo y seguir con la negociación hasta llegar como maximo al tercer monto que es el mas bajo. Por ningun motivo puedes saltarte esta escala de precios, debes seguir en orden.", 
+escala: `
 Item | Escala
 1 | $ 219.95
 2 | $ 199.95
 3 | $ 169.95
-`;
-const ver_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
-Las ventas se realizan por via web o telefonica, utilizando una escala de precios: '`+escala+`' para negociar los productos comenzando por el item 1 hasta el final.
+`, 
+ver_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+Las ventas se realizan por via web o telefonica, utilizando una escala de precios: 
+Item | Escala
+1 | $ 219.95
+2 | $ 199.95
+3 | $ 169.95,
+para negociar los productos comenzando por el item 1 hasta el final.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Esto para poder dar seguimiento y brindar un feedback a nuestros vendedores a fin de que se cumplan nuestras politicas y condiciones. 
 El texto que te indicare se encuentra entre <>. 
@@ -51,17 +59,17 @@ El output que necesito es unicamente un JSON con las keys:
 'observaciones' ('OBS: ninguna' si el vendedor sigue el orden de la escala de precios, si el vendedor no sigue el orden de la escala de precios y por ejemplo ofrece el precio del Item 2 o del Item 3 o uno menor al del item 3 indicar 'No cumple con la escala de precios definida para el canal'), 
 'tipoDeVenta' (analiza el texto e indica cual es el canal de la conversación), 
 'sintomas' (breve y especifico detalle de los sintomas o problemas que el cliente indique) y
-'textoVenta' ('se realizo la venta' si el cliente acepta el producto y acepta que se le cobre, indicar texto exacto donde se menciona esto. 'no se realizo compra' en cualquier otro escenario).`;
-//   un vendedor de productos medicinales que debe seguir esta escala de precios: 219.95, 199.95 , 169.95. Es decir si el cliente quiere una rebaja o no le parece el precio o no tiene suficiente dinero puedes ofrecerle el siguiente precio mas bajo y seguir con la negociación hasta llegar como maximo al tercer monto que es el mas bajo. Por ningun motivo puedes saltarte esta escala de precios, debes seguir en orden.;
+'textoVenta' ('se realizo la venta' si el cliente acepta el producto y acepta que se le cobre, indicar texto exacto donde se menciona esto. 'no se realizo compra' en cualquier otro escenario).`, 
+//   un vendedor de productos medicinales que debe seguir esta escala de precios: 219.95, 199.95 , 169.95. Es decir si el cliente quiere una rebaja o no le parece el precio o no tiene suficiente dinero puedes ofrecerle el siguiente precio mas bajo y seguir con la negociación hasta llegar como maximo al tercer monto que es el mas bajo. Por ningun motivo puedes saltarte esta escala de precios, debes seguir en orden., 
 
-const ver_part1 = "Texto a analizar <";
-const ver_part2 = ">";//. Genera un JSON con las siguientes keys: producto, monto, autorizacion, observaciones, tipoDeVenta, sintomas. Te explico cada uno: " +
+ver_part1: "Texto a analizar <", 
+ver_part2: ">", //. Genera un JSON con las siguientes keys: producto, monto, autorizacion, observaciones, tipoDeVenta, sintomas. Te explico cada uno: " +
 //producto+monto+autorizacion+observaciones+tipoDeVenta+sintomas + 
-//" (Todos los datos, valores, montos deben ser de acuerdo al texto). Solo dame como respuesta este JSON no agregues ningun otro texto adicional";
+//" (Todos los datos, valores, montos deben ser de acuerdo al texto). Solo dame como respuesta este JSON no agregues ningun otro texto adicional", 
 
 //SALUDO INSTITUCIONAL
-//const pemp_role = "Eres un analista especializado en conversaciones de ventas. Tu habilidad principal es identificar y extraer la presentación inicial de vendedores en transcripciones de conversaciones. Debes centrarte exclusivamente en la parte donde el vendedor se presenta, ignorando el resto de la conversación.";
-const pemp_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+//pemp_role: "Eres un analista especializado en conversaciones de ventas. Tu habilidad principal es identificar y extraer la presentación inicial de vendedores en transcripciones de conversaciones. Debes centrarte exclusivamente en la parte donde el vendedor se presenta, ignorando el resto de la conversación.", 
+pemp_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Esto para verificar si el vendedor se presentó de manera formal e institucional ante un potencial cliente. 
@@ -77,15 +85,15 @@ El output que necesito es unicamente un JSON válido con las keys:
 10: si es un 80% igual a la referencia incluyendo las palabras clave mencionadas
 ), 
 'comentario' (breve pero conciso comentario sobre la forma en que el vendedor se presento y otorga algun ejemplode como deberia ser).
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const pemp_part1 = "Texto a analizar <";//"Analiza la transcripción para determinar la formalidad y precisión del saludo en relación al saludo institucional de referencia: 'Bienvenido(a) al centro Internacional de Medicina Natural del Tratamiento ...'. La precisión y formalidad son esenciales. Si el saludo contiene al menos las palabras 'productos', 'naturales', 'medicina' o 'internacional', considera otorgar una calificación de '7'. Texto a analizar: ";
-const pemp_part2 = ">";//. Usa la escala: '0' si no existe el saludo, o el saludo es informal o coloquial, '5' si es un saludo formal pero no contiene las palabras clave mencionadas, '7' si es un saludo formal y contiene las palabras clave mencionadas, '10' si es perfectamente exacto y formal. . Se exacto con la seleccion de unicamente estos 4 valores de la escala. Genera unicamente un JSON con 'valor' indicando el valor y 'comentario' con un feedback breve, amigable, si el saludo contiene términos relevantes, destácalos de forma positiva, si falta algún término, sugiere incluirlo de manera específica sin mencionar 'palabras clave', proporciona un ejemplo de cómo podría ser el saludo basado en el original del vendedor, utilizando la referencia o destacando términos importantes como 'medicina', 'productos naturales', o 'internacional', el 'comentario' debe tener entre 10 y 15 palabras máximo.";
-//const a = "Analiza el texto para determinar cuán precisamente se utiliza el saludo institucional: 'Bienvenido(a) al centro Internacional de Medicina Natural del Tratamiento (nombre del tratamiento) que cuida, desintoxica'. La precisión es fundamental. Texto: " + text + ". Usa la escala: '0' si el saludo no aparece, '5' si es impreciso o tiene errores, '7' si es casi exacto pero con pequeñas omisiones, '10' si es perfectamente exacto. Genera unicamente un JSON con 'pemp_valor' indicando el valor y 'comentario' con un feedback breve y amigable para brindarle al vendedor (max. 15 palabras)."
+pemp_part1: "Texto a analizar <", //"Analiza la transcripción para determinar la formalidad y precisión del saludo en relación al saludo institucional de referencia: 'Bienvenido(a) al centro Internacional de Medicina Natural del Tratamiento ...'. La precisión y formalidad son esenciales. Si el saludo contiene al menos las palabras 'productos', 'naturales', 'medicina' o 'internacional', considera otorgar una calificación de '7'. Texto a analizar: ", 
+pemp_part2: ">", //. Usa la escala: '0' si no existe el saludo, o el saludo es informal o coloquial, '5' si es un saludo formal pero no contiene las palabras clave mencionadas, '7' si es un saludo formal y contiene las palabras clave mencionadas, '10' si es perfectamente exacto y formal. . Se exacto con la seleccion de unicamente estos 4 valores de la escala. Genera unicamente un JSON con 'valor' indicando el valor y 'comentario' con un feedback breve, amigable, si el saludo contiene términos relevantes, destácalos de forma positiva, si falta algún término, sugiere incluirlo de manera específica sin mencionar 'palabras clave', proporciona un ejemplo de cómo podría ser el saludo basado en el original del vendedor, utilizando la referencia o destacando términos importantes como 'medicina', 'productos naturales', o 'internacional', el 'comentario' debe tener entre 10 y 15 palabras máximo.", 
+//a: "Analiza el texto para determinar cuán precisamente se utiliza el saludo institucional: 'Bienvenido(a) al centro Internacional de Medicina Natural del Tratamiento (nombre del tratamiento) que cuida, desintoxica'. La precisión es fundamental. Texto: " + text + ". Usa la escala: '0' si el saludo no aparece, '5' si es impreciso o tiene errores, '7' si es casi exacto pero con pequeñas omisiones, '10' si es perfectamente exacto. Genera unicamente un JSON con 'pemp_valor' indicando el valor y 'comentario' con un feedback breve y amigable para brindarle al vendedor (max. 15 palabras)."
   
 //EMPATIA y SIMPATIA
-//const emsi_role = "Eres un experto en análisis de comunicación interpersonal con especialización en ventas. Tu principal habilidad es evaluar e identificar niveles de empatía y simpatía en conversaciones de vendedores basándote en transcripciones. Debes centrarte en identificar las palabras, frases y tonos que reflejen empatía y simpatía, y proporcionar una evaluación sobre el desempeño del vendedor en estos aspectos.";
-const emsi_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+//emsi_role: "Eres un experto en análisis de comunicación interpersonal con especialización en ventas. Tu principal habilidad es evaluar e identificar niveles de empatía y simpatía en conversaciones de vendedores basándote en transcripciones. Debes centrarte en identificar las palabras, frases y tonos que reflejen empatía y simpatía, y proporcionar una evaluación sobre el desempeño del vendedor en estos aspectos.", 
+emsi_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Esto para verificar si el vendedor demostró: 'empatia' (definida como la intención de comprender y asimilar emociones del cliente con ejemplos como 'ENTIENDO LO QUE ESTÁS PASANDO' y 'ME PREOCUPA LO QUE ME COMENTAS, PERO TRANQUILA(O) AQUÍ TE VAMOS A AYUDAR')
@@ -101,20 +109,20 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: vendedor mostro empatia y simpatia en su introduccion de forma excepcional
 ), 
 'comentario' (breve pero conciso comentario sobre el nivel de 'empatia' y 'simpatia' del vendedor).
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const emsi_part1 = "Texto a analizar <";//  "Analiza la transcripción para determinar si el vendedor mostró 'empatía', definida como la intención de comprender y asimilar emociones del cliente con ejemplos como 'ENTIENDO LO QUE ESTÁS PASANDO' y 'ME PREOCUPA LO QUE ME COMENTAS, PERO TRANQUILA(O) AQUÍ TE VAMOS A AYUDAR', y 'simpatía', mostrando inclinación afectiva con preguntas como '¿DÓNDE VIVES?', '¿EN QUÉ ESTADO TE ENCUENTRAS?' y 'SE TE ESCUCHA UNA VOZ MUY JOVEN, ¿CUÁL ES TU EDAD?'. Todo este análisis solamente debe realizarse durante aproximadamente los primeros 2 o 3 minutos de la conversación, es decir no deberías analizar estos durante otras partes que no sean la presentación del vendedor. La precisión y exactitud son escenciales. Texto a analizar: ";
-const emsi_part2 = ">";//. Usa la escala: '0' si no se muestra ni empatia ni simpatia, '5' para mostrar uno o ambos pero no como se espera, '7' para indicar que se muestran ambos pero se puede mejor, '10' para completa empatía y simpatía. Se exacto con la seleccion de unicamente estos 4 valores de la escala. Genera unicamente un JSON con 'valor' (valor de la escala) y 'comentario' detallando un feedback breve y amigable, resaltando los puntos positivos relacionados a 'empatia' y 'simpatia' en la conversación, señalando áreas de mejora y proporcionando ejemplos para mejorar, el feedback debe tener entre 10 y 15 palabras máximo.";;
+emsi_part1: "Texto a analizar <", //  "Analiza la transcripción para determinar si el vendedor mostró 'empatía', definida como la intención de comprender y asimilar emociones del cliente con ejemplos como 'ENTIENDO LO QUE ESTÁS PASANDO' y 'ME PREOCUPA LO QUE ME COMENTAS, PERO TRANQUILA(O) AQUÍ TE VAMOS A AYUDAR', y 'simpatía', mostrando inclinación afectiva con preguntas como '¿DÓNDE VIVES?', '¿EN QUÉ ESTADO TE ENCUENTRAS?' y 'SE TE ESCUCHA UNA VOZ MUY JOVEN, ¿CUÁL ES TU EDAD?'. Todo este análisis solamente debe realizarse durante aproximadamente los primeros 2 o 3 minutos de la conversación, es decir no deberías analizar estos durante otras partes que no sean la presentación del vendedor. La precisión y exactitud son escenciales. Texto a analizar: ", 
+emsi_part2: ">", //. Usa la escala: '0' si no se muestra ni empatia ni simpatia, '5' para mostrar uno o ambos pero no como se espera, '7' para indicar que se muestran ambos pero se puede mejor, '10' para completa empatía y simpatía. Se exacto con la seleccion de unicamente estos 4 valores de la escala. Genera unicamente un JSON con 'valor' (valor de la escala) y 'comentario' detallando un feedback breve y amigable, resaltando los puntos positivos relacionados a 'empatia' y 'simpatia' en la conversación, señalando áreas de mejora y proporcionando ejemplos para mejorar, el feedback debe tener entre 10 y 15 palabras máximo.", , 
 
 
 //PRESENTACION
-const pre_role = "Eres un experto en análisis de comunicación empresarial e institucional. Tu habilidad principal es discernir y extraer el segmento de la transcripcion donde se presenta el vendedor. Debes identificar y extraer los saludos profesionales, formales, informales o coloquiales (por ejemplo 'buenas', 'hola', 'buenos dias', 'muy buenas tardes' y similares). Descarta el texto que incluya otro tipo de preguntas o comentarios no relacionados con el saludo del vendedor.";
-const pre_part1 = "Este es el texto: ";//"De la siguiente transcripción entre un vendedor y un cliente, extrae sólo la presentación inicial del vendedor asi sea muy informal, solo extrae lo relacionado a su presentación ante el cliente, no agregues ningun comentario adicional y evita el texto relacionado a otras preguntas que no fueran un saludo: ";
-const pre_part2 = ". Nota: Una persona habla a un ritmo de 125 a 150 palabras por minuto.";
+pre_role: "Eres un experto en análisis de comunicación empresarial e institucional. Tu habilidad principal es discernir y extraer el segmento de la transcripcion donde se presenta el vendedor. Debes identificar y extraer los saludos profesionales, formales, informales o coloquiales (por ejemplo 'buenas', 'hola', 'buenos dias', 'muy buenas tardes' y similares). Descarta el texto que incluya otro tipo de preguntas o comentarios no relacionados con el saludo del vendedor.", 
+pre_part1: "Este es el texto: ", //"De la siguiente transcripción entre un vendedor y un cliente, extrae sólo la presentación inicial del vendedor asi sea muy informal, solo extrae lo relacionado a su presentación ante el cliente, no agregues ningun comentario adicional y evita el texto relacionado a otras preguntas que no fueran un saludo: ", 
+pre_part2: ". Nota: Una persona habla a un ritmo de 125 a 150 palabras por minuto.", 
 
 
 //PRECALIFICACION
-const prec_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+prec_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Necesito que verifiques si el vendedor le hace al cliente preguntas sobre la siguiente lista:
@@ -142,13 +150,13 @@ El output que necesito es unicamente un JSON valido con las keys:
 'tratamientosQueConsume' (tratamientos que consume el cliente, si el vendedor no pregunta indicar 'NP'),
 'productosTomaActualmente' (productos que toma actualmente el cliente, si el vendedor no pregunta indicar 'NP'),
 'comentario' (breve pero conciso comentario sobre si realizo estas preguntas y en que otras preguntas se enfoco que no tienen relacion con lo mencionado).
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const prec_part1 = "Texto a analizar <";
-const prec_part2 =  ">";
+prec_part1: "Texto a analizar <", 
+prec_part2:  ">", 
 
 //PREGUNTAS SUBJETIVAS
-const preSub_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+preSub_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor realiza preguntas subjetivas, es decir preguntas asociadas a la dolencia o padecimiento del cliente.
@@ -231,13 +239,13 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor realiza mínimo 4 preguntas subjetivas como las de los ejemplos anteriormente mencionados y además menciona ejemplos
 ), 
 'comentario' (breve pero conciso comentario sobre si el vendedor realizó al menos 4 preguntas subjetivas como las mencionadas anteriormente, indica cuales fueron).
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const preSub_part1 = "Texto a analizar <";
-const preSub_part2 = ">";
+preSub_part1: "Texto a analizar <", 
+preSub_part2: ">", 
 
 //TESTIMONIO
-const testi_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+testi_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Ya que en esta conversación el vendedor intenta influir en el cliente sobre su decisión de compra, 
@@ -253,15 +261,15 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor mencionó un testimonio real y creible de un tratamiento anterior, indicando que se obtuvieron buenos resultados, que definitivamente influyó en la decisión de compra del cliente
 ), 
 'comentario' (breve pero conciso comentario sobre el testimonio que brinda el vendedor).
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const testi_part1 = "Texto a analizar <";
-const testi_part2 = ">";
+testi_part1: "Texto a analizar <", 
+testi_part2: ">", 
 
 
 
 //RESPALDO
-const resp_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+resp_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor respalda su negociación hablando sobre: 
@@ -291,15 +299,15 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor habla sobre la "Trayectoria", el "Servicio", la "Calidad" y el "Profesionalismo" de la empresa, basandose en los ejemplos antes mencionados
 ), 
 'comentario' (breve pero conciso comentario sobre el respaldo (basándose en la "Trayectoria", "Servicio", "Calidad" o "Profesionalismo") que el vendedor indicó al cliente en su negociación).
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const resp_part1 = "Texto a analizar <";
-const resp_part2 = ">";
+resp_part1: "Texto a analizar <", 
+resp_part2: ">", 
 
 
 
 //PANORAMA OSCURO - etiqueta enfermedad
-const etenf_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+etenf_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor ETIQUETA CON UNA ENFERMEDAD AL CLIENTE Y EXPLICA LA GRAVEDAD QUE PUEDE EMPEORAR DE FORMA PERSONALIZADA, 
@@ -315,14 +323,14 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor etiqueta al cliente con alguna enfermedad durante la conversación y el cliente se siente preocupado con lo que se menciona y le da mucha importancia
 ), 
 'comentario' (breve pero conciso comentario sobre como el vendedor etiquetó con una enfermedad al cliente y le explicó sobre la gravedad que puede empeorar de forma personalizada.)
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const etenf_part1 = "Texto a analizar <";
-const etenf_part2 = ">";
+etenf_part1: "Texto a analizar <", 
+etenf_part2: ">", 
 
 
 //PANORAMA OSCURO - enfocarse enfermedad
-const enfenf_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+enfenf_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor SE ENFOCA EN LA ENFERMEDAD, es decir que la conversación y la negociación que mantiene el vendedor con su cliente vaya acorde a su enfermedad.
@@ -336,14 +344,14 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor se enfoca siempre en la enfermedad del cliente y toda la negociación va acorde a eso
 ), 
 'comentario' (breve pero conciso comentario sobre como el vendedor se enfocó en la enfermedad del cliente y mencionó cosas relacionadas a ella.)
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const enfenf_part1 = "Texto a analizar <";
-const enfenf_part2 = ">";
+enfenf_part1: "Texto a analizar <", 
+enfenf_part2: ">", 
 
 
 //PANORAMA OSCURO - tono de voz
-const tonoVoz_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+tonoVoz_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor mantiene un tono de voz que preocupa al cliente.
@@ -358,13 +366,13 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor manifiesta mucha preocupación por la enfermedad del cliente, usa un tono de voz claro y directo
 ), 
 'comentario' (breve pero conciso comentario sobre como el vendedor uso un tono de voz claro y directo que manifestó preocupación sobre la enfermedad del cliente.)
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const tonoVoz_part1 = "Texto a analizar <";
-const tonoVoz_part2 = ">";
+tonoVoz_part1: "Texto a analizar <", 
+tonoVoz_part2: ">", 
 
 //PANORAMA OSCURO - conocimiento de la patología
-const conPatol_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+conPatol_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor demuestra suficiente conocimiento sobre como funciona la patología asociada a los sintomas del cliente.
@@ -378,14 +386,14 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor demuestra mucho conocimiento sobre la patología asociada a los síntomas del cliente, demostrando ser un experto
 ), 
 'comentario' (breve pero conciso comentario sobre como el vendedor demuestra conocimiento sobre la patología asociada a los sintomas del cliente.)
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const conPatol_part1 = "Texto a analizar <";
-const conPatol_part2 = ">";
+conPatol_part1: "Texto a analizar <", 
+conPatol_part2: ">", 
 
 
 //PANORAMA OSCURO - dato duro
-const datoDuro_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+datoDuro_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor da a conocer informacion sobre la patología o el órgano que se ve afectado por la dolencia del cliente.
@@ -414,14 +422,14 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor da a conocer información sobre la patología o dolencia del cliente basandose exactamente en los ejemplos anteriores
 ), 
 'comentario' (breve pero conciso comentario sobre como el vendedor da a conocer información sobre la patología o el órgano que se ve afectado por la dolencia del cliente.)
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const datoDuro_part1 = "Texto a analizar <";
-const datoDuro_part2 = ">";
+datoDuro_part1: "Texto a analizar <", 
+datoDuro_part2: ">", 
 
 
 //SOLUCIÓN BENEFICIO
-const solBen_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+solBen_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor da a conocer los beneficios del tratamiento que el cliente está necesitando, el contexto debe tener coherencia con la dolencia del cliente y sus síntomas.
@@ -435,14 +443,14 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas
 ), 
 'comentario' (breve pero conciso comentario sobre como el vendedor da a los beneficios del tratamiento que el cliente necesita y el contexto es coherente con la dolencia del cliente y sus síntomas.)
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const solBen_part1 = "Texto a analizar <";
-const solBen_part2 = ">";
+solBen_part1: "Texto a analizar <", 
+solBen_part2: ">", 
 
 
 //CIERRE DE VENTA
-const cierre_role = `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
+cierre_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
 Debes analizar si en la conversación el vendedor encontró el momento adecuado para poder tomar el cobro de la venta y siguió alguno de estos tipos de cierre:
@@ -468,39 +476,41 @@ El output que necesito es unicamente un JSON valido con las keys:
 10: si el vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente, además usó alguno de los tipos de venta anteriormente mencionados
 ), 
 'comentario' (breve pero conciso comentario sobre si el vendedor realizó la venta o no y si usó o no alguno de los tipos de cierre antes mencionados.)
-Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`;
+Asegúrate de que el JSON cumpla con todas las reglas de formato para que pueda ser parseado sin errores.`, 
 
-const cierre_part1 = "Texto a analizar <";
-const cierre_part2 = ">";
+cierre_part1: "Texto a analizar <", 
+cierre_part2: ">", 
 
 
-function getPrompt(text,part1, part2){
-  const pemp_prompt =  part1 + text + part2;
-  return pemp_prompt;        
-}
+//function getPrompt(text,part1, part2){
+//  pemp_prompt:  part1 + text + part2, 
+//  return pemp_prompt,         
+//}
 
 /*
 document.addEventListener('contextmenu', function(e) {
-  e.preventDefault();
-});
+  e.preventDefault(), 
+}), 
 */
 
-let model = "";
-let quantityTokensPerMin = 40000;
-let accumlativeTokens = 0;
+model: "", 
+quantityTokensPerMin: 40000, 
+accumlativeTokens: 0, 
 
-const cost35I4 = 0.0015; // per 1000 tokens
-const cost35O4 = 0.002;
-const cost35I16 = 0.003;
-const cost35O16 = 0.004;
+cost35I4: 0.0015,  // per 1000 tokens
+cost35O4: 0.002, 
+cost35I16: 0.003, 
+cost35O16: 0.004, 
 
-const cost4I8 = 0.03;
-const cost4O8 = 0.06;
-const cost4I32 = 0.06;
-const cost4O32 = 0.12;
+cost4I8: 0.03, 
+cost4O8: 0.06, 
+cost4I32: 0.06, 
+cost4O32: 0.12, 
 
-const whisperCost = 0.006; // per minute (rounded to the nearest second)
+whisperCost: 0.006,  // per minute (rounded to the nearest second)
 
-const TC = 3.8;
-const decimals = 8;
-prod = true;
+TC: 3.8, 
+decimals: 8, 
+prod: true
+
+};
