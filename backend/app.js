@@ -62,10 +62,7 @@ app.get('/welcome', (req, res) => {
     res.send('Welcome, you are logged in!');
 });
 
-app.get('/auditoria', (req, res) => {
-    console.log("auditoria");
-    res.sendFile(__dirname + '/public/html/auditoria.html');
-});
+
 
 app.get('/new-password', (req, res) => {
   res.sendFile(__dirname + '/public/html/new-password.html');
@@ -146,8 +143,10 @@ function getKey(header, callback){
 }
 
 const verifyAccessToken = (req, res, next) => {
+    console.log(accessToken);
+
     const authHeader = accessToken;//req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = accessToken;//authHeader && authHeader.split(' ')[1];
 
     console.log("authHeader: " + authHeader);
     console.log("token: " + token);
@@ -163,7 +162,10 @@ const verifyAccessToken = (req, res, next) => {
     });
 };
 
-
+app.get('/auditoria', verifyAccessToken, (req, res) => {
+    console.log("auditoria");
+    res.sendFile(__dirname + '/public/html/auditoria.html');
+});
 
 
 app.listen(port, '0.0.0.0', () => {
