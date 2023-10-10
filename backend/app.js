@@ -1,110 +1,47 @@
 const express = require('express');
-const path = require('path');
-const cors = require('cors');
-const yaml = require('js-yaml');
-const fs = require('fs');
-const db = require('./db');
-const port = 3000;
+const bodyParser = require('body-parser');
+const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 
 const app = express();
-
-
-// Load config.yml
-const config = yaml.load(fs.readFileSync('config.yml', 'utf8'));
-
-app.use(express.static(path.join(__dirname, '../frontend/public')));
-
-app.use(cors());
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/public/html/login.html'));
-});
-
-app.get('/login-script', (req, res) => {
-  //res.sendFile(path.join(__dirname, './JS/login-script.js'));
-});
-
-app.get('/img', (req, res) => {
-  res.sendFile(path.join(__dirname, './img/logo.svg'));
-});
-
-app.use('/libs', express.static(path.join(__dirname, 'libs')));
-/*
-app.get('/libs/aws-cognito', (req, res) => {
-  res.sendFile(path.join(__dirname, './libs/amazon-cognito-identity.min.js'));
-});
-
-app.get('/libs/aws-cognito-sdk', (req, res) => {
-  res.sendFile(path.join(__dirname, './libs/aws-cognito-sdk.min.js'));
-});*/
-
-app.get('/const', (req, res) => {
-  res.sendFile(path.join(__dirname, './JS/const.js'));
-});
-
-app.get('/store', async (req, res) => {
-    const id_empleado = 1;  // ejemplo
-    const nombre = 'Juan';
-    const apellido = 'Perez';
-    const edad = 30;  // ejemplo
-  
-    const newEmployee = await db.storeEmployee(id_empleado, nombre, apellido, edad);
-    res.json(newEmployee);
-  });
-
-
-
-
-const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const AWSCognito = require('aws-sdk');
-
-// Configuración de AWS
-AWSCognito.config.region = 'us-east-1';
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const poolData = {
-  UserPoolId: 'us-east-1_ekaFmTqIv',
-  ClientId: '69i8c6c0mnq066d71qc2a8gm74'
+    UserPoolId: 'us-east-1_ekaFmTqIv',
+    ClientId: '69i8c6c0mnq066d71qc2a8gm74'
 };
-
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-  
-// Aquí irían tus endpoints, por ejemplo para autenticar un usuario
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/login.html');
+});
+
 app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-
-    const authenticationData = {
-        Username: username,
-        Password: password,
-    };
-
-    const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
-
-    const userData = {
-        Username: username,
-        Pool: userPool
-    };
-
-    const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
-
+    const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
+        Username : req.body.username,
+        Password : req.body.password,
+    });
+    
+    const cognitoUser = new AmazonCognitoIdentity.CognitoUser({
+        Username : req.body.username,
+        Pool : userPool
+    });
+    
     cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess: function(result) {
-            // El usuario se ha autenticado correctamente
-            res.json({ success: true});
+        onSuccess: (session) => {
+            console.log('Authentication Successful!', session);
+            res.redirect('/welcome');
         },
-        onFailure: function(err) {
-            // Error en la autenticación
-            res.status(400).json({ success: false, message: err.message });
-        },
-        newPasswordRequired: function(userAttributes, requiredAttributes) {
-            // El usuario necesita establecer una nueva contraseña
-            res.status(400).json({ success: false, message: 'New password required' });
+        onFailure: (err) => {
+            console.error('Authentication failed', err);
+            res.redirect('/');
         }
     });
 });
-  
 
+app.get('/welcome', (req, res) => {
+    res.send('Welcome, you are logged in!');
+});
 
-
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
+app.listen(3000, () => {
+    console.log('Server is running on http://localhost:3000');
 });
