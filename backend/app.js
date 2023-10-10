@@ -5,6 +5,8 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/public', express.static('backend/public'));
+
 const poolData = {
     UserPoolId: 'us-east-1_ekaFmTqIv',
     ClientId: '69i8c6c0mnq066d71qc2a8gm74'
