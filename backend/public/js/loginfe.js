@@ -15,7 +15,7 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
           },
           body: JSON.stringify({ username, password }),
       });
-      
+      /*
       if (!response.ok) {
           throw new Error('Login failed');
       }      
@@ -37,6 +37,11 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
       if (!auditResponse.ok) {
         throw new Error('Auditoría fallida');
       }
+      /*      
+      if (auditResponse.ok) {
+        localStorage.setItem('accessToken', accessToken);
+        window.location.href = '/public/html/auditoria.html';
+      }*/
       
   } catch (error) {
       console.error('Error:', error);

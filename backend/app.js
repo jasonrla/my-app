@@ -20,6 +20,7 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 const region = "us-east-1";
 const userPoolId = poolData['UserPoolId'];
 const YOUR_SECRET_KEY = "Hola_como_estas";
+let accessToken = "";
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/html/login.html');
@@ -41,9 +42,10 @@ app.post('/login', (req, res) => {
   cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (session) => {
           console.log('Authentication Successful!', session);
-          //res.redirect('/auditoria');
-          const accessToken = session.getAccessToken().getJwtToken();
-          res.json({ accessToken: accessToken });
+          
+          accessToken = session.getAccessToken().getJwtToken();
+          //res.json({ accessToken: accessToken });
+          res.redirect('/auditoria');
       },
       onFailure: (err) => {
           console.error('Authentication failed', err);
@@ -54,6 +56,15 @@ app.post('/login', (req, res) => {
           res.redirect('/new-password');
       }
   });
+});
+
+app.get('/welcome', (req, res) => {
+    res.send('Welcome, you are logged in!');
+});
+
+app.get('/auditoria', (req, res) => {
+    console.log("auditoria");
+    res.sendFile(__dirname + '/public/html/auditoria.html');
 });
 
 app.get('/new-password', (req, res) => {
@@ -135,7 +146,7 @@ function getKey(header, callback){
 }
 
 const verifyAccessToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
+    const authHeader = accessToken;//req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
     console.log("authHeader: " + authHeader);
@@ -153,10 +164,7 @@ const verifyAccessToken = (req, res, next) => {
 };
 
 
-app.get('/auditoria', verifyAccessToken, (req, res) => {
-    console.log("auditoria");
-    res.redirect('/public/html/auditoria.html');
-});
+
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on http://0.0.0.0:${port}`);
