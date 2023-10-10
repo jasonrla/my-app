@@ -1,54 +1,44 @@
-// Configuración de Amplify
-Amplify.configure({
-    Auth: {
-      region: 'us-east-1',
-      userPoolId: 'us-east-1_ekaFmTqIv',
-      userPoolWebClientId: '69i8c6c0mnq066d71qc2a8gm74',
-    }
-  });
+// JavaScript: login.js
+document.getElementById('login-form').addEventListener('submit', async (event) => {
+  event.preventDefault();  // Previene la recarga de la página
   
-  document.addEventListener('DOMContentLoaded', function() {
-    const loginButton = document.getElementById('login-button');
-  
-    loginButton.addEventListener('click', function() {
-      login();
-    });
-  });
+  const formData = new FormData(event.target);
+  const username = document.getElementById('username').value;
+  const password = document.getElementById('password').value;
+  console.log(username);
+  console.log(password);
+  try {
+      const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+      });
+      
+      if (!response.ok) {
+          throw new Error('Login failed');
+      }      
 
-  async function login() {
-    console.log("login")
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-  
-    try {
-      const user = await Auth.signIn(username, password);
-      // Usuario autenticado con éxito
-    } catch (error) {
-      console.log('Error al autenticar', error);
-    }
+      const data = await response.json();
+      const accessToken = data.accessToken;
+      localStorage.setItem('accessToken', accessToken); // Almacena el accessToken en localStorage
+
+      console.log("token: " + accessToken);
+
+      // Redirige al usuario a la página de auditoría
+      const auditResponse = await fetch('/auditoria', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+        },
+      });
+
+      if (!auditResponse.ok) {
+        throw new Error('Auditoría fallida');
+      }
+      
+  } catch (error) {
+      console.error('Error:', error);
   }
-  
-  async function forgotPassword() {
-    const username = document.getElementById('username').value;
-  
-    try {
-      await Auth.forgotPassword(username);
-      // Se envió el código
-    } catch (error) {
-      console.log('Error al enviar el código', error);
-    }
-  }
-  
-  async function resetPassword() {
-    const username = document.getElementById('username').value;
-    const code = document.getElementById('code').value;
-    const newPassword = document.getElementById('newPassword').value;
-  
-    try {
-      await Auth.forgotPasswordSubmit(username, code, newPassword);
-      // Contraseña cambiada con éxito
-    } catch (error) {
-      console.log('Error al cambiar la contraseña', error);
-    }
-  }
-  
+});

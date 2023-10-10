@@ -1,9 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 const port = 3000;
 const app = express();
+
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use('/public', express.static('backend/public'));
 
@@ -13,11 +17,17 @@ const poolData = {
 };
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
+const region = "us-east-1";
+const userPoolId = poolData['UserPoolId'];
+const YOUR_SECRET_KEY = "Hola_como_estas";
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/html/login.html');
 });
 
 app.post('/login', (req, res) => {
+    console.log("reqBody: "+req.body.username);
+    console.log("reqBody: "+req.body.password);
   const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails({
       Username: req.body.username,
       Password: req.body.password,
@@ -31,7 +41,9 @@ app.post('/login', (req, res) => {
   cognitoUser.authenticateUser(authenticationDetails, {
       onSuccess: (session) => {
           console.log('Authentication Successful!', session);
-          res.redirect('/auditoria');
+          //res.redirect('/auditoria');
+          const accessToken = session.getAccessToken().getJwtToken();
+          res.json({ accessToken: accessToken });
       },
       onFailure: (err) => {
           console.error('Authentication failed', err);
@@ -111,10 +123,41 @@ app.post('/confirm-password', (req, res) => {
 });
 
 
-app.get('/auditoria', (req, res) => {
-    res.sendFile(__dirname + '/public/html/Auditoria/auditoria.html');
+const client = jwksClient({
+    jwksUri: `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`
+});
+
+function getKey(header, callback){
+    client.getSigningKey(header.kid, function(err, key) {
+        const signingKey = key.publicKey || key.rsaPublicKey;
+        callback(null, signingKey);
+    });
+}
+
+const verifyAccessToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    console.log("authHeader: " + authHeader);
+    console.log("token: " + token);
+
+    if (token == null) return res.sendStatus(401);
+
+    jwt.verify(token, getKey, { algorithms: ['RS256'] }, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        console.log("jwtverify");
+        console.log(req.user);
+        next();
+    });
+};
+
+
+app.get('/auditoria', verifyAccessToken, (req, res) => {
+    console.log("auditoria");
+    res.redirect('/public/html/auditoria.html');
 });
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server is running on http://0.0.0.0:${port}`);
-  });
+});
