@@ -1,5 +1,6 @@
 module.exports = {
 
+tkn:"",
 fontH: "18px", 
 font: "13px", 
 fontC: "12px", 

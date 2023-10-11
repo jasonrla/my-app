@@ -1,4 +1,4 @@
-// Configuración de Cognito
+/*// Configuración de Cognito
 AWSCognito.config.region = 'us-east-1';
 
 var poolData = {
