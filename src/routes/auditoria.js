@@ -8,14 +8,16 @@ router.get('/auditoria', auditoriaController.getAuditoriaPage);
 
 router.get('/authentication', auditoriaController.getAuthentication);
 
-router.get('/auditor-name', auditoriaController.getAuditorName); //verifyAccessToken
+router.get('/auditor-name', verifyAccessToken, auditoriaController.getAuditorName);
 
-router.get('/listbox-vendedores', auditoriaController.getListBoxVendedores);
+router.get('/listbox-vendedores', verifyAccessToken, auditoriaController.getListBoxVendedores);
 
-router.get('/listbox-motivo', auditoriaController.getListBoxMotivo);
+router.get('/listbox-motivo', verifyAccessToken, auditoriaController.getListBoxMotivo);
 
-router.get('/listbox-dialer', auditoriaController.getListBoxDialer);
+router.get('/listbox-dialer', verifyAccessToken, auditoriaController.getListBoxDialer);
 
-router.post('/analizar-textos', auditoriaController.analizarTextos);
+router.post('/analizar-textos', verifyAccessToken, auditoriaController.analizarTextos);
+
+router.post('/report-data', verifyAccessToken, auditoriaController.reportData);
 
 module.exports = router;

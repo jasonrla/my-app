@@ -512,6 +512,6 @@ whisperCost: 0.006,  // per minute (rounded to the nearest second)
 
 TC: 3.8, 
 decimals: 8, 
-prod: true
+prod: false
 
 };
