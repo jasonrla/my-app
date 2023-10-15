@@ -3,7 +3,7 @@ const path = require('path');
 require('dotenv').config();
 const app = express();
 const gvars = require('../utils/const.js');
-const { analizarTextos, puntuacion } = require('../utils/functions.js');
+const { analizarTextos, puntuacion, currentDate, convertDateFormat } = require('../utils/functions.js');
 
 const http = require('http');
 const socketIo = require('socket.io');
@@ -80,6 +80,77 @@ exports.getListBoxDialer = async (req, res) => {
     res.json(data);
 };
 
+exports.getListBox1 = async (req, res) => {
+    const data = {
+        "FORMATIVO": "",
+        "POSITIVO": "",
+        "LLAMADA DE ATENCIÓN": ""
+    };
+    res.json(data);
+};
+
+exports.getListBox2 = async (req, res) => {
+    const data = {
+        "ESTADOS DE CONEXIÓN": "",
+        "BAJA CONVERSIÓN": "",
+        "BAJA FACTURACIÓN": "",
+        "TRAINING POR PRODUCTO": "",
+        "APOYO POR CONSULTA": "",
+        "GESTIÓN CC": "",
+        "PRECIO BAJO": ""
+    };
+    res.json(data);
+};
+
+exports.getListBox3 = async (req, res) => {
+    const data = {
+        "BUENA": "",
+        "REGULAR": "",
+        "MALA": ""
+    };
+    res.json(data);
+};
+
+exports.getFontSize = async (req, res) => {
+    const data = {
+        "fontH": gvars.fontH, 
+        "font": gvars.font, 
+        "fontC": gvars.fontC,
+    };
+    res.json(data);
+};
+
+exports.getPDFoptions = async (req, res) => {
+    const data = {
+        "margin":       6,
+        "image":        { type: 'jpeg', quality: 0.98 },
+        "html2canvas":  { scale: 2 },
+        "jsPDF":        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    res.json(data);
+};
+
+exports.setAudioData = async (req, res) => {
+    gvars.fechaCal = currentDate()
+    gvars.aName = req.body.aName
+    res.json({
+        "success": "ok"
+    })
+};
+
+exports.getAudioData = async (req, res) => {
+    res.json({
+        "fechaCal": convertDateFormat(gvars.fechaCal),
+        "aName": gvars.aName
+    });
+};
+
+exports.getCurrentDate = async (req, res) => {
+    res.json({
+        "currentDate": convertDateFormat(currentDate()),
+    });
+};
+
 exports.analizarTextos = async (req, res) => {
     const resultado = await analizarTextos(req.body.audioFile, req.body.auditor, req.body.grupo_vendedor, req.body.motivo, req.body.nombre_vendedor, req.body.tipo_campana);
     res.json(resultado);
@@ -88,9 +159,6 @@ exports.analizarTextos = async (req, res) => {
 exports.reportData = async (req, res) => {
     
     const resultados = req.body;
-
-    console.log("resultados");
-    console.log(resultados);
 
     const [auditor, fechaCalibracion, grupo, motivoAuditoria, vendedor, tipoCampana] = [resultados.Auditor, resultados.Fecha_Audio, resultados.Grupo, resultados.Motivo, resultados.Asesor, resultados.Tipo_de_Campana];
     const [saludo, simpatiaEmpatia] = [resultados.Saludo_institucional, resultados.Simpatia_empatia];
@@ -125,9 +193,6 @@ exports.reportData = async (req, res) => {
     const resCal = (etapasVenta+habComerciales)/(2);
 
     const resultado = {
-    "font": gvars.font,
-    "fontH": gvars.fontH,
-    "fontC": gvars.fontC,
     "etapasVenta": etapasVenta,
     "habComerciales": habComerciales,
     "resCal": resCal,

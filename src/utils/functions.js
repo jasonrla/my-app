@@ -15,6 +15,23 @@ function currentDate() {
     const formattedDate = `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
     return formattedDate;
 }
+
+function convertDateFormat(dateString) {
+    // Divide la fecha y la hora
+    const parts = dateString.split(' ');
+
+    // Divide la fecha en día, mes y año
+    const dateParts = parts[0].split('/');
+
+    // Une el año, mes y día
+    const formattedDate = dateParts[2] + dateParts[1] + dateParts[0];
+
+    // Reemplaza el ":" en la hora para obtener el formato deseado
+    const formattedTime = parts[1].replace(/:/g, '');
+
+    // Devuelve el formato deseado
+    return formattedDate + '_' + formattedTime;
+}
 function puntuacion(...numeros) {
     let sum = 0;
     let count = 0;
@@ -604,7 +621,7 @@ async function analizarTextos(audioFile, auditor, grupo_vendedor, motivo, nombre
             "Asesor": nombre_vendedor,
             "Tipo_de_Campana": tipo_campana,
             "Fecha_Audio": currentDate(),
-            "Nombre_Audio": audioFile.name,
+            "Nombre_Audio": "File example",//audioFile.name,
             "Duracion": textoTransformado.duration,
             "Resumen": formattedString,
             "Transcripcion": textoTransformado.text,
@@ -678,5 +695,7 @@ async function analizarTextos(audioFile, auditor, grupo_vendedor, motivo, nombre
 
 module.exports = {
     analizarTextos,
-    puntuacion
+    puntuacion,
+    currentDate,
+    convertDateFormat
 };

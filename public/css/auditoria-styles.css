@@ -96,7 +96,8 @@ pre {
 
 
 #downloadBtnPDF, #downloadBtnPDFInterno, #downloadBtnPDFGeneral, #downloadBtnPDFModal, #downloadBtnPDFInterno2, 
-#downloadBtnPDFGeneral2, #downloadBtnPDFModal2, #downloadBtnPDFFacturacion, #downloadBtnPDFFacturacion2 {
+#downloadBtnPDFGeneral2, #downloadBtnPDFModal2, #downloadBtnPDFFacturacion, #downloadBtnPDFFacturacion2,
+#downloadBtnPDFTextoTransformado {
   padding: 10px 10px;
   font-size: 15px;
   border: none;
@@ -107,7 +108,8 @@ pre {
 }
 
 #downloadBtnPDF:hover, #downloadBtnPDFInterno:hover, #downloadBtnPDFGeneral:hover, #downloadBtnPDFModal:hover, #downloadBtnPDFInterno2:hover, 
-#downloadBtnPDFGeneral2:hover, #downloadBtnPDFModal2:hover, #downloadBtnPDFFacturacion:hover, #downloadBtnPDFFacturacion2:hover {
+#downloadBtnPDFGeneral2:hover, #downloadBtnPDFModal2:hover, #downloadBtnPDFFacturacion:hover, #downloadBtnPDFFacturacion2:hover,
+#downloadBtnPDFTextoTransformado:hover {
   padding: 10px 10px;
   font-size: 15px;
   border: none;
