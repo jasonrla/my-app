@@ -135,8 +135,8 @@ function onModalClose(linkId) {
 }
 
 function storeListboxSelection(linkId, listboxValues) {
-  linkSelections[linkId] = listboxValues;
-  console.log("store: " + linkId + " - " + listboxValues);
+  //linkSelections[linkId] = listboxValues;
+  //console.log("store: " + linkId + " - " + listboxValues);
 }
 
 function obtenerTipoFeedback() {
@@ -186,87 +186,316 @@ async function exportTableToPDF(modalBody, fileName, accessToken) {
   html2pdf().from(element).set(opt).save();
 }
 
+async function exportTableToExcel(tableElement, accessToken) {
+  // Convertir la tabla a un libro de trabajo de Excel
+  const wb = XLSX.utils.table_to_book(tableElement, { sheet: "Sheet 1" });
+
+  // Obtener la hoja de trabajo que acabas de crear
+  const ws = wb.Sheets["Sheet 1"];
+
+  // Definir las columnas que deseas que se muestren como porcentajes y decimales
+  const percentageColumns = ['M', 'N', 'S', 'T', 'AB', 'AC', 'AJ', 'AK', 'AN', 'AO', 'AR', 'AS', 'AV', 'AW', 'BE', 'BF'];  
+  const decimalColumns = ['BG'];  // Añadido 'BG' aquí
+
+  for (let key in ws) {
+      if (ws.hasOwnProperty(key)) {
+          const cell = ws[key];
+          const columnLetter = getColumnLetter(key);
+
+          if (columnLetter) {
+              if (percentageColumns.includes(columnLetter) && typeof cell.v === 'number') {
+                  cell.z = '0%';
+              } else if (decimalColumns.includes(columnLetter) && typeof cell.v === 'number') {
+                  cell.z = '0.0%';
+              }
+          }
+      }
+  }
+
+  const response = await fetchApi('/get-current-date', accessToken);
+  const fileName = 'Procesamiento_audios_'+transformDateFormat(response.currentDate)+'.xlsx'
+  // Guardar el libro de trabajo
+  XLSX.writeFile(wb, fileName);
+}
+
+function getColumnLetter(cellKey) {
+  // Extraer y retornar las letras de la clave de la celda (por ejemplo, "AB" de "AB42")
+  const match = cellKey.match(/[A-Z]+/);
+  return match ? match[0] : null;
+}
+
+function transformDateFormat(dateStr) {
+  // Convertir "09/18/2023 22:08:15" a "_09182023_220815"
+  return dateStr.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$2$1$3_$4$5$6');
+}
+
+function generateFacturacion(audioFiles){
+  if (audioFiles.length == 0) {
+    Swal.fire({
+      title: 'Error!',
+      text: 'No ha procesado ningun audio',
+      icon: 'error',
+      confirmButtonText: 'Entendido'
+    })
+    return;
+  }
+  else{
+    mostrarResultadosFacturacion("modalFacturacion", "modalBodymodalFacturacion");
+    document.getElementById('modalFacturacion-content').scrollTop = 0;
+  }
+}
+
+function mostrarResultadosFacturacion(modalUsed, modalBodyUsed){
+  const modal = document.getElementById(modalUsed);
+  const modalBody = document.getElementById(modalBodyUsed);
+  modalBody.innerHTML = ''; // Limpiar el contenido anterior
+  
+  let grandTotalUSD = 0;
+  let grandTotalPEN = 0;
+
+  const table = document.createElement('table');
+  table.className = 'centered-table';
+  modalBody.appendChild(table);
+
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+  
+  // Crear la fila "Facturación"
+  const billingRow = document.createElement('tr');
+  const billingCell = document.createElement('th');
+  billingCell.colSpan = 6;
+  billingCell.appendChild(document.createTextNode("Facturación"));
+  billingCell.style.fontSize = "22px"; // Tamaño de letra más grande
+  billingCell.style.fontWeight = "bold"; // Texto en negrita
+  billingRow.appendChild(billingCell);
+  thead.appendChild(billingRow);
+
+  // Crear la fila "Detalle"
+  const row1 = document.createElement('tr');
+  const rowCell1 = document.createElement('th');
+  rowCell1.colSpan = 6;
+  rowCell1.style.background = "none"; // Sin fondo
+  row1.appendChild(rowCell1);
+  thead.appendChild(row1);
+
+  // Crear la fila "Fecha"
+  const row0 = document.createElement('tr');
+  const rowCell0 = document.createElement('th');
+  rowCell0.colSpan = 1;
+  rowCell0.appendChild(document.createTextNode("Fecha:"));
+  //rowCell0.style.fontSize = "16px"; // Tamaño de letra más grande
+  rowCell0.style.fontWeight = "bold"; // Texto en negrita
+  rowCell0.style.textAlign = 'left';
+  rowCell0.style.background = "none"; // Sin fondo
+  row0.appendChild(rowCell0);
+
+  const dateValueCell = document.createElement('td');
+  dateValueCell.appendChild(document.createTextNode(currentDate())); //////////////////////////
+  dateValueCell.colSpan =  5;
+  dateValueCell.style.textAlign = 'left';
+  //dateValueCell.fontSize = "16px";
+  row0.appendChild(dateValueCell);
+
+  thead.appendChild(row0);
+
+  // Crear la fila "Total USD"
+  const row2 = document.createElement('tr');
+  const rowCell2 = document.createElement('th');
+  rowCell2.colSpan = 1;
+  rowCell2.appendChild(document.createTextNode("Total USD:"));
+  //rowCell2.style.fontSize = "16px"; // Tamaño de letra más grande
+  rowCell2.style.fontWeight = "bold"; // Texto en negrita
+  rowCell2.style.textAlign = 'left';
+  rowCell2.style.background = "none"; // Sin fondo
+  row2.appendChild(rowCell2);
+
+  const totalUSDValueCell = document.createElement('td');
+  totalUSDValueCell.appendChild(document.createTextNode(grandTotalUSD.toFixed(decimals)));
+  totalUSDValueCell.colSpan =  5;
+  totalUSDValueCell.style.textAlign = 'left';
+  //totalUSDValueCell.fontSize = "16px";
+  row2.appendChild(totalUSDValueCell);
+
+  thead.appendChild(row2);
+
+  // Crear la fila "Total PEN"
+  const row3 = document.createElement('tr');
+  const rowCell3 = document.createElement('th');
+  rowCell3.colSpan = 1;
+  rowCell3.appendChild(document.createTextNode("Total PEN:"));
+  //rowCell3.style.fontSize = "16x"; // Tamaño de letra más grande
+  rowCell3.style.fontWeight = "bold"; // Texto en negrita
+  rowCell3.style.textAlign = 'left';
+  rowCell3.style.background = "none"; // Sin fondo
+  row3.appendChild(rowCell3);
+
+  const totalPENValueCell = document.createElement('td');
+  totalPENValueCell.appendChild(document.createTextNode(grandTotalPEN.toFixed(decimals)));
+  totalPENValueCell.colSpan =  5;
+  totalPENValueCell.style.textAlign = 'left';
+  //totalPENValueCell.fontSize = "16px";
+  row3.appendChild(totalPENValueCell);
+
+  thead.appendChild(row3);
+
+  // Crear una fila en blanco
+  const blankRow = document.createElement('tr');
+  const blankCell = document.createElement('th');
+  blankCell.colSpan = 6;
+  blankCell.style.background = "none"; // Sin fondo
+  blankRow.appendChild(blankCell);
+  thead.appendChild(blankRow);
+
+  // Crear header
+  const headerRow = document.createElement('tr');
+  ["Audio", "Duración", "Operación", "Total Tokens", "Total USD", "Total PEN"].forEach(text => {
+    const th = document.createElement('th');
+    th.appendChild(document.createTextNode(text));
+    headerRow.appendChild(th);
+  });
+  thead.appendChild(headerRow);
+  
+  
+
+  // Llenar filas
+  for (const [audioName, records] of Object.entries(invoice)) {
+    let firstRow = true;
+    let totalUSD = 0;
+    let totalPEN = 0;
+    const rowSpanValue = records.length + 1;
+
+    records.forEach(record => {
+      const row = document.createElement('tr');
+      
+      if (firstRow) {
+        const audioNameCell = document.createElement('td');
+        audioNameCell.rowSpan = rowSpanValue;
+        audioNameCell.appendChild(document.createTextNode(audioName));
+        row.appendChild(audioNameCell);
+
+        const durationCell = document.createElement('td');
+        durationCell.rowSpan = rowSpanValue;
+        durationCell.appendChild(document.createTextNode(record.duration));
+        row.appendChild(durationCell);
+
+        firstRow = false;
+      }
+      
+      ["operation", "totalTokens", "totalCost_USD", "totalCost_PEN"].forEach(key => {
+        const cell = document.createElement('td');
+        cell.appendChild(document.createTextNode(record[key]));
+        if (key === 'operation') {
+          cell.style.textAlign = 'left'; // Alineación a la izquierda para la columna "Operación"
+        }
+        row.appendChild(cell);
+
+      if (key === 'totalCost_USD') {
+        totalUSD += parseFloat(record[key]);
+      }
+      if (key === 'totalCost_PEN') {
+        totalPEN += parseFloat(record[key]);
+      }
+    });
+
+    tbody.appendChild(row);
+    });
+
+    // Add the Total row
+      const totalRow = document.createElement('tr');
+      totalRow.className = 'bold-row';
+
+      const totalLabelCell = document.createElement('td');
+      totalLabelCell.colSpan = 2;
+      totalLabelCell.appendChild(document.createTextNode('Sub-Total'));
+      totalRow.appendChild(totalLabelCell);
+
+      const totalUSDCell = document.createElement('td');
+      totalUSDCell.appendChild(document.createTextNode(totalUSD.toFixed(decimals)));
+      totalRow.appendChild(totalUSDCell);
+
+      const totalPENCell = document.createElement('td');
+      totalPENCell.appendChild(document.createTextNode(totalPEN.toFixed(decimals)));
+      totalRow.appendChild(totalPENCell);
+
+      tbody.appendChild(totalRow);
+
+      grandTotalUSD += parseFloat(totalUSD.toFixed(decimals));
+      grandTotalPEN += parseFloat(totalPEN.toFixed(decimals));
+
+      }
+      
+      // Add the Grand Total row
+      const grandTotalRow = document.createElement('tr');
+      grandTotalRow.className = 'bold-row';
+
+      const grandTotalLabelCell = document.createElement('td');
+      grandTotalLabelCell.colSpan = 4;
+      grandTotalLabelCell.appendChild(document.createTextNode('Total'));
+      grandTotalRow.appendChild(grandTotalLabelCell);
+
+      const grandTotalUSDCell = document.createElement('td');
+      grandTotalUSDCell.appendChild(document.createTextNode(grandTotalUSD.toFixed(decimals)));
+      grandTotalRow.appendChild(grandTotalUSDCell);
+      totalUSDValueCell.textContent = parseFloat(grandTotalUSDCell.textContent).toFixed(decimals);
+
+      const grandTotalPENCell = document.createElement('td');
+      grandTotalPENCell.appendChild(document.createTextNode(grandTotalPEN.toFixed(decimals)));
+      grandTotalRow.appendChild(grandTotalPENCell);
+      totalPENValueCell.textContent = parseFloat(grandTotalPENCell.textContent).toFixed(decimals);
+
+      tbody.appendChild(grandTotalRow);
+
+      table.appendChild(thead);
+      table.appendChild(tbody);
+      
+  modal.style.display = 'block';
+}
+function createHiddenTableFromData(data) {
+
+  if (!Array.isArray(data)) {
+    data = Object.values(data);
+    console.log("data");
+    console.log(data);
+  }
+
+  // Crear un elemento de tabla
+  let table = document.createElement('table');
+  table.id = 'hiddenTable';
+  table.style.display = 'none'; // Esto hará que la tabla no sea visible
+
+  // Crear el encabezado de la tabla
+  let thead = table.createTHead();
+  let headerRow = thead.insertRow();
+  for (let key in data[0]) {
+      let th = document.createElement('th');
+      th.textContent = key;
+      headerRow.appendChild(th);
+  }
+
+  // Agregar datos a la tabla
+  for (let obj of data) {
+      let row = table.insertRow();
+      for (let key in obj) {
+          let cell = row.insertCell();
+          cell.textContent = obj[key];
+      }
+  }
+
+  // Agregar la tabla al documento
+  document.body.appendChild(table);
+  console.log(table);
+  return table;
+}
+
 async function createReportTable(table, response, accessToken){//, nombreAuditor, grupoVendedor, motivo, asesor, tipoCampanaVendedor, audioFileName, audioDuracion){
   
-  const resFont = await fetchApi('/font-size', accessToken);
-  const result = await fetchApi('/report-data', accessToken, "POST", response);
-  await fetchApi('/set-audio-data', accessToken, "POST", {"aName": response.Nombre_Audio});
+  //const resFont = await fetchApi('/font-size', accessToken);
+  //const result = await fetchApi('/report-data', accessToken, "POST", response);
+  //await fetchApi('/set-audio-data', accessToken, "POST",   {"aName": response.Nombre_Audio});
   
-  const rowsData = [
-      //{cells: [{image: "/public/img/logo.svg"}]},
-      {fontSize: resFont.fontH, header: true, cells: [{text: "Acta Calibracion Cariola", colSpan: 5, centered: true, colour3: true}]},
-      {cells: [{text: " ", colSpan: 4},{text: response.Duracion, bold: true, centered: true}]},
+  const resp = await fetchApi('/get-rows-data', accessToken, "POST", response);
 
-      {fontSize: resFont.font, cells: [{text: " ", colSpan: 4},{text: "Resultado Calibración", centered: true, colour: true, bold: true}]},
-      {fontSize: resFont.font, cells: [{text: "Auditor:", colour2: true, bold: true}, {text: auditor, colSpan: 3},{text: result.resCal+"%", centered: true, colour: true, bold: true}]},
-
-      {fontSize: resFont.font, cells: [{text: "Fecha de Calibración:", colour2: true, bold: true}, {text: response.Fecha_Audio, colSpan: 4}]},
-
-      {fontSize: resFont.font, cells: [{text: " ", colSpan: 3},{text: "Etapas de la Venta", colour2: true, bold: true},{text: result.etapasVenta+"%", centered: true}]},
-      {fontSize: resFont.font, cells: [{text: "Grupo:", colour2: true, bold: true}, {text: response.Grupo, colSpan: 2},{text: "Habilidades Comerciales", colour2: true, bold: true},{text: result.habComerciales+"%", centered: true}]},
-
-      {fontSize: resFont.font, cells: [{text: "Motivo Auditoría:", colour2: true, bold: true}, {text: response.Motivo, colSpan: 4}]},
-      {fontSize: resFont.font, cells: [{text: "Nombre Asesor:", colour2: true, bold: true}, {text: response.Asesor, colSpan: 2},{text: "Lead", colour2: true, bold: true},{text: " ", centered: true}]},
-      {fontSize: resFont.font, cells: [{text: "Tipo de Campaña:", colour2: true, bold: true}, {text: response.Tipo_de_Campana, colSpan: 2},{text: "Fecha", colour2: true, bold: true},{text: " ", centered: true}]},
-      {fontSize: resFont.font, cells: [{text: "Supervisor:", colour2: true, bold: true}, {text: " ", colSpan:4}]},
-
-      {cells: [{text: " ", colSpan: 5}]},
-
-      {header: true, cells: ["Pesos", "Item", "Detalle", {text: "Puntuación", colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, rowSpan: 3, cells: [{ text: result.peso1 + "%", centered: true }, "1. PRESENTACIÓN EMPÁTICA", "SALUDO INSTITUCIONAL", {text: response.Saludo_institucional, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["SIMPATÍA / EMPATÍA", {text: response.Simpatia_empatia, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result.result1+"%", colSpan: 2, centered: true}]},
-      
-      {fontSize: resFont.fontC, rowSpan: 3, cells: [{ text: result.peso2+"%", centered: true }, "2. CALIFICACION", "PRECALIFICACION", {text: response.Precalificacion, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["PREGUNTAS SUBJETIVAS", {text: response.Preguntas_subjetivas, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result.result2+"%", colSpan: 2, centered: true}]},
-      
-      {fontSize: resFont.fontC, rowSpan:6, cells: [{ text: result.peso3+"%", centered: true }, "3. PANORAMA OSCURO", "EL VENDEDOR ETIQUETA CON UNA ENFERMEDAD AL CLIENTE Y EXPLICA LA GRAVEDAD QUE PUEDE EMPEORAR DE FORMA PERSONALIZADA", {text: response.Etiqueta_Enfermedad, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["ENFOCARSE EN LA ENFERMEDAD IDENTIFICADA EN LA CALIFICACIÓN", {text: response.Enfocarse_enfermedad, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["TONO DE VOZ (PREOCUPA AL CLIENTE / PACIENTE)", {text: response.Tono_voz, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["CONOCIMIENTO DE LA PATOLOGÍA", {text: response.Conocimiento_patologia, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["DATO DURO", {text: response.Dato_duro, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result.result3+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: resFont.fontC, rowSpan:2, cells: [{ text: result.peso4+"%", centered: true }, "4. TESTIMONIO", "SE MENCIONA ALGUNA REFERENCIA QUE HAYA TOMADO EL TRATAMIENTO Y LE HAYA FUNCIONADO", {text: response.Testimonio, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result.result4+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: resFont.fontC, rowSpan:2, cells: [{ text: result.peso5+"%", centered: true }, "5. SOLUCIÓN / BENEFICIOS", "SE REALIZA UN MATCH ENTRE LA CALIFICACIÓN Y LOS BENEFICIOS DEL TRATAMIENTO", {text: response.Solucion_beneficios, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result.result5+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: resFont.fontC, rowSpan:2, cells: [{ text: result.peso6+"%", centered: true }, "6. RESPALDO", "SE UTILIZA LA MATRIZ DE VALOR (TRAYECTORIA, CALIDAD, PROFESIONALISMO Y SERVICIO)", {text: response.Respaldo, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result.result6+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: resFont.fontC, rowSpan:2, cells: [{ text: result.peso7+"%", centered: true }, "7. CIERRE DE VENTA", "TOMA EL MOMENTO ADECUADO PARA ORDENAR LA FORMA DE PAGO", {text: response.Cierre_venta, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result.result7+"%", colSpan: 2, centered: true}]},
-
-      {cells: [{text: " ", colSpan: 5}]},
-
-      {fontSize: resFont.fontC, cells: ["", {text: "COMUNICACION EFECTIVA", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Comunicacion_efectiva, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["", {text: "CONOCIMIENTO DEL TRATAMIENTO", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Concimiento_tratamiento, colSpan: 2, centered: true}]},
-      {fontSize: resFont.fontC, cells: ["", {text: "REBATE DE POSIBLES OBJECIONES", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Rebate_objeciones, colSpan: 2, centered: true}]},
-
-      {cells: [{text: " ", colSpan: 5}]},
-
-      {cells: [{text: "Comentarios:", colSpan: 5, bold: true}]},
-      
-      {fontSize: resFont.font, cells: [{text: "- Saludo Institucional: "+response.Saludo_institucional_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Simpatía/Empatía: "+response.Simpatia_empatia_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Precalificación: "+response.Precalificacion_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Preguntas subjetivas: "+response.Preguntas_subjetivas_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Etiqueta enfermedad: "+response.Etiqueta_Enfermedad_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Enfocarse en la enfermedad: "+response.Enfocarse_enfermedad_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Tono de voz: "+response.Tono_voz_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Conocimiento de la patología: "+response.Conocimiento_patologia_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Dato duro: "+response.Dato_duro_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Testimonio: "+response.Testimonio_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Solución/Beneficios: "+response.Solucion_beneficios_comentario, colSpan: 5}]},
-      {fontSize: resFont.font, cells: [{text: "- Respaldo: "+response.Respaldo_comentario, colSpan: 5}]}, 
-      {fontSize: resFont.font, cells: [{text: "- Cierre de venta: "+response.Cierre_venta_comentario, colSpan: 5}]},      
-      {fontSize: resFont.font, cells: [{text: "- Comunicación efectiva: "+response.Comunicacion_efectiva_comentario, colSpan: 5}]},      
-      {fontSize: resFont.font, cells: [{text: "- Conocimiento del tratamiento: "+response.Concimiento_tratamiento_comentario, colSpan: 5}]},      
-      {fontSize: resFont.font, cells: [{text: "- Rebate de objeciones: "+response.Rebate_objeciones_comentario, colSpan: 5}]},      
-  ];
+  const rowsData = resp.rows_data;
 /*
   const tr = document.createElement('tr');
   const td = document.createElement('td');
@@ -593,7 +822,31 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
 
 }
 
-async function mostrarResultadosReporteGeneral(modalUsed, modalBodyUsed, response, accessToken) {
+async function generateGeneralReport(audioFiles, accessToken){
+  if (audioFiles.length == 0) {
+    Swal.fire({
+      title: 'Error!',
+      text: 'No ha procesado ningun audio',
+      icon: 'error',
+      confirmButtonText: 'Entendido'
+    })
+    return;
+  }
+  else{
+
+    const data = await fetchApi('/get-data-to-export', accessToken);  
+    const resultados = await fetchApi('/get-general-report-data', accessToken, "POST", data);
+
+    console.log(data);
+    console.log(resultados);
+
+    mostrarResultadosReporteGeneral("modalReporteGeneral", "modalBodyReporteGeneral", resultados.resultados_nuevo, accessToken, data);
+
+    document.getElementById('modalReporteGeneral-content').scrollTop = 0;
+  }
+}
+
+async function mostrarResultadosReporteGeneral(modalUsed, modalBodyUsed, resultados_nuevo, accessToken, data) {
   const modal = document.getElementById(modalUsed);
   const modalBody = document.getElementById(modalBodyUsed);
   modalBody.innerHTML = ''; // Limpiar el contenido anterior
@@ -602,95 +855,12 @@ async function mostrarResultadosReporteGeneral(modalUsed, modalBodyUsed, respons
   
   modalBody.appendChild(table);
 
-  const [auditor, fechaCalibracion, grupo, motivoAuditoria, nombreAsesor, tipoCampana] = [nombreAuditor, currentDate(), grupoVendedor, motivo, asesor, tipoCampanaVendedor];
-  const [saludo, simpatiaEmpatia] = [resultados[0].valor, resultados[1].valor];
-  const [percalificacion, preguntasSubjetivas] = [resultados[2].valor, resultados[3].valor];
-  const [etiqueta, enfoque, tono, conocimiento, datoDuro] = [resultados[4].valor, resultados[5].valor, resultados[6].valor, resultados[7].valor, resultados[8].valor];
-  const [referencia] = [resultados[9].valor]; 
-  const [match] = [resultados[10].valor];
-  const [matriz] = [resultados[11].valor];
-  const [momento] = [resultados[12].valor];
-  const [puntComEfec] = [resultados[13].valor];
-  const [puntConTrat] = [resultados[14].valor];
-  const [puntRebObj] = [resultados[15].valor];
-  const [comentario_saludo, comentario_empatia, comentario_prec, comentario_pregSub, comentario_etiqEnf, comentario_enfocEnf, comentario_tonoVoz, comentario_conPat, comentario_datoDuro, comentario_test, comentario_solBenef, comentario_resp, comentario_cierreVenta, comentario_comEfectiva, comentario_conocTratamiento, comentario_rebObjeciones] = 
-  [resultados[0].comentario, resultados[1].comentario, resultados[2].comentario, resultados[3].comentario, resultados[4].comentario, resultados[5].comentario, resultados[6].comentario, resultados[7].comentario, resultados[8].comentario, resultados[9].comentario, 
-  resultados[10].comentario, resultados[11].comentario, resultados[12].comentario, resultados[13].comentario, resultados[14].comentario, resultados[15].comentario];
+  //await fetchApi('/set-audio-data', accessToken, "POST", {"aName": data.dataToExport.Nombre_Audio});
 
-  await fetchApi('/set-audio-data', accessToken, "POST", {"aName": response.Nombre_Audio});
+  const resultados = await fetchApi('/get-general-report-rows', accessToken, "POST", {"resultados_nuevo": resultados_nuevo, "data": data});
 
-  const result1 = puntuacion(saludo,simpatiaEmpatia);
-  const result2 = puntuacion(percalificacion,preguntasSubjetivas);
-  const result3 = puntuacion(etiqueta, enfoque, tono, conocimiento, datoDuro);
-  const result4 = puntuacion(referencia);
-  const result5 = puntuacion(match);
-  const result6 = puntuacion(matriz);
-  const result7 = puntuacion(momento);
+  const rowsData = resultados.rows_data;
 
-  const etapasVenta = (peso1/100 * result1) + (peso2/100*result2) + (peso3/100*result3) + (peso4/100*result4) + (peso5/100*result5) + (peso6/100*result6) + (peso7/100*result7)
-  const habComerciales = puntuacion(puntComEfec, puntConTrat, puntRebObj);
-
-  const resCal = (etapasVenta+habComerciales)/(2);
-
-  const rowsData = [
-      {fontSize: fontH, header: true, cells: [{text: "Acta Calibración Cariola", colSpan: 5, centered: true, colour3: true}]},
-      {cells: [{text: " ", colSpan: 5}]},
-      //{cells: [{text: " ", colSpan: 5}]},
-
-      {fontSize: font, cells: [{text: " ", colSpan: 4},{text: "Resultado Calibración", centered: true, colour: true, bold: true}]},
-      {fontSize: font, cells: [{text: "Auditor:", colour2: true, bold: true}, {text: auditor, colSpan: 3},{text: resCal+"%", centered: true, colour: true, bold: true}]},
-
-      {fontSize: font, cells: [{text: "Fecha de Calibración:", colour2: true, bold: true}, {text: fechaCalibracion, colSpan: 4}]},
-
-      {fontSize: font, cells: [{text: " ", colSpan: 3},{text: "Etapas de la Venta", colour2: true, bold: true},{text: etapasVenta+"%", centered: true}]},
-      {fontSize: font, cells: [{text: "Grupo:", colour2: true, bold: true}, {text: grupo, colSpan: 2},{text: "Habilidades Comerciales", colour2: true, bold: true},{text: habComerciales+"%", centered: true}]},
-
-      {fontSize: font, cells: [{text: "Motivo Auditoría:", colour2: true, bold: true}, {text: motivoAuditoria, colSpan: 4}]},
-      {fontSize: font, cells: [{text: "Nombre Asesor:", colour2: true, bold: true}, {text: nombreAsesor, colSpan: 4}]},
-      {fontSize: font, cells: [{text: "Tipo de Campaña:", colour2: true, bold: true}, {text: tipoCampana, colSpan: 4}]},
-      
-      {cells: [{text: " ", colSpan: 5}]},
-      //{cells: [{text: " ", colSpan: 5}]},
-      //{cells: [{text: " ", colSpan: 5}]},
-
-      {header: true, cells: ["Pesos", "Item", "Detalle", {text: "Puntuación", colSpan: 2, centered: true}]},
-      {fontSize: fontC, rowSpan: 3, cells: [{ text: peso1 + "%", centered: true }, "1. PRESENTACIÓN EMPÁTICA", "SALUDO INSTITUCIONAL", {text: saludo, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["SIMPATÍA / EMPATÍA", {text: simpatiaEmpatia, colSpan: 2, centered: true}]},
-      {fontSize: fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result1+"%", colSpan: 2, centered: true}]},
-      
-      {fontSize: fontC, rowSpan: 3, cells: [{ text: peso2+"%", centered: true }, "2. CALIFICACION", "PRECALIFICACION", {text: percalificacion, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["PREGUNTAS SUBJETIVAS", {text: preguntasSubjetivas, colSpan: 2, centered: true}]},
-      {fontSize: fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result2+"%", colSpan: 2, centered: true}]},
-      
-      {fontSize: fontC, rowSpan:6, cells: [{ text: peso3+"%", centered: true }, "3. PANORAMA OSCURO", "EL VENDEDOR ETIQUETA CON UNA ENFERMEDAD AL CLIENTE Y EXPLICA LA GRAVEDAD QUE PUEDE EMPEORAR DE FORMA PERSONALIZADA", {text: etiqueta, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["ENFOCARSE EN LA ENFERMEDAD IDENTIFICADA EN LA CALIFICACIÓN", {text: enfoque, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["TONO DE VOZ (PREOCUPA AL CLIENTE / PACIENTE)", {text: tono, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["CONOCIMIENTO DE LA PATOLOGÍA", {text: conocimiento, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["DATO DURO", {text: datoDuro, colSpan: 2, centered: true}]},
-      {fontSize: fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result3+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: fontC, rowSpan:2, cells: [{ text: peso4+"%", centered: true }, "4. TESTIMONIO", "SE MENCIONA ALGUNA REFERENCIA QUE HAYA TOMADO EL TRATAMIENTO Y LE HAYA FUNCIONADO", {text: referencia, colSpan: 2, centered: true}]},
-      {fontSize: fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result4+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: fontC, rowSpan:2, cells: [{ text: peso5+"%", centered: true }, "5. SOLUCIÓN / BENEFICIOS", "SE REALIZA UN MATCH ENTRE LA CALIFICACIÓN Y LOS BENEFICIOS DEL TRATAMIENTO", {text: match, colSpan: 2, centered: true}]},
-      {fontSize: fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result5+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: fontC, rowSpan:2, cells: [{ text: peso6+"%", centered: true }, "6. RESPALDO", "SE UTILIZA LA MATRIZ DE VALOR (TRAYECTORIA, CALIDAD, PROFESIONALISMO Y SERVICIO)", {text: matriz, colSpan: 2, centered: true}]},
-      {fontSize: fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result6+"%", colSpan: 2, centered: true}]},
-
-      {fontSize: fontC, rowSpan:2, cells: [{ text: peso7+"%", centered: true }, "7. CIERRE DE VENTA", "TOMA EL MOMENTO ADECUADO PARA ORDENAR LA FORMA DE PAGO", {text: momento, colSpan: 2, centered: true}]},
-      {fontSize: fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: result7+"%", colSpan: 2, centered: true}]},
-
-      {cells: [{text: " ", colSpan: 5}]},
-
-      {fontSize: fontC, cells: ["", {text: "COMUNICACION EFECTIVA", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: puntComEfec, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["", {text: "CONOCIMIENTO DEL TRATAMIENTO", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: puntConTrat, colSpan: 2, centered: true}]},
-      {fontSize: fontC, cells: ["", {text: "REBATE DE POSIBLES OBJECIONES", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: puntRebObj, colSpan: 2, centered: true}]},
-
-      {cells: [{text: " ", colSpan: 5}]},
-      
-  ];
-  
   rowsData.forEach(rowData => {
       const tr = document.createElement('tr');
 
@@ -954,8 +1124,9 @@ let auditor = "";
       const tbody = document.createElement('tbody');
       table.appendChild(tbody);
 
+      //const data = [];
 
-      audioFiles.forEach(async audioFile => {
+      for (const audioFile of audioFiles) {
         const payload = {
           "audioFile": audioFile,
           "auditor": auditor,
@@ -1030,9 +1201,15 @@ let auditor = "";
           }
           tdReporte2.appendChild(link2);
           row.appendChild(tdReporte2);
-
-      });
+          
+          //data.push(response);
+          await fetchApi('/set-data-to-export', accessToken, "POST", response);
+          //console.log(data);
+      };
       
+      const data = await fetchApi('/get-data-to-export', accessToken);  
+      createHiddenTableFromData(data.dataToExport);
+
       statusMessage.textContent = "";
       document.getElementById('complete-icon').style.display = 'none';
       Swal.fire({
@@ -1062,6 +1239,32 @@ let auditor = "";
     }
       
   }); //submit
+
+  document.getElementById('downloadBtn').addEventListener('click', async function() {
+    const tableElement = document.getElementById('hiddenTable');
+  
+    if (audioFiles.length == 0) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'No se ha procesado ningun audio',
+        icon: 'error',
+        confirmButtonText: 'Entendido'
+      })
+      return;
+    }
+    else if (!tableElement && audioFiles.length != 0) {
+      console.error('La tabla no se encontró en el DOM');
+      Swal.fire({
+        title: 'Error!',
+        text: 'Por favor espere a que se procesen todos los archivos de audio',
+        icon: 'error',
+        confirmButtonText: 'Entendido'
+      })
+      return;
+    }
+    
+    exportTableToExcel(tableElement, accessToken);
+  });
 
   document.getElementById('downloadBtnPDFGeneral').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
@@ -1145,6 +1348,7 @@ let auditor = "";
     }
   });
 
+  
   document.getElementById('cancelButton').addEventListener('click', function() {
     Swal.fire({
       title: '¿Estás seguro?',
@@ -1160,6 +1364,14 @@ let auditor = "";
             location.reload();
         }
     });
+  });
+
+  document.getElementById('generalReport').addEventListener('click', function() {
+    generateGeneralReport(audioFiles, accessToken);
+  });
+
+  document.getElementById('facturacion').addEventListener('click', function() {
+    generateFacturacion(audioFiles);
   });
 
 });

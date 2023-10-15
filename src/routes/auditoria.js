@@ -36,4 +36,14 @@ router.get('/get-audio-data', verifyAccessToken, auditoriaController.getAudioDat
 
 router.get('/get-current-date', verifyAccessToken, auditoriaController.getCurrentDate);
 
+router.post('/set-data-to-export', verifyAccessToken, auditoriaController.setDataToExport);
+
+router.get('/get-data-to-export', verifyAccessToken, auditoriaController.getDataToExport);
+
+router.post('/get-general-report-data', verifyAccessToken, auditoriaController.getGeneralReportData);
+
+router.post('/get-rows-data', verifyAccessToken, auditoriaController.getRowsData);
+
+router.post('/get-general-report-rows', verifyAccessToken, auditoriaController.getGeneralReportRows);
+
 module.exports = router;

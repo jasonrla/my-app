@@ -14,6 +14,8 @@ invoice: {},
 fechaCal: "", 
 aName: "", 
 
+dataToExport: [],
+
 nombreUsuario: "", 
 
 peso1: 10, 

@@ -693,9 +693,24 @@ async function analizarTextos(audioFile, auditor, grupo_vendedor, motivo, nombre
     //return jsonObjects;
 }
 
+function calcularPromedio(datos, clave) {
+    
+    if (datos.length === 0) return "0";
+    
+    let suma = datos.reduce((acumulador, item) => {
+        let valorNumerico = parseFloat(item[clave]);
+        // Verificar si valorNumerico es un número válido antes de sumarlo
+        return !isNaN(valorNumerico) ? acumulador + valorNumerico : acumulador;
+    }, 0);
+
+    // Validar si el denominador es 0 para evitar división por cero
+    return (suma === 0 || datos.length === 0) ? "0" : suma / datos.length;
+}
+
 module.exports = {
     analizarTextos,
     puntuacion,
     currentDate,
-    convertDateFormat
+    convertDateFormat,
+    calcularPromedio
 };
