@@ -36,7 +36,7 @@ exports.getAuditorName = (req, res) => {
 
 exports.getListBoxVendedores = async (req, res) => {
     const data = {
-        "Equipo": "C4",
+        "Equipo": "",
         "Yanhelis Alvarez": "C4",
         "Caterin Almonte": "C4",
         "Stalin Domínguez": "C4",

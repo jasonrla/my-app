@@ -78,8 +78,6 @@ pre {
 }
 
 
-
-
 #downloadBtn {
   padding: 13px 13px;
   font-size: 16px;
@@ -94,6 +92,25 @@ pre {
   background-color: #45a049; /* Color de fondo al pasar el cursor por encima */
 }
 
+#generalReport{
+  padding: 13px 13px;
+  font-size: 16px;
+  border: none;
+  background-color:#3f51b5; /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+#generalReport:hover {
+  padding: 13px 13px;
+  font-size: 16px;
+  border: none;
+  background-color: #3949ab; /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+}
 
 #downloadBtnPDF, #downloadBtnPDFInterno, #downloadBtnPDFGeneral, #downloadBtnPDFModal, #downloadBtnPDFInterno2, 
 #downloadBtnPDFGeneral2, #downloadBtnPDFModal2, #downloadBtnPDFFacturacion, #downloadBtnPDFFacturacion2,
@@ -119,7 +136,8 @@ pre {
   border-radius: 5px; /* Bordes redondeados */
 }
 
-#downloadBtnPDFInterno[disabled], #downloadBtnPDFInterno2[disabled], #attachImagesBtn[disabled] {
+#downloadBtnPDFInterno[disabled], #downloadBtnPDFInterno2[disabled], #attachImagesBtn[disabled],
+#downloadBtn[disabled], #generalReport[disabled] {
   background-color: #c0c0c0;
   color: #888888;
   cursor: not-allowed;
@@ -559,26 +577,6 @@ div label {
   display: inline-block;
 }
 
-#generalReport{
-  padding: 13px 13px;
-  font-size: 16px;
-  border: none;
-  background-color:#3f51b5; /* Color de fondo */
-  color: white; /* Color del texto */
-  cursor: pointer; /* Cambiar el cursor al pasar por encima */
-  border-radius: 5px; /* Bordes redondeados */
-}
-
-#generalReport:hover {
-  padding: 13px 13px;
-  font-size: 16px;
-  border: none;
-  background-color: #3949ab; /* Color de fondo */
-  color: white; /* Color del texto */
-  cursor: pointer; /* Cambiar el cursor al pasar por encima */
-  border-radius: 5px; /* Bordes redondeados */
-}
-
 #facturacion, #logout, #verificacion, #admin, #configuracion{
   padding: 13px 13px;
   font-size: 16px;
@@ -695,4 +693,8 @@ div label {
 #content {
   margin-left: 30px;
   transition: 0.5s;
+}
+
+#grupoVendedor{
+  margin-left: 10px;
 }
