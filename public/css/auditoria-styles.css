@@ -198,6 +198,21 @@ pre {
 /* Ícono de completo (check) */
 #complete-icon {
   color: #2ecc71; /* Color verde. Puedes cambiarlo según tu diseño. */
+  
+}
+
+#loading-text{
+  color: #000000;
+  display: inline-block;
+  font-size: 16px;
+  font-family: 'Open sans', sans-serif;
+}
+
+#complete-text{
+  color: #000000;
+  display: inline-block;
+  font-size: 16px;
+  font-family: 'Open sans', sans-serif;
 }
 
 
@@ -301,7 +316,7 @@ tr:hover {
   background-color: white;
   padding: 20px;
   width: 70%; /* Puedes ajustar este valor según lo necesites */
-
+  height: 90vh;
   /* Centrar el elemento horizontalmente */
   position: relative; /* Cambiado de fixed a relative */
   margin: 0 auto; /* Esto centrará el modal horizontalmente */
@@ -309,7 +324,7 @@ tr:hover {
 
   /* No es necesario ajustar la transformación para el centrado horizontal ya que estamos usando margin: 0 auto; */
 
-  overflow: auto;
+  overflow-y: scroll;
 
   /* Estilos adicionales para mejorar la apariencia */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
@@ -564,24 +579,30 @@ div label {
   border-radius: 5px; /* Bordes redondeados */
 }
 
-#facturacion{
+#facturacion, #logout, #verificacion, #admin, #configuracion{
   padding: 13px 13px;
   font-size: 16px;
   border: none;
-  background-color:#8B0000; /* Color de fondo */
+  background-color:#0056b3; /* Color de fondo */
   color: white; /* Color del texto */
   cursor: pointer; /* Cambiar el cursor al pasar por encima */
   border-radius: 5px; /* Bordes redondeados */
+  width: 200px; 
 }
 
-#facturacion:hover {
+#facturacion:hover, #logout:hover, #verificacion:hover, #admin:hover, #configuracion:hover {
   padding: 13px 13px;
   font-size: 16px;
   border: none;
-  background-color: #6A0000; /* Color de fondo */
+  background-color: #01397541; /* Color de fondo */
   color: white; /* Color del texto */
   cursor: pointer; /* Cambiar el cursor al pasar por encima */
   border-radius: 5px; /* Bordes redondeados */
+  width: 200px; 
+}
+
+#admin i.fas, #facturacion i.fas, #logout i.fas, #verificacion i.fas, #admin i.fas, #configuracion i.fas {
+  margin-right: 10px; /* Esto añadirá un margen a la derecha del ícono */
 }
 
 #listBoxDialer {
@@ -603,4 +624,75 @@ div label {
 .centered-table td {
   text-align: center;
   font-size: 12px;
+}
+
+
+#logoutForm {
+  background: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  display: inline;
+}
+
+#logout-div {
+  position: absolute;
+  bottom: 0; /* Esto coloca el div en la parte inferior de su contenedor relativo */
+  width: 100%; /* Esto hace que el div ocupe todo el ancho de la barra lateral */
+}
+ 
+#sidebar {
+  width: 20px;
+  height: 100vh;
+  background-color: #0056b3;
+  overflow-x: hidden;
+  position: fixed;
+  transition: 0.5s;
+  padding-top: 0px;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+#toggleButton {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: #0056b3;
+  border: none;
+  color: white;
+  font-size: 20px;
+  width: 0px;  /* El mismo ancho que la barra lateral */
+  z-index: 0;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#toggleButton:hover {
+  color: rgb(255, 255, 255);
+  background: #013975;
+}
+
+.sidebar-list {
+  list-style-type: none;
+  margin-top: 60px;
+}
+
+.sidebar-list li {
+  width: 100%;
+  padding: 0px;
+  text-align: center;
+  color: #818181;
+  transition: 0.3s;
+}
+
+.sidebar-list li:hover {
+  color: #f1f1f1;
+}
+
+#content {
+  margin-left: 30px;
+  transition: 0.5s;
 }

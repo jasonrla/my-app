@@ -12,6 +12,39 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet" charset="UTF-8">
 </head>
 <body>
+
+  <div id="sidebar">
+    
+    <ul class="sidebar-list">
+      <li>
+        <button id="toggleButton">☰</button>
+      </li>
+      <li>
+        <button id="facturacion"><i class="fas fa-file-invoice"></i>Facturación</button>
+      </li>
+      <li>
+        <button id="verificacion"><i class="fas fa-check"></i>Verificación</button>
+      </li>
+      <li>
+        <button id="admin"><i class="fas fa-user-shield"></i>Admin site</button>
+      </li>
+      <li>
+        <button id="configuracion"><i class="fas fa-user-cog"></i>Configuración</button>
+      </li>
+      <li>
+        <div id="logout-div">
+          <form action="/logout" method="post" id="logoutForm">
+            <button type="submit" id="logout">
+              <i class="fas fa-sign-out-alt"></i>Cerrar Sesión</button>
+          </form>
+        </div> 
+      </li>
+    </ul>
+  </div>
+
+
+  <div id="content">
+
   <img class="imagen-derecha" src="/public/img/logo.svg" alt="Descripción de la imagen">
   <h1>Auditoría</h1>
   <h2>Auditor: <span id="verifName"></span></h2>
@@ -55,7 +88,9 @@
     <br>
     <br>
     <div id="loading-icon" class="fas fa-spinner fa-spin"></div>
+    <div id="loading-text"></div>
     <div id="complete-icon" class="fas fa-check" style="display: none;"></div>
+    <div id="complete-text"></div>
     <span id="statusMessage"></span>
   </form>
   
@@ -67,7 +102,7 @@
   <div id="buttonContainer">
     <button id="downloadBtn"><i class="fas fa-file-excel"></i> Descargar</button>
     <button id="generalReport"><i class="fas fa-file-alt"></i> Reporte General</button>
-    <button id="facturacion"><i class="fas fa-file-invoice"></i> Facturación</button>
+    
   </div>
   <div id="linksContainer"></div>
 
@@ -148,6 +183,7 @@
       <button id="downloadBtnPDFFacturacion2">Exportar a PDF</button>
       <br>
     </div>
+  </div>
   </div>
   <script src="/public/js/index.js" charset="UTF-8"></script>
 </body>

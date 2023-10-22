@@ -13,8 +13,28 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 let accessToken = "";
 
 exports.getLoginPage = (req, res) => {
+    gvars.tkn = "";
     res.sendFile(path.join(__dirname, '..', '..', 'public', 'html', 'login.html'));
 };
+
+exports.logout = (req, res) => {
+    // Obtén el usuario actual autenticado
+    const cognitoUser = userPool.getCurrentUser();
+
+    if (cognitoUser) {
+        cognitoUser.signOut();
+        gvars.tkn = "";
+        console.log('Usuario desconectado exitosamente');
+        // Puedes redirigir al usuario a la página de inicio de sesión u otra página de tu elección
+        res.redirect('/');
+    } else {
+        console.log('Ningún usuario autenticado');
+        gvars.tkn = "";
+        // Puedes redirigir al usuario a la página de inicio de sesión si no hay usuario autenticado
+        res.redirect('/');
+    }
+};
+
 
 
 exports.login = (req, res) => {

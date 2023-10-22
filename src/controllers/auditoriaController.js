@@ -3,7 +3,7 @@ const path = require('path');
 require('dotenv').config();
 const app = express();
 const gvars = require('../utils/const.js');
-const { analizarTextos, puntuacion, currentDate, convertDateFormat, calcularPromedio } = require('../utils/functions.js');
+const { analizarTextos, puntuacion, currentDate, convertDateFormat, calcularPromedio, getColumnLetter, transformDateFormat, audioToText } = require('../utils/functions.js');
 
 const http = require('http');
 const socketIo = require('socket.io');
@@ -13,11 +13,19 @@ const io = socketIo(server);
 
 //let data = {};
 exports.getAuditoriaPage = (req, res) => {
+    if(gvars.tkn == "" || gvars.tkn == undefined || gvars.tkn == null){
+        res.redirect('/');
+    }
     res.sendFile(path.join(__dirname, '..', '..', 'public', 'html', 'auditoria.html'));
 };
 
 exports.getAuthentication = (req, res) => {
     const data = {"token": gvars.tkn}
+    res.json(data);
+};
+
+exports.getEnv = (req, res) => {
+    const data = {"env": gvars.prodEnv}
     res.json(data);
 };
 
@@ -130,6 +138,43 @@ exports.getPDFoptions = async (req, res) => {
     res.json(data);
 };
 
+exports.excelOptions = async (req, res) => {
+    
+    // Convertir la tabla a un libro de trabajo de Excel
+    const wb = req.body.wb;
+    console.log("wb");
+    console.log(wb);
+
+    // Obtener la hoja de trabajo que acabas de crear
+    const ws = wb.Sheets["Sheet 1"];
+
+    // Definir las columnas que deseas que se muestren como porcentajes y decimales
+    const percentageColumns = ['M', 'N', 'S', 'T', 'AB', 'AC', 'AJ', 'AK', 'AN', 'AO', 'AR', 'AS', 'AV', 'AW', 'BE', 'BF'];  
+    const decimalColumns = ['BG'];  // Añadido 'BG' aquí
+
+    for (let key in ws) {
+        if (ws.hasOwnProperty(key)) {
+            const cell = ws[key];
+            const columnLetter = getColumnLetter(key);
+
+            if (columnLetter) {
+                if (percentageColumns.includes(columnLetter) && typeof cell.v === 'number') {
+                    cell.z = '0%';
+                } else if (decimalColumns.includes(columnLetter) && typeof cell.v === 'number') {
+                    cell.z = '0.0%';
+                }
+            }
+        }
+    }
+
+    const fileName = 'Procesamiento_audios_'+transformDateFormat(currentDate())+'.xlsx'
+
+    res.json({
+        "wb": wb,
+        "fileName": fileName
+    });
+};
+
 exports.setAudioData = async (req, res) => {
     gvars.fechaCal = currentDate()
     gvars.aName = req.body.aName
@@ -150,6 +195,13 @@ exports.getCurrentDate = async (req, res) => {
         "currentDate": convertDateFormat(currentDate()),
     });
 };
+
+exports.getDate = async (req, res) => {
+    res.json({
+        "date": currentDate(),
+    });
+};
+
 
 exports.setDataToExport = async (req, res) => {
     gvars.dataToExport.push(req.body);
@@ -392,8 +444,49 @@ exports.getGeneralReportRows = async (req, res) => {
     });
 }
 
+exports.getFeedbackReportRows = async (req, res) => {
+
+    ({
+        tipoFeedback, 
+        asunto, 
+        actitudVend, 
+        observacionesDetalleText
+    } = req.body);
+
+    const rowsData = [
+        {cells: [{text: " ", colSpan: 5}]},
+        {cells: [{text: "Resultados adicionales:", colSpan: 5, bold: true}]},
+        {cells: [{text: " ", colSpan: 5}]},
+        {fontSize: gvars.font, cells: [{text: "- Tipo de feedback: " + tipoFeedback, colSpan: 5}]},
+        {fontSize: gvars.font, cells: [{text: "- Asunto: " + asunto, colSpan: 5 }]},
+        {fontSize: gvars.font, cells: [{text: "- Actitud de vendedor: " + actitudVend, colSpan: 5 }]},
+        {fontSize: gvars.font, cells: [{text: observacionesDetalleText, colSpan: 5, editable: true}]},
+        {cells: [{text: " ", colSpan: 5}]},
+    ];
+
+    res.json({
+        "rows_data": rowsData
+    });
+}
+
+exports.transformarAudio = async (req, res) => {
+
+    const file = req.file;
+    const duracion = req.body.duracion;
+    const durationInSeconds = req.body.durationInSeconds;
+
+    console.log(file);
+    if (!file) {
+        return res.status(400).json({error: 'No se envió ningún archivo.'});
+    }
+
+    const resultado = await audioToText(file, duracion, durationInSeconds);
+    res.json(resultado);
+}
+
 exports.analizarTextos = async (req, res) => {
-    const resultado = await analizarTextos(req.body.audioFile, req.body.auditor, req.body.grupo_vendedor, req.body.motivo, req.body.nombre_vendedor, req.body.tipo_campana);
+    
+    const resultado = await analizarTextos(req.body);
     res.json(resultado);
 };
 
@@ -459,3 +552,7 @@ exports.reportData = async (req, res) => {
     res.json(resultado);
 };
 
+
+exports.getInvoiceData = async (req, res) => {
+    res.json(gvars.invoice);
+};

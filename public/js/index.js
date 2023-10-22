@@ -24,7 +24,6 @@ async function fetchApi(url, accessToken = null, method = 'GET', body = null) {
   }
 }
 
-
 let radioButtons = document.getElementsByName("channel");
   
 function handleRadioButtonChange() {
@@ -34,8 +33,9 @@ function handleRadioButtonChange() {
         document.getElementById("listBoxDialer").style.display = "none";
     }
 }
-for (let i = 0; i < radioButtons.length; i++) {
-    radioButtons[i].addEventListener("change", handleRadioButtonChange);
+
+for (const element of radioButtons) {
+    element.addEventListener("change", handleRadioButtonChange);
 }
 
 function updateListbox(listboxId, items) {
@@ -52,9 +52,9 @@ function tipoCampanaAuditoria() {
   const radios = document.getElementsByName('channel');
   let seleccionado = null;
 
-  for (let i = 0; i < radios.length; i++) {
-      if (radios[i].checked) {
-          seleccionado = radios[i].value;
+  for (const element of radios) {
+      if (element.checked) {
+          seleccionado = element.value;
           break;
       }
   }
@@ -187,49 +187,13 @@ async function exportTableToPDF(modalBody, fileName, accessToken) {
 }
 
 async function exportTableToExcel(tableElement, accessToken) {
-  // Convertir la tabla a un libro de trabajo de Excel
-  const wb = XLSX.utils.table_to_book(tableElement, { sheet: "Sheet 1" });
+  const wb1 = XLSX.utils.table_to_book(tableElement, { sheet: "Sheet 1" });
+  const res = await fetchApi('/excel-options', accessToken, "POST", { "wb": wb1});
+  XLSX.writeFile(res.wb, res.fileName);
 
-  // Obtener la hoja de trabajo que acabas de crear
-  const ws = wb.Sheets["Sheet 1"];
-
-  // Definir las columnas que deseas que se muestren como porcentajes y decimales
-  const percentageColumns = ['M', 'N', 'S', 'T', 'AB', 'AC', 'AJ', 'AK', 'AN', 'AO', 'AR', 'AS', 'AV', 'AW', 'BE', 'BF'];  
-  const decimalColumns = ['BG'];  // Añadido 'BG' aquí
-
-  for (let key in ws) {
-      if (ws.hasOwnProperty(key)) {
-          const cell = ws[key];
-          const columnLetter = getColumnLetter(key);
-
-          if (columnLetter) {
-              if (percentageColumns.includes(columnLetter) && typeof cell.v === 'number') {
-                  cell.z = '0%';
-              } else if (decimalColumns.includes(columnLetter) && typeof cell.v === 'number') {
-                  cell.z = '0.0%';
-              }
-          }
-      }
-  }
-
-  const response = await fetchApi('/get-current-date', accessToken);
-  const fileName = 'Procesamiento_audios_'+transformDateFormat(response.currentDate)+'.xlsx'
-  // Guardar el libro de trabajo
-  XLSX.writeFile(wb, fileName);
 }
 
-function getColumnLetter(cellKey) {
-  // Extraer y retornar las letras de la clave de la celda (por ejemplo, "AB" de "AB42")
-  const match = cellKey.match(/[A-Z]+/);
-  return match ? match[0] : null;
-}
-
-function transformDateFormat(dateStr) {
-  // Convertir "09/18/2023 22:08:15" a "_09182023_220815"
-  return dateStr.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$2$1$3_$4$5$6');
-}
-
-function generateFacturacion(audioFiles){
+function generateFacturacion(audioFiles, accessToken){
   if (audioFiles.length == 0) {
     Swal.fire({
       title: 'Error!',
@@ -240,12 +204,15 @@ function generateFacturacion(audioFiles){
     return;
   }
   else{
-    mostrarResultadosFacturacion("modalFacturacion", "modalBodymodalFacturacion");
+    mostrarResultadosFacturacion("modalFacturacion", "modalBodymodalFacturacion", accessToken);
     document.getElementById('modalFacturacion-content').scrollTop = 0;
   }
 }
 
-function mostrarResultadosFacturacion(modalUsed, modalBodyUsed){
+async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToken){
+
+  const decimals = 8;
+
   const modal = document.getElementById(modalUsed);
   const modalBody = document.getElementById(modalBodyUsed);
   modalBody.innerHTML = ''; // Limpiar el contenido anterior
@@ -289,8 +256,10 @@ function mostrarResultadosFacturacion(modalUsed, modalBodyUsed){
   rowCell0.style.background = "none"; // Sin fondo
   row0.appendChild(rowCell0);
 
+  const response = await fetchApi('/get-date', accessToken);
+
   const dateValueCell = document.createElement('td');
-  dateValueCell.appendChild(document.createTextNode(currentDate())); //////////////////////////
+  dateValueCell.appendChild(document.createTextNode(response.date)); //////////////////////////
   dateValueCell.colSpan =  5;
   dateValueCell.style.textAlign = 'left';
   //dateValueCell.fontSize = "16px";
@@ -355,7 +324,7 @@ function mostrarResultadosFacturacion(modalUsed, modalBodyUsed){
   });
   thead.appendChild(headerRow);
   
-  
+  const invoice = await fetchApi('/get-invoice-data', accessToken);
 
   // Llenar filas
   for (const [audioName, records] of Object.entries(invoice)) {
@@ -450,12 +419,11 @@ function mostrarResultadosFacturacion(modalUsed, modalBodyUsed){
       
   modal.style.display = 'block';
 }
+
 function createHiddenTableFromData(data) {
 
   if (!Array.isArray(data)) {
     data = Object.values(data);
-    console.log("data");
-    console.log(data);
   }
 
   // Crear un elemento de tabla
@@ -487,11 +455,7 @@ function createHiddenTableFromData(data) {
   return table;
 }
 
-async function createReportTable(table, response, accessToken){//, nombreAuditor, grupoVendedor, motivo, asesor, tipoCampanaVendedor, audioFileName, audioDuracion){
-  
-  //const resFont = await fetchApi('/font-size', accessToken);
-  //const result = await fetchApi('/report-data', accessToken, "POST", response);
-  //await fetchApi('/set-audio-data', accessToken, "POST",   {"aName": response.Nombre_Audio});
+async function createReportTable(table, response, accessToken){
   
   const resp = await fetchApi('/get-rows-data', accessToken, "POST", response);
 
@@ -579,10 +543,10 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
     
   const modal = document.getElementById(modalUsed);
   const modalBody = document.getElementById(modalBodyUsed);
-  modalBody.innerHTML = ''; // Limpiar el contenido anterior
+  modalBody.innerHTML = '';
   
-  const resFont = await fetchApi('/font-size', accessToken);
-  await fetchApi('/set-audio-data', accessToken, "POST", {"aName": response.Nombre_Audio});
+  await fetchApi('/set-audio-data', accessToken, "POST", {"aName": response.Nombre_Audio}); //REVISAR SI ES NECESARIO
+  //REPORTE SE VE VARIAS VECES
 
   let table;
 
@@ -598,8 +562,6 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
   const attachImagesBtn = document.getElementById('attachImagesBtn');
 
   let closeButtonCounter = 0;
-  let tableResult;
-  //aName = audioFileName;
 
   async function checkSelectionsAndShowTable() {
       
@@ -607,31 +569,28 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
       let asunto = obtenerAsunto();
       let actitudVend = obtenerActitudVendedor();
 
-      //storeListboxSelection(linkId, { "listBox1": tipoFeedback, "listBox2": asunto, "listBox3": actitudVend });
-
       if (tipoFeedback != "Seleccione una opción" && asunto != "Seleccione una opción" && actitudVend != "Seleccione una opción") {
-          modalBody.innerHTML = ''; // Limpiar el contenido anterior con listboxes
+          modalBody.innerHTML = '';
           
-          downloadBtnPDFInterno.removeAttribute('disabled'); // Habilita el botón
-          downloadBtnPDFInterno2.removeAttribute('disabled'); // Habilita el botón
-          imageInput.removeAttribute('disabled'); // Deshabilita el input de nuevo si no se cumplen las condiciones
+          downloadBtnPDFInterno.removeAttribute('disabled'); 
+          downloadBtnPDFInterno2.removeAttribute('disabled'); 
+          imageInput.removeAttribute('disabled'); 
           attachImagesBtn.removeAttribute('disabled');
 
           table = document.createElement('table');
 
-          await createReportTable(table, response, accessToken); //tableResult = 
+          createReportTable(table, response, accessToken);
           modalBody.appendChild(table);
           
-          const rowsData = [
-              {cells: [{text: " ", colSpan: 5}]},
-              {cells: [{text: "Resultados adicionales:", colSpan: 5, bold: true}]},
-              {cells: [{text: " ", colSpan: 5}]},
-              {fontSize: resFont.font, cells: [{text: "- Tipo de feedback: " + tipoFeedback, colSpan: 5}]},
-              {fontSize: resFont.font, cells: [{text: "- Asunto: " + asunto, colSpan: 5 }]},
-              {fontSize: resFont.font, cells: [{text: "- Actitud de vendedor: " + actitudVend, colSpan: 5 }]},
-              {fontSize: resFont.font, cells: [{text: observacionesDetalleText, colSpan: 5, editable: true}]},
-              {cells: [{text: " ", colSpan: 5}]},
-          ];
+          let payload =  {
+            "tipoFeedback": tipoFeedback, 
+            "asunto": asunto, 
+            "actitudVend": actitudVend, 
+            "observacionesDetalleText": observacionesDetalleText
+          };
+
+          const resp = await fetchApi('/get-feedback-report-rows', accessToken, "POST", payload);
+          const rowsData = resp.rows_data;
       
           rowsData.forEach(rowData => {
               const tr = document.createElement('tr');
@@ -707,7 +666,6 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
               table.appendChild(tr); //table
 
           });
-
 
       }else{
           modal.style.display = 'block';
@@ -938,9 +896,94 @@ function resetModal() {
   imageInput.value = '';
 }
 
+function getAudioDurationInSecs(blob) {
+  return new Promise((resolve, reject) => {
+      const audio = new Audio(URL.createObjectURL(blob));
+      audio.onloadedmetadata = function() {
+          resolve(audio.duration);
+      };
+      audio.onerror = function() {
+          reject('Error al cargar el archivo de audio.');
+      };
+  });
+}
+
+async function getAudioDurationHHMMSS(blob) {
+  let formattedHours;
+  let formattedMinutes;
+  let formattedSeconds;
+  let durationInSeconds;
+  try {
+      durationInSeconds = await getAudioDurationInSecs(blob);
+      const hours = Math.floor(durationInSeconds / 60 / 60);
+      formattedHours = String(hours).padStart(2, '0');
+      const minutes = Math.floor(durationInSeconds / 60);
+      formattedMinutes = String(minutes).padStart(2, '0');
+      const seconds = Math.round(durationInSeconds % 60);
+      formattedSeconds = String(seconds).padStart(2, '0');
+  } catch (durationError) {
+      console.error('Error al obtener la duración:', durationError);
+  }
+  return {
+    "durationFormat" : `${formattedHours}:${formattedMinutes}:${formattedSeconds}`,
+    "durationInSeconds": durationInSeconds
+  }
+}
+
+function showLoadingIcon(text) {
+  const loadingTextIcon = document.getElementById('loading-icon');
+  loadingTextIcon.style.display = 'inline-block';
+
+  const loadingTextElement = document.getElementById('loading-text');
+  loadingTextElement.style.display = 'inline-block';
+  loadingTextElement.textContent = text;
+
+  document.getElementById('complete-icon').style.display = 'none';
+  document.getElementById('complete-text').style.display = 'none';
+}
+
+function showCompleteIcon() {
+  
+  document.getElementById('loading-icon').style.display = 'none';
+  document.getElementById('loading-text').style.display = 'none';
+  
+  const completeTextIcon = document.getElementById('complete-icon')
+  completeTextIcon.style.display = 'inline-block';
+
+  const completeTextElement = document.getElementById('complete-text')
+  completeTextElement.style.display = 'inline-block';
+  completeTextElement.textContent = 'Procesamiento completado';
+}
+
 let auditor = "";
 
-  document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function() {
+
+  const toggleButton = document.getElementById("toggleButton");
+  const content = document.getElementById("content");
+
+  toggleButton.addEventListener("click", function() {
+    const sidebar = document.getElementById("sidebar");
+
+    if (sidebar.style.width === "280px") {
+      sidebar.style.width = "20px";
+      content.style.marginLeft = "30px";
+    } else {
+      sidebar.style.width = "280px";
+      content.style.marginLeft = "280px";
+    }
+  });
+
+  document.addEventListener('click', function(event) {
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar.contains(event.target)) {
+      // Contrae la barra lateral aquí
+      sidebar.style.width = "20px";
+      content.style.marginLeft = "30px";
+      isSidebarExpanded = false;
+    }
+  });
+
     let accessToken;
     
     try {
@@ -1018,9 +1061,11 @@ let auditor = "";
   const submitButton = document.getElementById('SubmitButton');
   const cancelButton = document.getElementById('cancelButton');
 
-  let prod = false;
+  let prodEnv = await fetchApi('/get-env', accessToken);  
+  prod = prodEnv.env;
 
   audioForm.addEventListener('submit', async function(event) {
+
     statusMessage.textContent = '';
     event.preventDefault();
     document.getElementById('linksContainer').innerHTML = '';
@@ -1079,7 +1124,6 @@ let auditor = "";
       
       const tipoCampanaMasDialer = (tipoCampanaAuditoria() == "Reorden") ? "Reorden - " + obtenerDialer() : tipoCampanaAuditoria();
 
-
       const linksContainer = document.getElementById('linksContainer');
 
       const table = document.createElement('table');
@@ -1124,20 +1168,65 @@ let auditor = "";
       const tbody = document.createElement('tbody');
       table.appendChild(tbody);
 
-      //const data = [];
-
       for (const audioFile of audioFiles) {
-        const payload = {
-          "audioFile": audioFile,
-          "auditor": auditor,
-          "grupo_vendedor": grupoVendedor(),
-          "motivo": obtenerMotivo(),
-          "nombre_vendedor": obtenerNombreVendedor(),
-          "tipo_campana": tipoCampanaMasDialer
-        };
 
-        const response = await fetchApi('/analizar-textos', accessToken, "POST", payload);
+        let transcripcion = "";
+        let duracion = "";
+        let audioFileName = "";
+
+        if(prod){
+
+          audioFileName = audioFile.name;
+
+          showLoadingIcon('Procesando audio: ' + audioFileName);
+
+          duracion = await getAudioDurationHHMMSS(audioFile);
+
+          const formData1 = new FormData();
+          formData1.append('audioFile', audioFile);
+          formData1.append('duracion', duracion.durationFormat);
+          formData1.append('durationInSeconds', duracion.durationInSeconds);
+          
+          const requestOptions1 = {
+            method: 'POST',
+            headers: {'Authorization': `Bearer ${accessToken}`},
+            body: formData1
+          };
+
+          console.log(audioFile);
+          console.log(audioFile.name);
+          let data = {};
+          const resp = await fetch('/transformar-audio', requestOptions1);
+          data = resp.ok ? await resp.json() : console.log('Error:', response.status, response.statusText);
+          transcripcion = data.text;
+          console.log(transcripcion);
+
+          
+        }
+        else{
+          transcripcion = "Buenas. Muy buenas tardes Alicia, ¿cómo estás? Bien. Qué bueno, me da mucho gusto saludar que te llegó la orden. Sí. Excelente. ¿Cuántos días tiene tomándose el tratamiento? Dos, tres, como cuatro días, cinco días, como media semana. ¿Media semana? Ajá. Ok mi amor, ¿ha visto algún cambio ya positivo? No, ahorita no. Ya me duelen mis dedos. ¿Te duelen los dedos? Ajá. Ok, ¿tú tienes artritis, Alicia? No sé, no me han dicho, pero creo que sí. Ok, salvo FLEX, tú sabes que contiene colágeno que te va a ayudar a desinflamar y poco a poco, como es un tratamiento natural, va a ir sacando la inflamación y va a ir quitando el dolor. ¿Tienes algún dedito chueco? No, nada más así como con bolas. ¿Bolas? Eso es la inflamación de la membrana sinovial del líquido, el líquido se sale. Esa inflamación es la que te tiene así, con dolor y los dedos rígidos. Te sientes rígido, ¿es solamente en los dedos o hay alguna otra coyuntura que te ha afectado? No, nada más los dedos. Los dedos, ¿cuántos libros estás pesando, Alicia? Peso 142. ¿Y la estatura tuya, mi amor, cuánto es? Cinco. Cinco, vamos a ver. Tienes un poquito de sobrepeso, ¿verdad? ¿Cuánto debería ser el peso normal, sabes? ¿Te ha dicho tu médico? No, no me ha dicho que estoy sobrepeso. Si me está dando bien tus medidas, sí. ¿Peso normal para tu tamaño deberían ser 130 libras? ¿Cuántos años tienes? 50. Pero tú tienes una voz muy engañosa, Alicia. Se escucha como una muchachita, se escucha muy joven. Siempre se lo dice la gente, ¿verdad? Sí. Aparte del tratamiento para la inflamación de las articulaciones, ¿estás tomando algo más? ¿Indicado por el médico? ¿Cómo? ¿Estás tomando algún tratamiento recetado por el doctor? No, nada más para la diabetes. ¿Nada más para la diabetes? ¿Y qué tiempo tiene con diabetes? Hace como dos años. ¿Estás usando insulina o metformina? Metformina. ¿De 500? Ajá. ¿De 500 una vez o dos veces? ¿Cómo? ¿Una vez o dos veces al día tomas la metformina? Dos veces al día. Ok, entonces todavía tienes diabetes tipo 2, Alicia. Es la menos mala. La diabetes puede avanzar o puede retroceder. Así como puede bajarte a que esté normal, puede avanzar a degenerarse a tipo 1. Todavía estás a tiempo de estimular el páncreas para detener el avance de la diabetes. Sabes que la diabetes es degenerativa, progresiva. Y lamentablemente el uso prolongado de esa medicina puede dañar el hígado y los riñones. ¿Algún deterioro en algún órgano del cuerpo? No. Hasta ahora, gracias a Dios. Todo bien, gracias a Dios. Hay que mantenerse así. ¿El nivel de azúcar en la mañana en cuánto te aparece? ¿Tú te la checas? En 30. ¿En 30? A veces en 111. Ok, entonces usted está... Usted está regulada, Alicia. O sea que todavía estimulando el páncreas se normaliza. La única diabetes que no tiene solución y no tiene vuelta atrás es la diabetes mellitus. Tú sabes que hay diferentes tipos de diabetes, ¿verdad? Sí. La diabetes mellitus, que es la mala, que es la tipo 1 o la tipo 2 la que tiene, la diabetes estacional que da en el embarazo. Y hay pacientes que están prediabéticos que a veces nunca se les desarrolla la diabetes tipo 2. Entonces, el tratamiento para la páncreas se llama REVENSI para pacientes tipo 2 y prediabéticos. Esto lo que hace es estimular la célula beta del páncreas para ayudar con la producción de insulina de manera natural. Entonces, esto te ayuda a que el páncreas, o sea tu órgano, que ahora mismo no está produciendo insulina 100%, empiece a funcionar de una mejor manera. Entonces, eso te ayuda a que te regules sin necesidad de medicina. O sea que poco a poco tu propio médico te va a ir quitando el medicamento. Lo primero es bajar a prediabetes. Ya después que estés en prediabetes estamos a un paso a que estés normal. Y puedes lograr porque tú estás regulada, mi amor. Si usted tuviera mal, sí no, pero usted tiene diabetes tipo 2. Anota el nombre del tratamiento, Alicia. Se llama REVENSI. Le toma una sola de ese. Y apenas tiene 2 años, mi amor. Eso no se te ha desarrollado todavía. A veces tú vas al médico y se te sube el azúcar un día y el médico te manda pastillas de por vida. En vez de decirte, haga una dieta, cuídate, tómate esto, tómate lo otro, y ya. Pero te manda medicina y el cuerpo se va acostumbrando al químico. Hay muchas personas que se han tomado el tratamiento y que a los 3 meses ya están normales. Y como tú sabes que si tú estás bien, la medicina química te puede bajar mucho el azúcar y eso también es peligroso. El azúcar es muy bajita. Entonces tengo personas que el médico automáticamente le quitó la medicina. Ya no la pueden beber porque no la necesitan. Eso es muy fuerte. Entonces ya que el páncreas trabaja, si se toman esa medicina le bajaría demasiado y eso es peligroso. Tengo pacientes que ya no. El mismo médico se la quitó porque entonces se la baja mucho ya. O sea que ya no la necesitan y tú puedes entrar ahí porque tú estás controlada. Anota el nombre del tratamiento, Alisa, para que te lo empieces a tomar en ayunas. Dime, amor. ¿Cuál es la diferencia del azúcar? Ese es nuestro laboratorio. Nosotros, aparte de los tratamientos para los dolores y la inflamación, tenemos más de 30 productos para el cuidado de la salud. Esa es para la diabetes tipo 2 o prediabética. Se llama Revense. ¿Y eso cuánto sale? Ese tratamiento del azúcar sale en $299,95. Es un tratamiento, sí, claro que es caro, mi amor. No es un tratamiento paliativo. Los tratamientos paliativos son los que te alivian el momento y al finalizar el tratamiento vuelve usted con lo mismo y tiene que estar tomando medicina de por vida. Eso es un tratamiento, un solo tratamiento. Viene por seis meses porque se toma una sola cápsula diario y eso no es simplemente para regular el azúcar en la sangre. Eso es para que tu páncreas, si tú has buscado o has leído un poquito, sabes, que el órgano que produce insulina naturalmente en el cuerpo se llama páncreas y que eso es lo que no te está funcionando bien. Este tratamiento es para ese órgano. Entonces ya funcionando tu órgano en mayor capacidad, controla solo el azúcar en la sangre sin necesidad de pastillas. Es un tratamiento para la páncreas, no simplemente para limpiarle la sangre. La pastilla de metformina, ¿qué hace? Regula el azúcar en la sangre. Regula. O sea, no es un tratamiento para tu páncreas, sino para regular lo que ya hay en la sangre. Este tratamiento es para evitar que el azúcar se suba. ¿Y yo si no lo puedo encontrar aquí como en los naturistas? Ah, no, no, mi vida, ese tratamiento es de nosotros, del laboratorio de Svense. Y en este caso sale 299.95 porque era un paciente con dos años de diabetes. Tú todavía, gracias a papá Dios, está controlada, no tiene daños severos de hígado, riñón y eso. Porque un paciente ya más avanzado con daños severos de órgano, tú sabes que lleva un medicamento más agresivo, más medicamento, más tiempo. En el caso tuyo, no. Yo te voy a poner un descuento para personas de bajos recursos. Pero vas a ver el cambio, porque te lo digo, porque teníamos un paciente que vino con diabetes tipo 2 y el señor tenía 30 años con la enfermedad, tomando pastillas. Y siempre estaba el señor como controlado. Él se veía, se picaba el azúcar 110, 112, 90 en la mañana y se tomó el tratamiento. En el 2017, el señor tiene todos esos años que no usa medicina. Realmente, usted se le subió una vez el azúcar y el médico automáticamente lo diagnosticó con la enfermedad. Porque si ya tenía diabetes desarrollada, ¿tú crees que ese señor con dos meses de tratamiento ya le estaba bien y ya no se podía tomar la pastilla porque se ponía muy bajita su azúcar? El médico se la quitó rotundamente y el señor a la fecha se mantiene controlado. Estaba sobrepeso, bajó. Bajó también de peso, tenía como 40 libras de más. Que también eso le ayudó muchísimo en su proceso. Yo sé que tú no bajaste de peso. ¿Usted quiere decir que estoy subida de peso? No, no, no. Tú no estás subida de peso. Tú nada más tienes unas libritas de más, mi vida. No, te digo el señor que estaba subido de peso. No, pero yo digo, ¿cuánto es lo que tendría que pesar? Tú, para 5, para el tamaño de 5 serían 130. Pero eso sí es también la medida que tú me estás dando porque yo no sé realmente. Yo voy de acuerdo a lo que tú me dices. Pero si tú entiendes que tienes una pancita por ahí, abdomen, que lo tienes un poquito crecido, ¿sí tienes quien te varíe? Pues no, no tengo, así nunca he tomado uno. Entonces tú no tienes sobrepeso, hay algo mal con la medida entonces. A lo mejor es 5 o 2, no me acuerdo la medida. A lo mejor es 5 o 2. Pero de qué 5, pasa casi todos 5, pero no es. Sí, pero que tú sabes que hay que tener lo correcto porque yo lo meto en un aparatico aquí que me da si es sobrepeso, cuánta libra tiene demás y todo eso. Pero para eso necesito la medida exacta, si sea 5 o 2, 5 o 2 o 5 o 3. Es la única manera de uno saber si estás bien o si yo te estoy diciendo lo correcto. La última vez que me me dio la doctora hace meses que fueron 5 o 2. 5 o 2. Entonces si tú tienes 5 o 2, tú dijiste que eran 145. Sí, a pesos 142, pero yo creo que como depende también porque los zapatos, me peso y peso 143 y me quito los zapatos y peso 141, así. Ah, no, eso es por la ropa. Tú mides, tú pesas como 140, no, si tienes 5 o 2, mi amor, está bien, depende del peso, estás en el peso. Pero eso el doctor no te ha dicho nada, estás en el peso. Tienes que tener, como con ropa y sin ropa es diferente, tienes que tener como 140 libras o 141, estás bien. Si es 5 o 2, estás perfecta y eso te ayuda muchísimo a que se mejore muchísimo más rápido cuando tú tienes sobrepeso. Mira, cuando hay un bebé, si tú has tenido niños, para darle medicamento lo pesan porque la cantidad de medicamento va de acuerdo al peso. Entonces, si te mandan un medicamento, como se lo mandan a todo el mundo, y tú tienes, por ejemplo, sobrepeso, no te va a trabajar igual porque hay más volumen del cuerpo, ¿tú ves? Aunque sea el que no tiene enfermedad. Oí un doctor que estaba hablando, un doctor de aquí del BIDOBIDO, pero hay de Tijuana, que estaba diciendo que esas pastillas que le dan a uno para la diabetes, no le tienen que dar los doctores simplemente la misma pastilla a todo el paciente que tiene diabetes. Exacto. Porque la pastilla, el paciente tiene que ser pesado, medido. Exacto. Y aquí no, aquí nomás le dicen nomás que le sale el aceite de araita y luego le dan a uno la pastilla. Y créeme que nosotros con tantos pacientes que tenemos, latinos, que tienen sus soluciones naturales con nosotros, es lo mismo. Y todos los días tratamos los mismos casos sin saber cuánto mide, cuánto pesa el paciente. Le mandan la misma medicina, los mismos miligramos. Hay gente que no me está haciendo nada la pastilla. Y el médico le cambia para insulina. A mí ya me la quería dar, a mí ya me la quería dar la insulina al doctor. Pero le dije no, le dije yo no quiero eso. Porque si yo quiero, yo no puedo controlar el azúcar. Simplemente nomás que hay veces que uno come cosas. Desarreglo. Pues no le digo de comer. Pero bueno, ya con la del pancrea evitamos que se siga deteriorando, porque el doctor manda insulina cuando la azúcar ya la pastilla no la puede controlar en la sangre. ¿Entiendes? Entonces con este tratamiento tú vas a ayudar a tu páncreas para que se estimule. Porque a veces tú haces desarreglo o no puedes hacer la dieta por X o por Y y se puede subir. Pero si ya el páncreas está produciendo más insulina, el azúcar no se va a disparar. Porque eso es como el metabolismo. Es como el metabolismo. Por ejemplo, yo tengo metabolismo rápido, yo puedo comer lo que sea. Yo puedo comer puerco, puedo comer vaca, lo que sea. Yo no aumento de peso. Coma una loma, mi metabolismo está acelerado. Así estoy yo, así como comidas pues, mis tres comidas y no he aumentado de peso. Mi peso que antes tenía, antes como más joven, pesaba 160, 170 así. Pero ya de repente fui bajando de peso, sí, pero nunca he estado gorda yo. Porque se te aceleró el metabolismo. Entonces, mi reina, esta medicina de Red Veins, como acelera el proceso de la producción de insulina natural del cuerpo, aunque comas lo que comas, no te eleva el nivel de azúcar en la sangre. Porque es tu páncreas que va a trabajar. Te lo pongo así de ejemplo de metabolismo para que veas. Porque es así, yo soy delgada, a veces quiero aumentar 10 libras, 15 libras y no puedo. Porque mi metabolismo es muy rápido, ¿tú ves? Entonces mira, con ese cuento, en vez que lo pagues en 300, te queda en 249,95. ¿Ok? Es una sola, Alicia, que te vas a tomar. Vas a ver que no sé cuándo tienes cita, me imagino que cada tres meses. Cada lunes, ¿verdad? ¿A los tres? Sí. Y ya la tengo para el mes, en ese mes el 21 la tengo en el doctor. Sí, al final del mes. Entonces, vamos a ir avanzado con el tratamiento. ¿Tú conoces la prueba A1C? No. Es una prueba donde se determina la diabetes que tienes. Yo sé que la doctora te la hace. ¿Ok? Porque yo cuando te chequean, pueden ver también una curva de cómo se ha comportado el azúcar en los últimos días. Entonces, este tratamiento está próximo para llegar el martes, que tendría tú alrededor de una o dos semanas con el producto. Entonces, la doctora ve la estabilidad, pero ella tiene después, al finalizar el tratamiento, que hacerte esa prueba. A1C es la prueba que determina la diabetes. Si estás en tipo 2, es una prueba de por ciento. Te voy a decir más o menos, a ver si te la he hecho yo alguna vez. Una persona normal tiene 5.7. Una persona con pre-diabetes está por encima de 5.7 a 6.4. Una con tipo 2 está por encima de 6.4. Una persona que pasa del por ciento A1C de 14 está tipo 1. Ese es la prueba de la insulina glicosilada. Se llama A1C. A1C. Ellos te hacen esa prueba. Al finalizar el tratamiento, debes hacerla. ¿Ok? Ahí es para que te deje trabajar la medicina. ¿Ok? ¿Qué le parece si le habla dentro de una semana? Porque ahorita no tengo para pagarlo. Ay, mi vida. El problema es que el descuento en el momento de la promoción y fuera de la promoción se cae. Ahí lo tendrías que pagar y si está chiquita de dinero, entonces hasta 10 dólares, como está la situación, es una ayuda de descuento. ¿Con qué tarjeta es que tú haces los pagos? No, yo no tengo tarjeta. Yo lo pago ahí directamente en el... ¿Tú puedes tomar una de predébito? ¿Tú puedes tomar una de predébito? Mi vida, la que tiene todo el mundo también te sirve. Si quiere, luego me habla porque el tratamiento no ha comido nada. Bueno, vamos a ayudarte entonces en ese caso. Si tú lo puedes pagar para la próxima semana, hacemos una infección para que lo puedas recibir entonces. Alicia. Sí, pues ahí habla en otra semana. Mi vida, o sea, el descuento que te consigo es para recibirlo para la próxima semana, que sería... Sí, pero ahorita no puedo porque acabo de pagar mi renta. Ahorita no tengo. Apenas voy a contar con el cheque y te voy a agarrar para la semana que entra. Sí, pero es para la semana que entra, que te va a llegar. No es ahora, para el miércoles o el jueves. Te lo voy a autorizar con mi código de especialista. Es lo más que puedo hacer para que te quede en el costo mínimo, para ver si puedes hacerle esfuerzo. Mira, ahí te quedaría con mi código de empleada en 169,95. Te queda todo el tratamiento. Estaría llegando para la fecha de martes o miércoles, 13 o 14. Para esa fecha, ¿tú crees que puedes sacarlo en el correo cuando te llegue? ¿Para cuándo? Miércoles o jueves de la próxima semana. Miércoles o jueves. De la próxima semana. ¿Y en cuánto dices? No, no, espérate, miércoles o jueves no. Martes 12, miércoles 13, 170 te llegaría. Son 3 francos de resbenz de 60 cápsulas cada uno. ¿En 170? Sí, en 170. Ahí te lo estoy poniendo con mi código de especialista, mi reina, ya para la recomendación sí te pido que me sea discreta con empresa. Conozco bien el resultado del producto. ¿Crees que contaría con el tiempo y el dinero para hacer el esfuerzo, para buscarlo para el 12 o el 13, cuando le llegue al correo? ¿En 170 dices? Sí, en 170 cerrarlo, mi reina. En 170. ¿No es eso que puedo pagarlo? Sí, mira, yo te lo estoy poniendo con mi código de especialista, ya tú sabes. Entonces, el departamento de confirmación y envío te llama en un rato, es una llamada de dos minutos para validar ese descuento. Ellos son los que validan que es en 170. Lo más que sabes es que ahorita después de que te acuerde contigo, no puedo agarrar llamadas aquí en el trabajo. ¿Y a qué hora es que tú, o sea, tú estás de break ahora? Ahorita estoy en break, ya he comido. ¿Y cuándo entras? Ahorita entro a las 12. ¿En cuánto tiempo? Entro como en, ya, yo creo, ya va a picar la raya, vamos, ya va a ir. Porque yo le digo que te llamen y es un minuto que duran contigo evaluándote para que te llamen rápido, nada más para confirmar el envío. ¿Oíste? Ve comiendo entonces. ¿Es breve? Ali, es breve. Dios te bendiga, mi reina.";
+          duracion = "00:03:22";
+          audioFileName = "Audio.mp3"
+        }
         
+        showLoadingIcon('Analizando texto: ' + audioFileName);
+
+        const payload = {
+          'audioFileName': audioFileName,
+          'auditor': auditor,
+          'grupo_vendedor': grupoVendedor(),
+          'motivo': obtenerMotivo(),
+          'nombre_vendedor': obtenerNombreVendedor(),
+          'tipo_campana': tipoCampanaMasDialer,
+          'transcripcion': transcripcion,
+          'duracion': duracion.durationFormat
+        }
+
+        let response = {};
+        const resp = await fetchApi('/analizar-textos', accessToken, "POST", payload);
+        response = resp;
+        console.log("response");
+        console.log(resp);
         const row = document.createElement('tr');
           tbody.appendChild(row);
 
@@ -1221,21 +1310,7 @@ let auditor = "";
       submitButton.style.display = 'inline-block';
       cancelButton.style.display = 'none';
 
-      /*
-      Promise.all([analizarTextos(audioFiles,auditor,grupoVendedor(), obtenerMotivo(), obtenerNombreVendedor(),tipoCampanaMasDialer)]).then(results => {
-        statusMessage.textContent = "";
-        document.getElementById('complete-icon').style.display = 'none';
-        Swal.fire({
-          title: 'Éxito!',
-          text: 'Proceso terminado.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
-        submitButton.style.display = 'inline-block';
-        cancelButton.style.display = 'none';
-      }); 
-  */
-
+      showCompleteIcon();
     }
       
   }); //submit
@@ -1371,8 +1446,18 @@ let auditor = "";
   });
 
   document.getElementById('facturacion').addEventListener('click', function() {
-    generateFacturacion(audioFiles);
+    generateFacturacion(audioFiles, accessToken);
   });
+
+  document.getElementById('logout').addEventListener('click', async function() {
+    console.log("logout");
+    localStorage.removeItem('accessToken');
+  });
+
+  window.history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    window.history.go(1);
+  };
 
 });
 

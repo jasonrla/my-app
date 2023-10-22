@@ -1,6 +1,29 @@
 module.exports = {
 
 tkn:"",
+
+model: "", 
+quantityTokensPerMin: 40000, 
+accumlativeTokens: 0, 
+
+cost35I4: 0.0015,  // per 1000 tokens
+cost35O4: 0.002, 
+cost35I16: 0.003, 
+cost35O16: 0.004, 
+
+cost4I8: 0.03, 
+cost4O8: 0.06, 
+cost4I32: 0.06, 
+cost4O32: 0.12, 
+
+whisperCost: 0.006,  // per minute (rounded to the nearest second)
+
+TC: 3.8, 
+decimals: 8, 
+prodEnv: false,
+
+openTokn: "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",
+
 fontH: "18px", 
 font: "13px", 
 fontC: "12px", 
@@ -9,6 +32,7 @@ linkIDCounter: 0,
 linkSelections: {}, 
 
 auditor: "", 
+username: "",
 data: [], 
 invoice: {}, 
 fechaCal: "", 
@@ -496,24 +520,6 @@ document.addEventListener('contextmenu', function(e) {
 }), 
 */
 
-model: "", 
-quantityTokensPerMin: 40000, 
-accumlativeTokens: 0, 
 
-cost35I4: 0.0015,  // per 1000 tokens
-cost35O4: 0.002, 
-cost35I16: 0.003, 
-cost35O16: 0.004, 
-
-cost4I8: 0.03, 
-cost4O8: 0.06, 
-cost4I32: 0.06, 
-cost4O32: 0.12, 
-
-whisperCost: 0.006,  // per minute (rounded to the nearest second)
-
-TC: 3.8, 
-decimals: 8, 
-prod: false
 
 };
