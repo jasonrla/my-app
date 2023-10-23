@@ -264,6 +264,7 @@ exports.getRowsData = async (req, res) => {
 
     const rowsData = [
         //{cells: [{image: "/public/img/logo.svg"}]},
+        
         {fontSize: gvars.fontH, header: true, cells: [{text: "Acta Calibracion Cariola", colSpan: 10, centered: true, colour3: true}]},
         {cells: [{text: " ", colSpan: 9},{text: response.Duracion, bold: true, centered: true}]},
   
