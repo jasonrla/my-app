@@ -200,6 +200,9 @@ pre {
   text-align: left;
 }
 
+.cell-width{
+  width: 150px;
+}
 
 /* Efecto de desvanecimiento para los íconos cuando se ocultan */
 .fas[style*="display: none"] {

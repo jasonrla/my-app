@@ -22,7 +22,7 @@ TC: 3.8,
 decimals: 8, 
 prodEnv: false,
 
-openTokn: "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",
+openTokn: "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",
 
 fontH: "18px", 
 font: "13px", 

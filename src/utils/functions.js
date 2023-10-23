@@ -1,4 +1,5 @@
 
+const { Logger } = require('aws-amplify');
 const gvars = require('../utils/const.js');
 const FormData = require('form-data');
 const fs = require('fs').promises;
@@ -85,8 +86,6 @@ function getAudioDurationInSecs(blob) {
 async function audioToText(audioFile, duracion, durationInSeconds) {
 
     console.log("audioFile");
-    console.log("audioFile.name");
-    console.log(audioFile);
 
     const buffer = await fs.readFile(audioFile.path);
 
@@ -114,7 +113,9 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
             console.error('Error:', error);
         }
         addData(audioCost(audioFile.originalname, duracion, durationInSeconds));
-
+        console.log("transcripcion");
+        console.log(transcripcion);
+        console.log("transcripcion.text");
         return {
             text: transcripcion.text
         };
@@ -134,6 +135,7 @@ function getPrompt(text,part1, part2){
 let useGpt35 = true;
 
 async function processPrompt(role, text, part1, part2, audioFileName, operation) {
+    console.log("Procesando prompt")
     let data;
     let model;
     
@@ -184,16 +186,16 @@ async function processPrompt(role, text, part1, part2, audioFileName, operation)
 
         data = await response.json();
     } catch (error) {
-        //statusMessage.textContent = 'Error al analizar el texto: ' + error.message;
         console.log('Error al analizar el texto: ' + error.message);
         return null;
     }
     
-    console.log("data: " + data);
     addData(textCost(model, data, audioFileName, operation));
     
     // Cambia el modelo para el próximo intento
     useGpt35 = !useGpt35;
+
+    console.log(data.choices[0].message.content);
 
     return extractJSON(data.choices[0].message.content);
 }
@@ -209,6 +211,8 @@ function extractJSON(text) {
 }
 
 function addData(jsonObject) {
+    console.log("Invoice")
+
     const audioName = jsonObject.audioName;
     
     // Si la llave ya existe en el diccionario, añade el objeto al array existente
@@ -223,7 +227,8 @@ function addData(jsonObject) {
 }
 
 function textCost(model, data, audioFileName, operation){
-    
+    console.log("Analizando costo de procesar texto");
+
     let input, output, context, inputTokens, outputTokens;
 
     if (model == "GPT35"){
@@ -326,56 +331,44 @@ function audioCost(fileName, duration ,seconds){
 }
 
 async function saludoInstitucional(text, audioFileName){
-if(gvars.prodEnv){
-    //showLoadingIcon();
-    //statusMessage.textContent = 'Analizando saludo institucional: ' + audioFileName;
-  
-    let valor, comentario;
 
-    const result = await Promise.all([processPrompt(gvars.pemp_role, text, gvars.pemp_part1, gvars.pemp_part2, audioFileName, "Saludo Institucional")]);
-    //const cleanString = result[0].replace(/'/g, '"');  // Reemplaza comillas simples con comillas dobles
-    //console.log(cleanString);
-    parsedData = JSON.parse(result);
+    console.log("Procesando Saludo Institucional")
 
-    ({
-        valor,
-        comentario
-    } = parsedData);
-    valor = valor ? parseInt(valor) : "0";
-    //showCompleteIcon();
-    return{
-        "valor": valor,
-        "comentario": comentario,
-        "audioName": audioFileName
-    };
-}
-else{
-    return{
-        "valor": "5",
-        "comentario": "comentario"
-    };
-}
+    if(gvars.prodEnv){
+
+        let valor, comentario;
+        const result = await Promise.all([processPrompt(gvars.pemp_role, text, gvars.pemp_part1, gvars.pemp_part2, audioFileName, "Saludo Institucional")]);
+        parsedData = JSON.parse(result);
+
+        ({valor, comentario} = parsedData);
+        valor = valor ? parseInt(valor) : "0";
+        
+        return{
+            "valor": valor,
+            "comentario": comentario,
+            "audioName": audioFileName
+        };
+    }
+    else{
+        return{
+            "valor": "10",
+            "comentario": "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, utiliza las palabras clave 'productos naturales' y 'medicamentos' al mencionar los paquetes disponibles."
+        };
+    }
 }
 
 async function empatiaSimpatia(text, audioFileName){
+    
+    console.log("Procesando Empatia Simpatia");
+    
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando presentacion empatica: ' + audioFileName;
-        
         let valor, comentario;
-        
         const result = await Promise.all([processPrompt(gvars.emsi_role, text, gvars.emsi_part1, gvars.emsi_part2, audioFileName, "Empatia/Simpatia")]);
-        const cleanString = result[0].replace(/'/g, '"');  // Reemplaza comillas simples con comillas dobles
-        //console.log(cleanString);
         parsedData = JSON.parse(result);
         
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -383,91 +376,72 @@ async function empatiaSimpatia(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "10",
+            "comentario": "El vendedor mostró empatía y simpatía de forma excepcional en su introducción. Demostró preocupación por el cliente y ofreció diferentes opciones para adaptarse a su presupuesto."
         };
     }
 }
 
 async function precalificacion(text, audioFileName){
-if(gvars.prodEnv){
-    //showLoadingIcon();
-    //statusMessage.textContent = 'Analizando precalificacion: ' + audioFileName;    
-    
-    let valor, comentario;
-    
-    const result = await Promise.all([processPrompt(gvars.prec_role, text, gvars.prec_part1, gvars.prec_part2, audioFileName, "Precalificación")]);
-    console.log("RESULT PRECALIFICACION");
-    console.log(result);
-    
-    let parsedData;
-    try{
-        const cleanString = result[0].replace(/'/g, '"');  // Reemplaza comillas simples con comillas dobles
-        //console.log(cleanString);
-        parsedData = JSON.parse(result);
-    
-        ({
-            valor,
-            edad,
-            peso,
-            estatura,
-            tipoTrabajo,
-            otrasEnfermedades,
-            tratamientosQueConsume,
-            productosTomaActualmente,
-            comentario
-        } = parsedData);
 
-        valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+    console.log("Procesando Precalificacion");
+
+    if(gvars.prodEnv){
+    
+        let valor, comentario, parsedData;
+        const result = await Promise.all([processPrompt(gvars.prec_role, text, gvars.prec_part1, gvars.prec_part2, audioFileName, "Precalificación")]);
+        
+        try{
+            parsedData = JSON.parse(result);
+        
+            ({valor, edad, peso, estatura, tipoTrabajo, otrasEnfermedades, tratamientosQueConsume, productosTomaActualmente, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+
+            return{
+                "valor": valor,
+                "comentario": comentario,
+                "edad": edad,
+                "peso": gvars.peso,
+                "estatura": estatura,
+                "tipoTrabajo": tipoTrabajo,
+                "otrasEnfermedades": otrasEnfermedades,
+                "tratamientosQueConsume": tratamientosQueConsume,
+                "gvars.prodEnvuctosTomaActualmente": gvars.prodEnvuctosTomaActualmente
+            };
+        }
+        catch(e){
+            console.error(e)
+        }
+    }
+    else{    
         return{
-            "valor": valor,
-            "comentario": comentario,
-            "edad": edad,
-            "peso": gvars.peso,
-            "estatura": estatura,
-            "tipoTrabajo": tipoTrabajo,
-            "otrasEnfermedades": otrasEnfermedades,
-            "tratamientosQueConsume": tratamientosQueConsume,
-            "gvars.prodEnvuctosTomaActualmente": gvars.prodEnvuctosTomaActualmente
-        };
+            "valor": "0",
+            "comentario": "El vendedor no realizó ninguna de las preguntas mencionadas y se enfocó en ofrecer diferentes paquetes de productos.",
+            "edad": "edad",
+            "peso": "peso",
+            "estatura": "estatura",
+            "tipoTrabajo": "tipoTrabajo",
+            "otrasEnfermedades": "otrasEnfermedades",
+            "tratamientosQueConsume": "tratamientosQueConsume",
+            "gvars.prodEnvuctosTomaActualmente": "gvars.prodEnvuctosTomaActualmente"
+         };
     }
-    catch(e){
-        console.error(e)
-    }
-}
-else{    
-    return{
-        "valor": "0",
-        "comentario": "comentario",
-        "edad": "edad",
-        "peso": "peso",
-        "estatura": "estatura",
-        "tipoTrabajo": "tipoTrabajo",
-        "otrasEnfermedades": "otrasEnfermedades",
-        "tratamientosQueConsume": "tratamientosQueConsume",
-        "gvars.prodEnvuctosTomaActualmente": "gvars.prodEnvuctosTomaActualmente"
-   };
-}
 }
 
 async function preguntasSubjetivas(text, audioFileName){
+    
+    console.log("Procesando Preguntas Subjetivas");
+    
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando preguntas subjetivas: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.preSub_role, text, gvars.preSub_part1, gvars.preSub_part2, audioFileName, "Preguntas subjetivas")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+        
         return{
             "valor": valor,
             "comentario": comentario
@@ -475,29 +449,26 @@ async function preguntasSubjetivas(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "7",
+            "comentario": "El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas y ofrecer opciones de tratamiento, pero no mencionó ejemplos específicos."
         };
     }
 }
 
 async function etiquetaEnf(text, audioFileName){
+    
+    console.log("Procesando Etiqueta Enfermedad");
+
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando etiqueta enfermedad: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.etenf_role, text, gvars.etenf_part1, gvars.etenf_part2, audioFileName, "Etiqueta enfermedad")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -505,59 +476,53 @@ async function etiquetaEnf(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "0",
+            "comentario": "El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación."
         };
     }
 }
 
 async function enfocEnf(text, audioFileName){
+
+    console.log("Procesando Enfoque Enfermedad");
+
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando enfoque enfermedad: ' + audioFileName;
-        
+
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.enfenf_role, text, gvars.enfenf_part1, gvars.enfenf_part2, audioFileName, "Enfoque enfermedad")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
-        return{
+        
+        return {
             "valor": valor,
             "comentario": comentario
         };
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "10",
+            "comentario": "El vendedor se enfoca en la enfermedad del cliente desde el principio de la conversación y ofrece diferentes opciones de paquetes que podrían ayudar a tratar los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida de los pacientes."
         };
     }
 }
 
 async function tonoVoz(text, audioFileName){
+    
+    console.log("Procesando Tono de voz");
+    
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando tono de voz: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.tonoVoz_role, text, gvars.tonoVoz_part1, gvars.tonoVoz_part2, audioFileName, "Tono de voz")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+        
         return{
             "valor": valor,
             "comentario": comentario
@@ -565,29 +530,26 @@ async function tonoVoz(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "10",
+            "comentario": "El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo."
         };
     }
 }
 
 async function conocimientoPatol(text, audioFileName){
+    
+    console.log("Procesando Conocimiento Patología");
+    
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando conocimiento de la patología: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.conPatol_role, text, gvars.conPatol_part1, gvars.conPatol_part2, audioFileName, "Conoc. patología")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+        
         return{
             "valor": valor,
             "comentario": comentario
@@ -595,29 +557,26 @@ async function conocimientoPatol(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "7",
+            "comentario": "El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación."
         };
     }
 }
 
 async function datoDuro(text, audioFileName){
+    
+    console.log("Procesando Dato Duro");
+    
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando dato duro: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.datoDuro_role, text, gvars.datoDuro_part1, gvars.datoDuro_part2, audioFileName, "Dato duro")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+        
         return{
             "valor": valor,
             "comentario": comentario
@@ -625,29 +584,26 @@ async function datoDuro(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "0",
+            "comentario": "El vendedor no da a conocer información sobre la patología o dolencia del cliente"
         };
     }
 }
 
 async function testimonio(text, audioFileName){
+
+    console.log("Procesando Testimonio");
+
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando testimonio: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.testi_role, text, gvars.testi_part1, gvars.testi_part2, audioFileName, "Testimonio")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -655,29 +611,26 @@ async function testimonio(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "0",
+            "comentario": "El vendedor no menciona ningún testimonio al cliente."
         };
     }
 }
 
 async function solucionBeneficios(text, audioFileName){
+    
+    console.log("Procesando Solución Beneficios");
+    
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando solución/beneficios: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.solBen_role, text, gvars.solBen_part1, gvars.solBen_part2, audioFileName, "Solución beneficios")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -685,31 +638,26 @@ async function solucionBeneficios(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "10",
+            "comentario": "El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas."
         };
     }
 }
 
 async function respaldo(text, audioFileName){
+    
+    console.log("Procesando Respaldo");
+
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando respaldo: ' + audioFileName;
         
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.resp_role, text, gvars.resp_part1, gvars.resp_part2, audioFileName, "Respaldo")]);
-        const cleanString = result[0].replace(/'/g, '"');  // Reemplaza comillas simples con comillas dobles
-        //console.log(cleanString);
         parsedData = JSON.parse(result);
 
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+        
         return{
             "valor": valor,
             "comentario": comentario
@@ -717,29 +665,26 @@ async function respaldo(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "0",
+            "comentario": "El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación."
         };
     }
 }
 
 async function cierreVenta(text, audioFileName){
+
+    console.log("Procesando Cierre de venta");
+
     if(gvars.prodEnv){
-        //showLoadingIcon();
-        //statusMessage.textContent = 'Analizando cierre de venta: ' + audioFileName;
-        
+
         let valor, comentario;
         
         const result = await Promise.all([processPrompt(gvars.cierre_role, text, gvars.cierre_part1, gvars.cierre_part2, audioFileName, "Cierre de venta")]);
         parsedData = JSON.parse(result);  
              
-        ({
-            valor,
-            comentario
-        } = parsedData);
-
+        ({valor, comentario} = parsedData);
         valor = valor ? parseInt(valor) : "0";
-        //showCompleteIcon();
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -747,37 +692,49 @@ async function cierreVenta(text, audioFileName){
     }
     else{
         return{
-            "valor": "5",
-            "comentario": "comentario"
+            "valor": "10",
+            "comentario": "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente, además utilizó el tipo de cierre 'Amarre invertido'."
         };
     }
 }
 
 async function comunicacionEfectiva(text, audioFileName){
+
+    console.log("Procesando Comunicación efectiva");
+
     return{
         "valor": "0",
-        "comentario": "comentario"
+        "comentario": "comentario Comunicación efectiva"
     };
 }
 
 async function conocimientoTratamiento(text, audioFileName){
+
+    console.log("Procesando Conocimiento del tratamiento");
+
     return{
         "valor": "0",
-        "comentario": "comentario"
+        "comentario": "comentario Conocimiento del tratamiento"
     };
 }
 
 async function rebateObjeciones(text, audioFileName){
+
+    console.log("Procesando Rebate de objeciones");
+
     return{
         "valor": "0",
-        "comentario": "comentario"
+        "comentario": "comentario Rebaje de objeciones"
     };
 }
 
 async function analizarTextos(reqBody) {
 
-    const { audioFileName, auditor, grupo_vendedor, motivo, nombre_vendedor, tipo_campana, transcripcion, duracion } = reqBody;
-    
+    console.log("Analizando textos");
+
+    ({ audioFileName, auditor, grupo_vendedor, motivo, nombre_vendedor, tipo_campana, transcripcion, duracion } = reqBody);
+    console.log(reqBody.body);
+
     const resultados = await Promise.all([
         saludoInstitucional(transcripcion, audioFileName),
         empatiaSimpatia(transcripcion, audioFileName),
@@ -893,16 +850,16 @@ async function analizarTextos(reqBody) {
 }
 
 function calcularPromedio(datos, clave) {
+
+    console.log("Calculando promedio")
     
     if (datos.length === 0) return "0";
     
     let suma = datos.reduce((acumulador, item) => {
         let valorNumerico = parseFloat(item[clave]);
-        // Verificar si valorNumerico es un número válido antes de sumarlo
         return !isNaN(valorNumerico) ? acumulador + valorNumerico : acumulador;
     }, 0);
 
-    // Validar si el denominador es 0 para evitar división por cero
     return (suma === 0 || datos.length === 0) ? "0" : suma / datos.length;
 }
 

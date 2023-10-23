@@ -170,8 +170,23 @@ async function mostrarResultados(modalUsed, modalBodyUsed, response, accessToken
   modal.style.display = 'block';
 }
 
-async function exportTableToPDF(modalBody, fileName, accessToken) {
+async function exportTableToPDF(modalBody, fileName, accessToken, audioFileName) {
   let element = document.getElementById(modalBody);  // Reemplaza 'your-table-id' con el ID de tu tabla
+
+  let titleElement = document.createElement("h1");
+  titleElement.innerHTML = audioFileName;
+
+  let imageElement = document.createElement("img");
+  imageElement.src = "/public/img/logo.svg";  // Reemplaza con la URL de tu imagen
+  imageElement.style.float = "right";
+  imageElement.style.marginBottom = "20px";  // Agrega un margen inferior de 20 píxeles
+  //imageElement.width = 100;  // Opcional: establecer el ancho de la imagen
+  //imageElement.height = 100; 
+  
+  let newDiv = document.createElement("div");
+  newDiv.appendChild(imageElement);
+  newDiv.appendChild(titleElement);
+  newDiv.appendChild(element.cloneNode(true));
 
   const response = await fetchApi('/get-pdf-options', accessToken);
 
@@ -183,7 +198,7 @@ async function exportTableToPDF(modalBody, fileName, accessToken) {
       jsPDF:        response.jsPDF
   };
 
-  html2pdf().from(element).set(opt).save();
+  html2pdf().from(newDiv).set(opt).save();
 }
 
 async function exportTableToExcel(tableElement, accessToken) {
@@ -510,6 +525,10 @@ async function createReportTable(table, response, accessToken){
               if (cellData.left) {
                   td.classList.add("left-image-cell");
               }
+
+              if (cellData.width) {
+                td.classList.add("cell-width");
+            }
 
           } else {
               td.textContent = cellData;
@@ -1061,14 +1080,14 @@ document.addEventListener('DOMContentLoaded', async function() {
   let prodEnv = await fetchApi('/get-env', accessToken);  
   prod = prodEnv.env;
 
-  /*
+  
   const miListbox = document.getElementById("miListbox");
   const grupo_vendedor = document.getElementById("grupoVendedor");
 
   miListbox.addEventListener("change", function() {
     const seleccionado = miListbox.value;
     grupo_vendedor.textContent = seleccionado ? `Grupo: ${seleccionado}` : "";
-  });*/
+  });
 
   audioForm.addEventListener('submit', async function(event) {
 
@@ -1237,10 +1256,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         let response = {};
         const resp = await fetchApi('/analizar-textos', accessToken, "POST", payload);
         response = resp;
-        console.log("response");
-        console.log(resp);
+        
         const row = document.createElement('tr');
-          tbody.appendChild(row);
+        tbody.appendChild(row);
 
           //td1
           const tdAudioDate = document.createElement('td');
@@ -1355,47 +1373,47 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   document.getElementById('downloadBtnPDFGeneral').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
-    exportTableToPDF('modalBodyReporteGeneral', 'ReporteGeneral_' + response.fechaCal, accessToken);
+    exportTableToPDF('modalBodyReporteGeneral', 'ReporteGeneral_' + response.fechaCal, accessToken, "Reporte General");
   });
 
   document.getElementById('downloadBtnPDFGeneral2').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
-    exportTableToPDF('modalBodyReporteGeneral', 'ReporteGeneral_' + response.fechaCal, accessToken);
+    exportTableToPDF('modalBodyReporteGeneral', 'ReporteGeneral_' + response.fechaCal, accessToken, "Reporte General");
   });
 
   document.getElementById('downloadBtnPDFInterno').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
-    exportTableToPDF('modalBodyFeedbackInterno', 'Reporte2_' + response.aName + "_" + response.fechaCal, accessToken);
+    exportTableToPDF('modalBodyFeedbackInterno', 'Reporte2_' + response.aName + "_" + response.fechaCal, accessToken, "Reporte 2");
   });
 
   document.getElementById('downloadBtnPDFInterno2').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
-    exportTableToPDF('modalBodyFeedbackInterno', 'Reporte2_' + response.aName + "_" + response.fechaCal, accessToken);
+    exportTableToPDF('modalBodyFeedbackInterno', 'Reporte2_' + response.aName + "_" + response.fechaCal, accessToken, "Reporte 2");
   });
 
   document.getElementById('downloadBtnPDFTextoTransformado').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
-    exportTableToPDF('modalBodyTextoTransformado', 'Transcripción_' + response.aName + "_" + response.fechaCal, accessToken);
+    exportTableToPDF('modalBodyTextoTransformado', 'Transcripción_' + response.aName + "_" + response.fechaCal, accessToken, response.aName);
   });
 
   document.getElementById('downloadBtnPDFModal').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
-    exportTableToPDF('modalBody', 'Reporte1_' + response.aName + "_" + response.fechaCal, accessToken);
+    exportTableToPDF('modalBody', 'Reporte1_' + response.aName + "_" + response.fechaCal, accessToken, "Reporte 1");
   });
 
   document.getElementById('downloadBtnPDFModal2').addEventListener('click', async function() {
     const response = await fetchApi('/get-audio-data', accessToken);
-    exportTableToPDF('modalBody', 'Reporte1_' + response.aName + "_" + response.fechaCal, accessToken);
+    exportTableToPDF('modalBody', 'Reporte1_' + response.aName + "_" + response.fechaCal, accessToken, "Reporte 1");
   });
 
   document.getElementById('downloadBtnPDFFacturacion').addEventListener('click', async function() {
     const response = await fetchApi('/get-current-date', accessToken);
-    exportTableToPDF('modalBodymodalFacturacion', 'Facturacion_' + response.currentDate, accessToken);
+    exportTableToPDF('modalBodymodalFacturacion', 'Facturacion_' + response.currentDate, accessToken, "Facturación");
   });
 
   document.getElementById('downloadBtnPDFFacturacion2').addEventListener('click', async function() {
     const response = await fetchApi('/get-current-date', accessToken);
-    exportTableToPDF('modalBodymodalFacturacion', 'Facturacion_' + response.currentDate, accessToken);
+    exportTableToPDF('modalBodymodalFacturacion', 'Facturacion_' + response.currentDate, accessToken, "Facturación");
   });
 
   const modal = document.getElementById('modal');
