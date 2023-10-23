@@ -99,7 +99,7 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
     const requestOptions = {
         method: 'POST',
         headers: {
-        'Authorization': `Bearer ${gvars.openTokn}`
+        'Authorization': `Bearer ${process.env.openTokn}`
         },
         body: formData
     };
@@ -153,7 +153,7 @@ async function processPrompt(role, text, part1, part2, audioFileName, operation)
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${gvars.openTokn}`
+                'Authorization': `Bearer ${process.env.openTokn}`
             },
             body: JSON.stringify(payload)
         });
