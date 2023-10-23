@@ -1,31 +1,25 @@
-name: Deploy to Production
+name: Deploy to EC2
 
 on:
   push:
     branches:
-      - main  # Ajusta esto a la rama que utilizas para la producción
+      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Obfuscate code
-      run: npm run obfuscate
-
-    - name: Deploy to AWS EC2
-      env:
-        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        HOST: ec2-user@44.201.144.212
+    - name: Add SSH key to known hosts
       run: |
-        echo "$PRIVATE_KEY" > private_key.pem
-        chmod 400 private_key.pem
-        scp -o UserKnownHostsFile=known_hosts -i private_key.pem -r ./dist/* $HOST:my-app
-        ssh -o UserKnownHostsFile=known_hosts -i private_key.pem $HOST "cd my-app && git pull && rm -rf ./public/* && mv ./dist/* ./public/"
-        rm -f private_key.pem
+        mkdir -p ~/.ssh
+        ssh-keyscan -H 44.201.144.212 >> ~/.ssh/known_hosts
+      
+    - name: Deploy to EC2
+      run: |
+        ssh ec2-user@44.201.144.212 "cd my-app && git pull origin main"
+      env:
+        EC2_PEM: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
