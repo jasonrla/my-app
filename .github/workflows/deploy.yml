@@ -21,10 +21,8 @@ jobs:
     - name: Setup SSH Keys
       run: |
         echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ec2.pem
-        chmod 600 ec2.pem
-        eval $(ssh-agent -s)
-        ssh-add ec2.pem
+        chmod 400 ec2.pem
 
     - name: Deploy to EC2
       run: |
-        ssh ec2-user@44.201.144.212 "cd my-app && git pull origin main"
+        ssh -i ec2.pem ec2-user@44.201.144.212 "cd my-app && git pull origin main"
