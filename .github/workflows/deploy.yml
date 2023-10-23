@@ -20,6 +20,4 @@ jobs:
       
     - name: Deploy to EC2
       run: |
-        ssh ec2-user@44.201.144.212 "cd my-app && git pull origin main"
-      env:
-        EC2_PEM: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        ssh -i ${{ secrets.EC2_SSH_PRIVATE_KEY }} ec2-user@44.201.144.212 "cd my-app && git pull origin main"
