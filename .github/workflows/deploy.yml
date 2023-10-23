@@ -1,0 +1,23 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main  # Ajusta esto a la rama que utilizas para la producción
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Obfuscate code
+      run: npm run obfuscate
+
+    - name: Deploy to Production
+      run: ./deploy-script.sh  # Ajusta esto a tu script de despliegue
