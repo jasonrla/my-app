@@ -25,7 +25,7 @@ jobs:
         HOST: ec2-user@44.201.144.212
       run: |
         echo "$PRIVATE_KEY" > private_key.pem
-        chmod 600 private_key.pem
-        scp -i private_key.pem -r ./dist/* $HOST:my-app
-        ssh -i private_key.pem $HOST "cd my-app && git pull && rm -rf ./public/* && mv ./dist/* ./public/"
+        chmod 400 private_key.pem
+        scp -o UserKnownHostsFile=known_hosts -i private_key.pem -r ./dist/* $HOST:my-app
+        ssh -o UserKnownHostsFile=known_hosts -i private_key.pem $HOST "cd my-app && git pull && rm -rf ./public/* && mv ./dist/* ./public/"
         rm -f private_key.pem
