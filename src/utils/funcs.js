@@ -1,3 +1,4 @@
+/*
 function countTokens(text) {
     const words = text.split(/[\s,.\n!?"'();:-]+/);
     
@@ -2723,4 +2724,4 @@ module.exports = {
     textCost,
     audioCost,
     addData
-  };
+  };*/

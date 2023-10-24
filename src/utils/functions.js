@@ -141,7 +141,7 @@ async function processPrompt(role, text, part1, part2, audioFileName, operation)
     
     try {
         let payload = {
-            model: useGpt35 ? 'gpt-3.5-turbo-16k' : 'gpt-4',
+            model: useGpt35 ? 'gpt-3.5-turbo' : 'gpt-4',
             messages: [
                 { role: 'system', content: role },
                 { role: 'user', content: getPrompt(text, part1, part2) }
