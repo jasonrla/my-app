@@ -2,6 +2,7 @@
 const { Logger } = require('aws-amplify');
 const gvars = require('../utils/const.js');
 const FormData = require('form-data');
+const { error } = require('console');
 const fs = require('fs').promises;
 
 function currentDate() {
@@ -119,6 +120,7 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
             console.log("Response status: ", response.status);
             console.log("Response headers: ", response.headers);
             console.log("Response: ", response);
+            if (response == undefined) { throw new Error('Error transformando audio a texto'); }
 
         } catch (error) {
             console.error('Error:', error);
