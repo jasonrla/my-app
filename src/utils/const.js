@@ -22,8 +22,6 @@ TC: 3.8,
 decimals: 8, 
 prodEnv: true,
 
-openTokn: "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",
-
 fontH: "18px", 
 font: "13px", 
 fontC: "12px", 
