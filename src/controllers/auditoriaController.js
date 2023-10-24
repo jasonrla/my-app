@@ -480,6 +480,10 @@ exports.transformarAudio = async (req, res) => {
     }
 
     const resultado = await audioToText(file, duracion, durationInSeconds);
+    
+    if(resultado == {}){
+        throw new Error('Error transformando audio a texto');
+    }
     res.json(resultado);
 }
 
