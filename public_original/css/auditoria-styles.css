@@ -1,0 +1,703 @@
+body {
+  font-family: 'Open sans', sans-serif;
+  margin: 20px;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+#verifName {
+  font-size: 18px;
+  background-color: #fff; /* o cualquier color que desees */
+  padding: 4px 30px; /* ajusta el espacio interior a 3px a la izquierda y derecha */
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  font-weight: normal; 
+}
+
+.imagen-derecha {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+form, textarea, button {
+  display: block;
+  margin-bottom: 20px;
+}
+
+form {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+input[type="file"]{
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 400px;  /* Esta línea define el ancho del elemento */
+}
+
+input[type="file"],
+input[type="submit"],
+textarea,
+button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+input[type="submit"],
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover,
+button:hover {
+  background-color: #0056b3;
+}
+
+pre {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  white-space: pre-wrap;  /* CSS3 */
+  white-space: -moz-pre-wrap;  /* Firefox */
+  white-space: -pre-wrap;  /* Opera <7 */
+  white-space: -o-pre-wrap;  /* Opera 7 */
+  word-wrap: break-word;  /* IE */
+}
+
+
+#downloadBtn {
+  padding: 13px 13px;
+  font-size: 16px;
+  border: none;
+  background-color: #4CAF50; /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+#downloadBtn:hover {
+  background-color: #45a049; /* Color de fondo al pasar el cursor por encima */
+}
+
+#generalReport{
+  padding: 13px 13px;
+  font-size: 16px;
+  border: none;
+  background-color:#3f51b5; /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+#generalReport:hover {
+  padding: 13px 13px;
+  font-size: 16px;
+  border: none;
+  background-color: #3949ab; /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+#downloadBtnPDF, #downloadBtnPDFInterno, #downloadBtnPDFGeneral, #downloadBtnPDFModal, #downloadBtnPDFInterno2, 
+#downloadBtnPDFGeneral2, #downloadBtnPDFModal2, #downloadBtnPDFFacturacion, #downloadBtnPDFFacturacion2,
+#downloadBtnPDFTextoTransformado {
+  padding: 10px 10px;
+  font-size: 15px;
+  border: none;
+  background-color: rgb(197, 4, 4); /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+#downloadBtnPDF:hover, #downloadBtnPDFInterno:hover, #downloadBtnPDFGeneral:hover, #downloadBtnPDFModal:hover, #downloadBtnPDFInterno2:hover, 
+#downloadBtnPDFGeneral2:hover, #downloadBtnPDFModal2:hover, #downloadBtnPDFFacturacion:hover, #downloadBtnPDFFacturacion2:hover,
+#downloadBtnPDFTextoTransformado:hover {
+  padding: 10px 10px;
+  font-size: 15px;
+  border: none;
+  background-color: rgb(154, 2, 2); /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+#downloadBtnPDFInterno[disabled], #downloadBtnPDFInterno2[disabled], #attachImagesBtn[disabled],
+#downloadBtn[disabled], #generalReport[disabled] {
+  background-color: #c0c0c0;
+  color: #888888;
+  cursor: not-allowed;
+}
+
+.custom-audio-table td {
+  text-align: center;
+}
+
+
+.custom-audio-table .editable-field {
+  background-color: white;
+  border: 1px dashed #ccc;
+  padding: 2px;
+  cursor: text; /* Cambia el cursor a un cursor de texto cuando se pasa sobre el elemento */
+  text-align: left;
+}
+
+/*Reporte Cariola*/
+
+
+/* Estilos para la fila de encabezado */
+.header-cell {
+  font-weight: bold;
+  text-align: center;
+  background-color: #e0f0ff;
+}
+
+/* Estilo para la celda de "Resultado" */
+.resultado-cell {
+  background-color: rgba(220, 220, 220, 0.4); /* Cambia esto al color de fondo que desees */
+}
+
+/* Estilo para la celda adyacente a "Resultado" */
+.result-cell {
+  background-color: rgba(220, 220, 220, 0.4); /* Cambia esto al color de fondo que desees para el valor adyacente */
+}
+
+.centered-cell {
+  text-align: center;
+}
+
+.colour-cell {
+  background-color: #e0f0ff;
+}
+
+.colour2-cell {
+  background-color: rgba(220, 220, 220, 0.4);
+}
+
+.colour3-cell {
+  background-color: rgba(215, 235, 161, 0.849);
+}
+
+.bold-cell {
+  font-weight: bold;
+}
+
+.left-image-cell {
+  text-align: left;
+}
+
+.cell-width{
+  width: 150px;
+}
+
+/* Efecto de desvanecimiento para los íconos cuando se ocultan */
+.fas[style*="display: none"] {
+  opacity: 0; /* Hace el ícono transparente */
+  pointer-events: none; /* Asegura que el ícono oculto no pueda ser clickeado */
+}
+
+/* Ícono de carga (spinner) */
+#loading-icon {
+  color: #3498db; /* Color azul. Puedes cambiarlo según tu diseño. */
+  display: none;
+}
+
+/* Ícono de completo (check) */
+#complete-icon {
+  color: #2ecc71; /* Color verde. Puedes cambiarlo según tu diseño. */
+  
+}
+
+#loading-text{
+  color: #000000;
+  display: inline-block;
+  font-size: 16px;
+  font-family: 'Open sans', sans-serif;
+}
+
+#complete-text{
+  color: #000000;
+  display: inline-block;
+  font-size: 16px;
+  font-family: 'Open sans', sans-serif;
+}
+
+
+
+button {
+  padding: 10px 20px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+button:hover {
+  background-color: #555;
+}
+/*
+#linksContainer {
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+}*/
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #e0f0ff; /*#f2f2f2;*/
+  text-align: center;
+}
+
+#linksContainer:td{
+  text-align: center;
+}
+
+th:nth-child(1) { /* Selecciona el primer encabezado */
+  width: 10%;  /* Ancho para la columna del nombre del texto */
+}
+
+th:nth-child(2) { /* Selecciona el segundo encabezado */
+  width: 20%;  /* Ancho para la columna del link */
+}
+
+th:nth-child(3) { /* Selecciona el tercer encabezado */
+  width: 10%;  /* Ancho para la columna del texto transformado */
+}
+
+th:nth-child(4) { /* Selecciona el primer encabezado */
+  width: 30%;  /* Ancho para la columna del nombre del texto */
+}
+
+th:nth-child(5) { /* Selecciona el segundo encabezado */
+  width: 10%;  /* Ancho para la columna del link */
+}
+
+th:nth-child(6) { /* Selecciona el tercer encabezado */
+  width: 10%;  /* Ancho para la columna del texto transformado */
+}
+
+th:nth-child(7) { /* Selecciona el tercer encabezado */
+  width: 10%;  /* Ancho para la columna del texto transformado */
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+#modal, #modalTextoTransformado, #modalFeedbackInterno, #modalReporteGeneral, #modalFacturacion{
+  display: none;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /*rgba(255,255,255,0.9); Transparente*/
+  padding: 20px;
+  /*border: 1px solid #ccc;*/
+  overflow: auto;
+  /*box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);*/
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+#modalContent, #modalTextoTransformado-content, #modalFeedbackInterno-content, #modalReporteGeneral-content, #modalFacturacion-content {
+  background-color: white;
+  padding: 20px;
+  width: 70%; /* Puedes ajustar este valor según lo necesites */
+  height: 90vh;
+  /* Centrar el elemento horizontalmente */
+  position: relative; /* Cambiado de fixed a relative */
+  margin: 0 auto; /* Esto centrará el modal horizontalmente */
+  top: 20px; /* Para que comience a 20px de la parte superior. Puedes ajustar este valor según lo necesites */
+
+  /* No es necesario ajustar la transformación para el centrado horizontal ya que estamos usando margin: 0 auto; */
+
+  overflow-y: scroll;
+
+  /* Estilos adicionales para mejorar la apariencia */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  border-radius: 8px; 
+  /*z-index: 1000;*/
+}
+
+
+
+a {
+  color: #007BFF;
+  text-decoration: none;
+  align-content: center;
+  text-align: center;
+}
+
+a:hover {
+  text-decoration: underline;
+  align-content: center;
+  text-align: center;
+}
+
+
+
+
+
+/*
+#linksContainer {
+  max-height: 500px;  /* o la altura que desees*/
+/*  overflow-y: auto;*/
+/*}*/
+
+
+
+
+
+.close-button {
+  color: #aaa;
+  position: absolute;  /* Posición absoluta para colocar en la esquina superior derecha del modal */
+  top: 10px;  /* Espacio desde el borde superior */
+  right: 10px;  /* Espacio desde el borde derecho */
+  background-color: transparent;  /* Sin fondo */
+  border: none;  /* Sin borde */
+  font-size: 30px;  /* Tamaño de la "X" */
+  cursor: pointer;  /* Cursor del tipo mano al pasar sobre el botón */
+}
+
+.close-button:hover,
+.close-button:focus {
+  color: white;  /* Cambia el color de la "X" a blanco cuando se pasa el mouse encima */
+}
+
+#SubmitButton:disabled {
+  background-color: #cccccc; /* Color de fondo gris claro */
+  cursor: not-allowed;      /* Cursor que indica que el botón no se puede clicar */
+  color: #888888;           /* Color de texto gris oscuro */
+  border: 1px solid #aaaaaa;/* Borde gris */
+}
+
+#cancelButton {
+  background-color: #ff4d4d;   /* Color de fondo rojo */
+  color: #ffffff;              /* Texto blanco */
+  padding: 10px 20px;          /* Espaciado interno */
+  border: none;                /* Sin borde */
+  border-radius: 5px;          /* Bordes redondeados */
+  cursor: pointer;             /* Cursor de mano al pasar el mouse encima */
+  transition: background-color 0.3s; /* Transición suave para el cambio de color */
+}
+
+#cancelButton:hover {
+  background-color: #ff1a1a;   /* Color de fondo un poco más oscuro al pasar el mouse encima */
+}
+
+
+/* Estilo general para los listboxes */
+select {
+  font-size: 13px; 
+  padding: 10px 15px; /* Espacio interno para texto y bordes */
+  border-radius: 5px; /* Bordes redondeados */
+  border: 1px solid #ccc; /* Borde del listbox */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  max-width: 200px; /* Ancho máximo que puede ocupar el listbox */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+  appearance: none; /* Elimina el aspecto predeterminado del listbox en algunos navegadores */
+  -webkit-appearance: none; /* Para navegadores basados en Webkit (Safari, Chrome) */
+  -moz-appearance: none; /* Para Firefox */
+  background-color: #fff; /* Fondo blanco */
+  position: relative; 
+}
+
+/* Agrega una pequeña flecha o ícono para indicar que es un dropdown. Esta es una representación simple y puedes personalizarla más o usar íconos si lo prefieres. */
+select:after {
+  content: '\25BC'; /* Código del ícono de flecha hacia abajo */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%); /* Centra la flecha verticalmente */
+  pointer-events: none; /* Asegura que no interfiera con los clics */
+  color: #888; /* Color de la flecha */
+}
+
+/* Estilo para las opciones dentro de los listboxes */
+select option {
+  padding: 10px 15px; 
+}
+
+/* Estilo para el espacio entre los listboxes */
+br {
+  margin-bottom: 10px; 
+}
+
+
+
+
+/* Estilo por defecto para los radio buttons */
+div input[type="radio"] {
+  display: none; /* Ocultamos los radio buttons por defecto */
+}
+
+/* Estilo personalizado para los radio buttons */
+div input[type="radio"] + label:before {
+  content: '';
+  display: inline-block;
+  width: 15px; /* Tamaño del círculo del radio button */
+  height: 15px;
+  margin-right: 5px;
+  border-radius: 50%; /* Hace que sea un círculo */
+  border: 1px solid #777; /* Borde del círculo */
+  vertical-align: middle; /* Alinea verticalmente con el texto */
+  transition: background 0.2s; /* Efecto de transición suave al seleccionar */
+}
+
+/* Estilo cuando el radio button está seleccionado */
+div input[type="radio"]:checked + label:before {
+  background: #007BFF; /* Color de fondo cuando se selecciona */
+  border-color: #007BFF; /* Color del borde cuando se selecciona */
+}
+
+div label {
+  font-size: 16px;
+  margin-right: 15px; /* Aumentamos el margen a la derecha de cada etiqueta */
+}
+
+
+
+
+/* Estilos generales del formulario */
+#audio-form {
+  position: relative;
+  font-family: 'Arial', sans-serif;
+  max-width: 400px;
+  width: 100%;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#audio-form label {
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Estilos para el input de archivo y los botones */
+#audio-form input[type="file"] {
+  display: inline-block; /* Cambio clave para que se muestre en línea */
+  width: 70%; /* Ajusta según necesidad */
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  vertical-align: middle; /* Alineación vertical */
+}
+
+#audio-form #SubmitButton, 
+#audio-form #cancelButton {
+  position: absolute;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  vertical-align: middle; /* Alineación vertical */
+}
+
+#audio-form #SubmitButton {
+  display: inline-block; /* Asegurarse de que se muestre en línea */
+  background-color: #3498db;
+  color: white;
+  margin-left: 10px; /* Separación entre el input y el botón */
+}
+
+#audio-form #SubmitButton:hover {
+  background-color: #2980b9;
+}
+
+#audio-form #cancelButton {
+  background-color: #e74c3c;
+  color: white;
+  margin-left: 10px;
+}
+
+#audio-form #cancelButton:hover {
+  background-color: #c0392b;
+}
+
+/* Estilos para los íconos de carga y completado */
+#audio-form .fas {
+  font-size: 24px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* Estilo para el mensaje de estado */
+#audio-form #statusMessage {
+  font-size: 14px;
+  font-style: italic;
+  color: #555;
+}
+
+
+.flex-container {
+  display: flex;
+  align-items: center; /* Alinea verticalmente en el centro */
+  gap: 10px; /* Espaciado entre el label y el select */
+}
+
+#buttonContainer button {
+  display: inline-block;
+}
+
+#facturacion, #logout, #verificacion, #admin, #configuracion{
+  padding: 13px 13px;
+  font-size: 16px;
+  border: none;
+  background-color:#0056b3; /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+  width: 200px; 
+}
+
+#facturacion:hover, #logout:hover, #verificacion:hover, #admin:hover, #configuracion:hover {
+  padding: 13px 13px;
+  font-size: 16px;
+  border: none;
+  background-color: #01397541; /* Color de fondo */
+  color: white; /* Color del texto */
+  cursor: pointer; /* Cambiar el cursor al pasar por encima */
+  border-radius: 5px; /* Bordes redondeados */
+  width: 200px; 
+}
+
+#admin i.fas, #facturacion i.fas, #logout i.fas, #verificacion i.fas, #admin i.fas, #configuracion i.fas {
+  margin-right: 10px; /* Esto añadirá un margen a la derecha del ícono */
+}
+
+#listBoxDialer {
+  display: none;
+}
+
+
+.bold-row td {
+  font-weight: bold;
+  font-size: 14px;
+  background-color: rgba(220, 220, 220, 0.4);
+}
+
+.centered-table th{
+  text-align: center;
+  font-size: 14px;
+}
+
+.centered-table td {
+  text-align: center;
+  font-size: 12px;
+}
+
+
+#logoutForm {
+  background: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  display: inline;
+}
+
+#logout-div {
+  position: absolute;
+  bottom: 0; /* Esto coloca el div en la parte inferior de su contenedor relativo */
+  width: 100%; /* Esto hace que el div ocupe todo el ancho de la barra lateral */
+}
+ 
+#sidebar {
+  width: 20px;
+  height: 100vh;
+  background-color: #0056b3;
+  overflow-x: hidden;
+  position: fixed;
+  transition: 0.5s;
+  padding-top: 0px;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+#toggleButton {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background: #0056b3;
+  border: none;
+  color: white;
+  font-size: 20px;
+  width: 0px;  /* El mismo ancho que la barra lateral */
+  z-index: 0;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#toggleButton:hover {
+  color: rgb(255, 255, 255);
+  background: #013975;
+}
+
+.sidebar-list {
+  list-style-type: none;
+  margin-top: 60px;
+}
+
+.sidebar-list li {
+  width: 100%;
+  padding: 0px;
+  text-align: center;
+  color: #818181;
+  transition: 0.3s;
+}
+
+.sidebar-list li:hover {
+  color: #f1f1f1;
+}
+
+#content {
+  margin-left: 30px;
+  transition: 0.5s;
+}
+
+#grupoVendedor{
+  margin-left: 10px;
+}

@@ -471,25 +471,16 @@ exports.getFeedbackReportRows = async (req, res) => {
 
 exports.transformarAudio = async (req, res) => {
 
-    console.log("transformando audio en backend")
     const file = req.file;
-    //const duracion = req.body.duracion;
-    //const durationInSeconds = req.body.durationInSeconds;
+    const duracion = req.body.duracion;
+    const durationInSeconds = req.body.durationInSeconds;
 
     if (!file) {
         return res.status(400).json({error: 'No se envió ningún archivo.'});
     }
 
-    console.log("file recibido")
-    console.log(req.file)
-    console.log(req.body)
-
     const resultado = await audioToText(file, duracion, durationInSeconds);
     
-    console.log("Se obtuvo resultado: " + resultado);
-    if(resultado == {}){
-        throw new Error('Error transformando audio a texto');
-    }
     res.json(resultado);
 }
 

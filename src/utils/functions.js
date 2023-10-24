@@ -3,7 +3,7 @@ const { Logger } = require('aws-amplify');
 const gvars = require('../utils/const.js');
 const FormData = require('form-data');
 const { error } = require('console');
-const fs = require('fs').promises;
+const fs = require('fs');
 
 function currentDate() {
     const date = new Date();
@@ -87,19 +87,14 @@ function getAudioDurationInSecs(blob) {
 
 async function audioToText(audioFile, duracion, durationInSeconds) {
 
-    console.log("audioFile");
+    console.log("Transformando audio");
     console.log(audioFile);
 
-    const audioFile = fs.createReadStream(audioFile.path);
-
-    //const buffer = await fs.readFile(audioFile.path);
-
     const formData = new FormData();
-    //formData.append('file', buffer, {
-    //    filename: audioFile.originalname,
-    //    contentType: audioFile.mimetype
-    //});
-    formData.append('file', audioFile);
+    formData.append('file', fs.createReadStream(audioFile.path),{ 
+        filename: 'cariola_audioprueba.mp3',
+        contentType: 'audio/mpeg'
+    }); 
     formData.append('model', 'whisper-1');
 
     const requestOptions = {
@@ -111,29 +106,27 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
     };
 
     let transcripcion;
+    let texto = "";
 
     if(gvars.prodEnv){
-
-        console.log(formData);
-        console.log(requestOptions);
 
         try {
             const response = await fetch('https://api.openai.com/v1/audio/transcriptions', requestOptions);
             transcripcion = await response.json();
-            console.log("Response status: ", response.status);
-            console.log("Response headers: ", response.headers);
+            texto = transcripcion.text;
+
             console.log("Response: ", response);
-            fs.unlinkSync(req.file.path);
+        
+            fs.unlinkSync(audioFile.path);
 
         } catch (error) {
             console.error('Error:', error);
         }
+        
         addData(audioCost(audioFile.originalname, duracion, durationInSeconds));
-        console.log("transcripcion");
-        console.log(transcripcion);
-        console.log("transcripcion.text");
+        
         return {
-            text: transcripcion.text
+            text: texto
         };
     }
     else{  
