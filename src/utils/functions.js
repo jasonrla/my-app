@@ -104,8 +104,13 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
         body: formData
     };
 
+    let transcripcion;
+
     if(gvars.prodEnv){
-        let transcripcion;
+
+        console.log(formData);
+        console.log(requestOptions);
+
         try {
             const response = await fetch('https://api.openai.com/v1/audio/transcriptions', requestOptions);
             transcripcion = await response.json();
