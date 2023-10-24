@@ -21,7 +21,6 @@ function currentDate() {
 }
 
 function getColumnLetter(cellKey) {
-    // Extraer y retornar las letras de la clave de la celda (por ejemplo, "AB" de "AB42")
     const match = cellKey.match(/[A-Z]+/);
     return match ? match[0] : null;
 }
@@ -31,19 +30,11 @@ function transformDateFormat(dateStr) {
     return dateStr.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2}):(\d{2})/, '$2$1$3_$4$5$6');
 }
 function convertDateFormat(dateString) {
-    // Divide la fecha y la hora
     const parts = dateString.split(' ');
-
-    // Divide la fecha en día, mes y año
     const dateParts = parts[0].split('/');
-
-    // Une el año, mes y día
     const formattedDate = dateParts[2] + dateParts[1] + dateParts[0];
-
-    // Reemplaza el ":" en la hora para obtener el formato deseado
     const formattedTime = parts[1].replace(/:/g, '');
 
-    // Devuelve el formato deseado
     return formattedDate + '_' + formattedTime;
 }
 function puntuacion(...numeros) {
@@ -53,7 +44,7 @@ function puntuacion(...numeros) {
     for(let num of numeros) {
         if (num) {
             num = parseInt(num);
-            if (!isNaN(num)) { // Aseguramos que no sea NaN después de convertirlo
+            if (!isNaN(num)) {
                 sum += num;
                 count++;
             }
@@ -63,32 +54,7 @@ function puntuacion(...numeros) {
     return (sum / count) * 10;
 }
 
-function showLoadingIcon() {
-    document.getElementById('loading-icon').style.display = 'inline-block';
-    document.getElementById('complete-icon').style.display = 'none';
-}
-
-function showCompleteIcon() {
-    document.getElementById('loading-icon').style.display = 'none';
-    document.getElementById('complete-icon').style.display = 'inline-block';
-}
-
-function getAudioDurationInSecs(blob) {
-    return new Promise((resolve, reject) => {
-        const audio = new Audio(URL.createObjectURL(blob));
-        audio.onloadedmetadata = function() {
-            resolve(audio.duration);
-        };
-        audio.onerror = function() {
-            reject('Error al cargar el archivo de audio.');
-        };
-    });
-}
-
 async function audioToText(audioFile, duracion, durationInSeconds) {
-
-    console.log("Transformando audio");
-    console.log(audioFile);
 
     const formData = new FormData();
     formData.append('file', fs.createReadStream(audioFile.path),{ 
@@ -113,16 +79,23 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
         try {
             const response = await fetch('https://api.openai.com/v1/audio/transcriptions', requestOptions);
             transcripcion = await response.json();
+            
+            console.log("Transformando audio");
+            console.log(transcripcion);
+
             texto = transcripcion.text;
 
-            console.log("Response: ", response);
-        
+            if(response.status != 200){
+                console.log("response: ", transcripcion);
+                throw new Error("Error al transformar el audio");
+            }
+            
             fs.unlinkSync(audioFile.path);
 
         } catch (error) {
             console.error('Error:', error);
         }
-        
+
         addData(audioCost(audioFile.originalname, duracion, durationInSeconds));
         
         return {
@@ -144,13 +117,13 @@ function getPrompt(text,part1, part2){
 let useGpt35 = true;
 
 async function processPrompt(role, text, part1, part2, audioFileName, operation) {
-    console.log("Procesando prompt")
+    
     let data;
     let model;
     
     try {
         let payload = {
-            model: useGpt35 ? 'gpt-3.5-turbo' : 'gpt-4',
+            model: useGpt35 ? 'gpt-3.5-turbo-16k' : 'gpt-4',
             messages: [
                 { role: 'system', content: role },
                 { role: 'user', content: getPrompt(text, part1, part2) }
@@ -194,6 +167,10 @@ async function processPrompt(role, text, part1, part2, audioFileName, operation)
         }
 
         data = await response.json();
+        
+        console.log("Procesando " + operation);
+        console.log(data);
+
     } catch (error) {
         console.log('Error al analizar el texto: ' + error.message);
         return null;
@@ -341,8 +318,6 @@ function audioCost(fileName, duration ,seconds){
 
 async function saludoInstitucional(text, audioFileName){
 
-    console.log("Procesando Saludo Institucional")
-
     if(gvars.prodEnv){
 
         let valor, comentario;
@@ -368,8 +343,6 @@ async function saludoInstitucional(text, audioFileName){
 
 async function empatiaSimpatia(text, audioFileName){
     
-    console.log("Procesando Empatia Simpatia");
-    
     if(gvars.prodEnv){
         let valor, comentario;
         const result = await Promise.all([processPrompt(gvars.emsi_role, text, gvars.emsi_part1, gvars.emsi_part2, audioFileName, "Empatia/Simpatia")]);
@@ -392,8 +365,6 @@ async function empatiaSimpatia(text, audioFileName){
 }
 
 async function precalificacion(text, audioFileName){
-
-    console.log("Procesando Precalificacion");
 
     if(gvars.prodEnv){
     
@@ -438,9 +409,7 @@ async function precalificacion(text, audioFileName){
 }
 
 async function preguntasSubjetivas(text, audioFileName){
-    
-    console.log("Procesando Preguntas Subjetivas");
-    
+        
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -466,8 +435,6 @@ async function preguntasSubjetivas(text, audioFileName){
 
 async function etiquetaEnf(text, audioFileName){
     
-    console.log("Procesando Etiqueta Enfermedad");
-
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -493,8 +460,6 @@ async function etiquetaEnf(text, audioFileName){
 
 async function enfocEnf(text, audioFileName){
 
-    console.log("Procesando Enfoque Enfermedad");
-
     if(gvars.prodEnv){
 
         let valor, comentario;
@@ -519,9 +484,7 @@ async function enfocEnf(text, audioFileName){
 }
 
 async function tonoVoz(text, audioFileName){
-    
-    console.log("Procesando Tono de voz");
-    
+        
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -546,9 +509,7 @@ async function tonoVoz(text, audioFileName){
 }
 
 async function conocimientoPatol(text, audioFileName){
-    
-    console.log("Procesando Conocimiento Patología");
-    
+        
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -573,9 +534,7 @@ async function conocimientoPatol(text, audioFileName){
 }
 
 async function datoDuro(text, audioFileName){
-    
-    console.log("Procesando Dato Duro");
-    
+        
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -601,8 +560,6 @@ async function datoDuro(text, audioFileName){
 
 async function testimonio(text, audioFileName){
 
-    console.log("Procesando Testimonio");
-
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -627,9 +584,7 @@ async function testimonio(text, audioFileName){
 }
 
 async function solucionBeneficios(text, audioFileName){
-    
-    console.log("Procesando Solución Beneficios");
-    
+        
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -655,8 +610,6 @@ async function solucionBeneficios(text, audioFileName){
 
 async function respaldo(text, audioFileName){
     
-    console.log("Procesando Respaldo");
-
     if(gvars.prodEnv){
         
         let valor, comentario;
@@ -681,8 +634,6 @@ async function respaldo(text, audioFileName){
 }
 
 async function cierreVenta(text, audioFileName){
-
-    console.log("Procesando Cierre de venta");
 
     if(gvars.prodEnv){
 
@@ -709,8 +660,6 @@ async function cierreVenta(text, audioFileName){
 
 async function comunicacionEfectiva(text, audioFileName){
 
-    console.log("Procesando Comunicación efectiva");
-
     return{
         "valor": "0",
         "comentario": "comentario Comunicación efectiva"
@@ -719,8 +668,6 @@ async function comunicacionEfectiva(text, audioFileName){
 
 async function conocimientoTratamiento(text, audioFileName){
 
-    console.log("Procesando Conocimiento del tratamiento");
-
     return{
         "valor": "0",
         "comentario": "comentario Conocimiento del tratamiento"
@@ -728,8 +675,6 @@ async function conocimientoTratamiento(text, audioFileName){
 }
 
 async function rebateObjeciones(text, audioFileName){
-
-    console.log("Procesando Rebate de objeciones");
 
     return{
         "valor": "0",
@@ -742,6 +687,7 @@ async function analizarTextos(reqBody) {
     console.log("Analizando textos");
 
     ({ audioFileName, auditor, grupo_vendedor, motivo, nombre_vendedor, tipo_campana, transcripcion, duracion } = reqBody);
+    
     console.log(reqBody.body);
 
     const resultados = await Promise.all([
@@ -859,8 +805,6 @@ async function analizarTextos(reqBody) {
 }
 
 function calcularPromedio(datos, clave) {
-
-    console.log("Calculando promedio")
     
     if (datos.length === 0) return "0";
     
