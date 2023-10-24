@@ -1214,8 +1214,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
           const formData1 = new FormData();
           formData1.append('audioFile', audioFile);
-          formData1.append('duracion', duracion.durationFormat);
-          formData1.append('durationInSeconds', duracion.durationInSeconds);
+          //formData1.append('duracion', duracion.durationFormat);
+          //formData1.append('durationInSeconds', duracion.durationInSeconds);
           
           const requestOptions1 = {
             method: 'POST',

@@ -473,8 +473,8 @@ exports.transformarAudio = async (req, res) => {
 
     console.log("transformando audio en backend")
     const file = req.file;
-    const duracion = req.body.duracion;
-    const durationInSeconds = req.body.durationInSeconds;
+    //const duracion = req.body.duracion;
+    //const durationInSeconds = req.body.durationInSeconds;
 
     if (!file) {
         return res.status(400).json({error: 'No se envió ningún archivo.'});

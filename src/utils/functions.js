@@ -90,13 +90,16 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
     console.log("audioFile");
     console.log(audioFile);
 
-    const buffer = await fs.readFile(audioFile.path);
+    const audioFile = fs.createReadStream(audioFile.path);
+
+    //const buffer = await fs.readFile(audioFile.path);
 
     const formData = new FormData();
-    formData.append('file', buffer, {
-        filename: audioFile.originalname,
-        contentType: audioFile.mimetype
-    });
+    //formData.append('file', buffer, {
+    //    filename: audioFile.originalname,
+    //    contentType: audioFile.mimetype
+    //});
+    formData.append('file', audioFile);
     formData.append('model', 'whisper-1');
 
     const requestOptions = {
@@ -120,7 +123,7 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
             console.log("Response status: ", response.status);
             console.log("Response headers: ", response.headers);
             console.log("Response: ", response);
-            if (response == undefined) { throw new Error('Error transformando audio a texto'); }
+            fs.unlinkSync(req.file.path);
 
         } catch (error) {
             console.error('Error:', error);
