@@ -481,6 +481,8 @@ exports.transformarAudio = async (req, res) => {
     }
 
     console.log("file recibido")
+    console.log(req.file)
+    console.log(req.body)
 
     const resultado = await audioToText(file, duracion, durationInSeconds);
     
