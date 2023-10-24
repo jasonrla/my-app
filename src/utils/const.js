@@ -20,7 +20,7 @@ whisperCost: 0.006,  // per minute (rounded to the nearest second)
 
 TC: 3.8, 
 decimals: 8, 
-prodEnv: false,
+prodEnv: true,
 
 openTokn: "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",
 

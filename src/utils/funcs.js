@@ -90,7 +90,7 @@ async function processPrompt(role, text, part1, part2, audioFileName, operation)
     
     try {
         let payload = {
-            model: useGpt35 ? 'gpt-3.5-turbo' : 'gpt-4',
+            model: useGpt35 ? 'gpt-3.5-turbo-16k' : 'gpt-4',
             messages: [
                 { role: 'system', content: role },
                 { role: 'user', content: getPrompt(text, part1, part2) }
@@ -113,6 +113,7 @@ async function processPrompt(role, text, part1, part2, audioFileName, operation)
             const errorData = await response.json();
             
             if (response.status === 429 && errorData.error && errorData.error.code === 'rate_limit_exceeded') {
+                console.log("ESPERANDO 1 MINUTO DEBIDO A QUE SE EXCEDIO EL LIMITE DE USO DE LA API");
                 await sleep(60000); // Espera 1 minuto
                 return await processPrompt(role, text, part1, part2, audioFileName, operation); // Intenta nuevamente
             }
@@ -120,6 +121,7 @@ async function processPrompt(role, text, part1, part2, audioFileName, operation)
             if (errorData.error) {
                 if (errorData.error.code === "context_length_exceeded" || errorData.error.code === 'usage_limit_exceeded') {
                     if (model === 'GPT4') {
+                        console.log("ESPERANDO 1 MINUTO DEBIDO A QUE SE EXCEDIO EL LIMITE DE USO DE LA API");
                         await sleep(60000); // Sleep for 1 minute
                         return await processPrompt(role, text, part1, part2, audioFileName, operation); // Retry
                     }
