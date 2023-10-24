@@ -25,4 +25,4 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -i ec2.pem ec2-user@44.201.144.212 "./start-app.sh"  
+        ssh -i ec2.pem ec2-user@44.201.144.212 "cd my-app && git pull origin main"
