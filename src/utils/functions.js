@@ -83,9 +83,11 @@ function getAudioDurationInSecs(blob) {
         };
     });
 }
+
 async function audioToText(audioFile, duracion, durationInSeconds) {
 
     console.log("audioFile");
+    console.log(audioFile);
 
     const buffer = await fs.readFile(audioFile.path);
 
@@ -114,6 +116,10 @@ async function audioToText(audioFile, duracion, durationInSeconds) {
         try {
             const response = await fetch('https://api.openai.com/v1/audio/transcriptions', requestOptions);
             transcripcion = await response.json();
+            console.log("Response status: ", response.status);
+            console.log("Response headers: ", response.headers);
+            console.log("Response: ", response);
+
         } catch (error) {
             console.error('Error:', error);
         }
