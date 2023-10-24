@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Audio to Text to Analysis</title>
+  <link rel="stylesheet" type="text/css" href="/public/css/auditoria-styles.min.css"> 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" charset="UTF-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js" charset="UTF-8"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10" charset="UTF-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js" charset="UTF-8"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <div id="sidebar">
+    
+    <ul class="sidebar-list">
+      <li>
+        <button id="toggleButton">☰</button>
+      </li>
+      <li>
+        <button id="facturacion"><i class="fas fa-file-invoice"></i>Facturación</button>
+      </li>
+      <li>
+        <button id="verificacion"><i class="fas fa-check"></i>Verificación</button>
+      </li>
+      <li>
+        <button id="admin"><i class="fas fa-user-shield"></i>Admin site</button>
+      </li>
+      <li>
+        <button id="configuracion"><i class="fas fa-user-cog"></i>Configuración</button>
+      </li>
+      <li>
+        <div id="logout-div">
+          <form action="/logout" method="post" id="logoutForm">
+            <button type="submit" id="logout">
+              <i class="fas fa-sign-out-alt"></i>Cerrar Sesión</button>
+          </form>
+        </div> 
+      </li>
+    </ul>
+  </div>
+
+
+  <div id="content">
+
+  <img class="imagen-derecha" src="/public/img/logo.svg" alt="Descripción de la imagen">
+  <h1>Auditoría</h1>
+  <h2>Auditor: <span id="verifName"></span></h2>
+  
+
+  <form id="vendedor-form">
+    <div>
+      <label for="vendedorFile">Tipo de campaña:</label>
+      <input type="radio" name="channel" id="online" value="Publicidad Online">
+      <label for="online">Publicidad Online</label>
+      <input type="radio" name="channel" id="tv" value="Publicidad TV">
+      <label for="tv">Publicidad TV</label>
+      <input type="radio" name="channel" id="reorden" value="Reorden">
+      <label for="reorden">Reorden</label>
+    </div>
+    <br>
+      <select id="listBoxDialer">
+        <option value="" selected>Seleccione una opción</option>
+      </select>
+  </form>
+
+  <form id="vendedor-form-2">
+    <label for="vendedorFile">Vendedor:</label>
+    <select id="miListbox">
+      <option value="" selected>Seleccione un vendedor</option>
+    </select>
+    <label id="grupoVendedor"></label>
+    <br>
+    <br>
+    <label for="motivoFile">Motivo:</label>
+    <select id="miListboxMotivo">
+      <option value="" selected>Seleccione un motivo</option>
+    </select>
+  </form>
+
+  <form id="audio-form">
+    <label for="audioFile">Subir archivos de audio: </label>
+    
+    <input type="file" id="audioFile" multiple>
+    <input id="SubmitButton" type="submit" value="Cargar">
+    <button id="cancelButton" style="display: none;">Cancelar</button>
+    <br>
+    <br>
+    <div id="loading-icon" class="fas fa-spinner fa-spin"></div>
+    <div id="loading-text"></div>
+    <div id="complete-icon" class="fas fa-check" style="display: none;"></div>
+    <div id="complete-text"></div>
+    <span id="statusMessage"></span>
+  </form>
+  
+  
+
+  <h2>Resultados</h2>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <div id="buttonContainer">
+    <button id="downloadBtn" disabled><i class="fas fa-file-excel"></i> Descargar</button>
+    <button id="generalReport" disabled><i class="fas fa-file-alt"></i> Reporte General</button>
+    
+  </div>
+  <div id="linksContainer"></div>
+
+  <div id="modalTextoTransformado">
+    <div id="modalTextoTransformado-content">
+      <button onclick="closeModalTextoTransformado()" class="close-button">×</button>  
+      <button id="downloadBtnPDFTextoTransformado">Exportar a PDF</button>
+      <h2>Titulo</h2>
+      <div id="modalBodyTextoTransformado">
+      </div>
+    </div>
+  </div>
+
+  <div id="modal">
+    <div id="modalContent">
+      <button onclick="closeModal()" class="close-button">×</button>
+      <button id="downloadBtnPDFModal">Exportar a PDF</button>
+      <h2>Reporte 1</h2>
+      <div id="modalBody"></div> <!--aqui se agrega la tabla-->
+      <br>
+      <button id="downloadBtnPDFModal2">Exportar a PDF</button>
+      <br>
+    </div>
+  </div>
+
+  <div id="modalFeedbackInterno">
+    <div id="modalFeedbackInterno-content">
+      <button onclick="closeModalFeedbackInterno()" class="close-button">×</button>  
+      <button id="downloadBtnPDFInterno" disabled>Exportar a PDF</button>
+      <h2>Reporte 2</h2>
+      <label for="vendedorFile">Tipo de feedback:</label>
+      <select id="listBox1">
+        <option value="" selected>Seleccione una opción</option>
+      </select>
+      <br>
+      <label for="vendedorFile">Asunto:</label>
+      <select id="listBox2">
+        <option value="" selected>Seleccione una opción</option>
+      </select>
+      <br>
+      <label for="vendedorFile">Actitud de vendedor:</label>
+      <select id="listBox3">
+        <option value="" selected>Seleccione una opción</option>
+      </select>
+      <br>
+      <br>
+      <label for="imageInput">Adjuntar imágenes:</label>
+      <input type="file" id="imageInput" multiple accept="image/*" disabled>
+      <br>
+      <button id="attachImagesBtn" disabled>Adjuntar imágenes</button>
+      <br>
+      <div id="modalBodyFeedbackInterno"></div>
+      <br>
+      <br>
+      <button id="downloadBtnPDFInterno2" disabled>Exportar a PDF</button>
+      <br>
+    </div>
+  </div>
+
+  <div id="modalReporteGeneral">
+    <div id="modalReporteGeneral-content">
+      <button onclick="closeModalmodalReporteGeneral()" class="close-button">×</button>
+      <button id="downloadBtnPDFGeneral">Exportar a PDF</button>
+      <h2>Reporte General</h2>
+      <div id="modalBodyReporteGeneral"></div> <!--aqui se agrega la tabla-->
+      <br>
+      <button id="downloadBtnPDFGeneral2">Exportar a PDF</button>
+      <br>
+    </div>
+  </div>
+
+  <div id="modalFacturacion">
+    <div id="modalFacturacion-content">
+      <button onclick="closeModalmodalFacturacion()" class="close-button">×</button>
+      <button id="downloadBtnPDFFacturacion">Exportar a PDF</button>
+      <div id="modalBodymodalFacturacion"></div> <!--aqui se agrega la tabla-->
+      <br>
+      <button id="downloadBtnPDFFacturacion2">Exportar a PDF</button>
+      <br>
+    </div>
+  </div>
+  </div>
+  <script src="/public/js/index.js" charset="UTF-8"></script>
+</body>
+</html>
+

@@ -17,9 +17,17 @@
         "winston": "^3.11.0"
     },
     "devDependencies": {
-        "javascript-obfuscator": "^4.1.0"
+        "clean-css-cli": "^5.6.2",
+        "html-minifier": "^4.0.0",
+        "javascript-obfuscator": "^4.1.0",
+        "mkdirp": "^3.0.1",
+        "terser": "^5.22.0"
     },
     "scripts": {
-        "obfuscate": "javascript-obfuscator ./public --output ./dist"
+        "prepare-folders": "mkdirp public/css public/html public/js",
+        "minify": "npm run prepare-folders && npm run minify-css && npm run minify-html && npm run obfuscate-js",
+        "minify-css": "node src/utils/minify-css.js",
+        "minify-html": "html-minifier --input-dir public_original/html/ --output-dir public/html/ --collapse-whitespace",
+        "obfuscate-js": "javascript-obfuscator public_original/js/ --output public/js/"
     }
 }
