@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Audio to Text to Analysis</title>
+  <link rel="stylesheet" type="text/css" href="/public/css/mobile.min.css"> 
   <link rel="stylesheet" type="text/css" href="/public/css/auditoria-styles.min.css"> 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" charset="UTF-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js" charset="UTF-8"></script>
@@ -10,8 +11,14 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10" charset="UTF-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.10.11/interact.min.js" charset="UTF-8"></script>
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
+  <div id="mobile-warning">
+    <h1>No disponible para versión móvil, solo web</h1>
+    <img class="imagen-warning" src="/public/img/logo.svg" alt="Descripción de la imagen">
+  </div>
 
   <div id="sidebar">
     
@@ -19,11 +26,14 @@
       <li>
         <button id="toggleButton">☰</button>
       </li>
-      <li>
+      <li id="adminOption">
         <button id="facturacion"><i class="fas fa-file-invoice"></i>Facturación</button>
       </li>
       <li>
-        <button id="verificacion"><i class="fas fa-check"></i>Verificación</button>
+        <button id="reportes"><i class="fas fa-chart-bar"></i>Reportes</button>
+      </li>
+      <li>
+        <button id="datajson"><i class="fa fa-download"></i>Data JSON</button>
       </li>
       <li>
         <button id="admin"><i class="fas fa-user-shield"></i>Admin site</button>
@@ -47,12 +57,11 @@
 
   <img class="imagen-derecha" src="/public/img/logo.svg" alt="Descripción de la imagen">
   <h1>Auditoría</h1>
-  <h2>Auditor: <span id="verifName"></span></h2>
+  <h2>Auditor: <span id="verifName"></span><span id="role"></span></h2>
   
-
   <form id="vendedor-form">
     <div>
-      <label for="vendedorFile">Tipo de campaña:</label>
+      <label for="vendedorFile">Tipo de campaña: <span class="required">*</span></label>
       <input type="radio" name="channel" id="online" value="Publicidad Online">
       <label for="online">Publicidad Online</label>
       <input type="radio" name="channel" id="tv" value="Publicidad TV">
@@ -67,34 +76,61 @@
   </form>
 
   <form id="vendedor-form-2">
-    <label for="vendedorFile">Vendedor:</label>
+    <label for="vendedorFile">Vendedor: <span class="required">*</span></label>
     <select id="miListbox">
       <option value="" selected>Seleccione un vendedor</option>
     </select>
     <label id="grupoVendedor"></label>
     <br>
     <br>
-    <label for="motivoFile">Motivo:</label>
+    <label for="motivoFile">Motivo: <span class="required">*</span></label>
     <select id="miListboxMotivo">
       <option value="" selected>Seleccione un motivo</option>
     </select>
   </form>
 
-  <form id="audio-form">
-    <label for="audioFile">Subir archivos de audio: </label>
-    
-    <input type="file" id="audioFile" multiple>
-    <input id="SubmitButton" type="submit" value="Cargar">
-    <button id="cancelButton" style="display: none;">Cancelar</button>
-    <br>
-    <br>
-    <div id="loading-icon" class="fas fa-spinner fa-spin"></div>
-    <div id="loading-text"></div>
-    <div id="complete-icon" class="fas fa-check" style="display: none;"></div>
-    <div id="complete-text"></div>
-    <span id="statusMessage"></span>
-  </form>
-  
+  <div class="audio-form-container">
+    <div id="div1">
+      
+      <form id="checkForm">
+        <div class="title-container">
+          <label for="processes">Procesos: <span class="required">*</span></label>
+        </div>
+        <div class="checkbox-container">
+            <label for="selectAll" class="col1 row1"><input type="checkbox" id="selectAll" checked> Seleccionar todo</label>
+            <label for="deselectAll" class="col1 row2"><input type="checkbox" id="deselectAll"> Deseleccionar todo</label>
+            <label for="box1" class="col2 row1"><input type="checkbox" class="box" id="box1" name="box1" value="1" checked>Presentación Empática</label>
+            <label for="box2" class="col2 row2"><input type="checkbox" class="box" id="box2" name="box2" value="2" checked>Calificación</label>
+            <label for="box3" class="col2 row3"><input type="checkbox" class="box" id="box3" name="box3" value="3" checked>Panorama Oscuro</label>
+            <label for="box4" class="col2 row4"><input type="checkbox" class="box" id="box4" name="box4" value="4" checked>Testimonio</label>
+            <label for="box5" class="col2 row5"><input type="checkbox" class="box" id="box5" name="box5" value="5" checked>Solución/Beneficios</label>
+            <label for="box6" class="col3 row1"><input type="checkbox" class="box" id="box6" name="box6" value="6" checked>Respaldo</label>
+            <label for="box7" class="col3 row2"><input type="checkbox" class="box" id="box7" name="box7" value="7" checked>Cierre de Venta</label>
+            <label for="box8" class="col3 row3"><input type="checkbox" class="box" id="box8" name="box8" value="8" checked>Comunicación Efectiva</label>
+            <label for="box9" class="col3 row4"><input type="checkbox" class="box" id="box9" name="box9" value="9" checked>Conocimiento del Tratamiento</label>
+            <label for="box10" class="col3 row5"><input type="checkbox" class="box" id="box10" name="box10" value="10" checked>Rebate de Posibles Objeciones</label>
+        </div>
+      </form>
+    </div>
+
+    <div id="div2">
+      <form id="audio-form">
+        <label for="audioFile">Subir archivos de audio: </label>
+        
+        <div style="display: flex; align-items: center;">
+          <input type="file" id="audioFile" accept="audio/*" multiple>
+          <input id="SubmitButton" type="submit" value="Cargar">
+          <button id="cancelButton" style="display: none;">Cancelar</button>
+        </div>
+        <br>
+        <div id="loading-icon" class="fas fa-spinner fa-spin"></div>
+        <div id="loading-text"></div>
+        <div id="complete-icon" class="fas fa-check" style="display: none;"></div>
+        <div id="complete-text"></div>
+        <span id="statusMessage"></span>
+      </form>
+    </div>
+  </div>
   
 
   <h2>Resultados</h2>
@@ -133,27 +169,81 @@
     <div id="modalFeedbackInterno-content">
       <button onclick="closeModalFeedbackInterno()" class="close-button">×</button>  
       <button id="downloadBtnPDFInterno" disabled>Exportar a PDF</button>
-      <h2>Reporte 2</h2>
-      <label for="vendedorFile">Tipo de feedback:</label>
-      <select id="listBox1">
-        <option value="" selected>Seleccione una opción</option>
-      </select>
-      <br>
-      <label for="vendedorFile">Asunto:</label>
-      <select id="listBox2">
-        <option value="" selected>Seleccione una opción</option>
-      </select>
-      <br>
-      <label for="vendedorFile">Actitud de vendedor:</label>
-      <select id="listBox3">
-        <option value="" selected>Seleccione una opción</option>
-      </select>
-      <br>
-      <br>
-      <label for="imageInput">Adjuntar imágenes:</label>
-      <input type="file" id="imageInput" multiple accept="image/*" disabled>
-      <br>
-      <button id="attachImagesBtn" disabled>Adjuntar imágenes</button>
+      <h2>Feedback Lider</h2>
+      
+      <div class="main-container">
+
+        <div class="form-container1">
+          <div class="form-group">
+            <label for="date-picker">Fecha:</label>
+            <div class="container">
+              <input type="text" id="datepicker" onclick="openCalendar()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="date-picker">Fecha del Lead: <span class="required">*</span></label>
+            <div class="container">
+              <input type="text" id="datepicker2" onclick="openCalendar()" placeholder="MM/DD/YYYY">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="listboxAgentes">Agente: <span class="required">*</span></label>
+            <select id="listboxAgentes">
+              <option value="" selected>Seleccione una opción</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="listBox1">Tipo de feedback: <span class="required">*</span></label>
+            <select id="listBox1">
+              <option value="" selected>Seleccione una opción</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="listBox3">Actitud de vendedor: <span class="required">*</span></label>
+            <select id="listBox3">
+              <option value="" selected>Seleccione una opción</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-container2">
+          <div class="form-group">
+            <label for="listBoxLead" class="textarea-label">Lead: <span class="required">*</span></label>
+            <textarea id="autoResizeTextarea1"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="listboxGrupos">Grupo: <span class="required">*</span></label>
+            <select id="listboxGrupos">
+              <option value="" selected>Seleccione una opción</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="listboxLideres">Lider: <span class="required">*</span></label>
+            <select id="listboxLideres">
+              <option value="" selected>Seleccione una opción</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="listBox2">Asunto o Motivo de la Auditoria: <span class="required">*</span></label>
+            <select id="listBox2">
+              <option value="" selected>Seleccione una opción</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    
+      <div class="form-group2">
+        <label>Observaciones:</label>
+        <textarea id="autoResizeTextarea2"></textarea>
+      </div>
+
+      <div class="form-group3">
+        <label for="imageInput">Adjuntar imágenes:</label>
+        <input type="file" id="imageInput" multiple accept="image/*">
+        <button id="attachImagesBtn">Adjuntar imágenes</button>
+      </div>
+
       <br>
       <div id="modalBodyFeedbackInterno"></div>
       <br>
@@ -187,6 +277,7 @@
   </div>
   </div>
   <script src="/public/js/index.js" charset="UTF-8"></script>
+  <script src="/public/js/mobile.js" charset="UTF-8"></script>
 </body>
 </html>
 

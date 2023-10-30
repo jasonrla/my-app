@@ -14,10 +14,22 @@ body {
   font-weight: normal; 
 }
 
+#role{
+  display: inline-block;
+  font-weight: normal;
+  margin-left: 10px;
+  font-size: 18px;
+}
+
 .imagen-derecha {
   position: absolute;
   top: 5%;
   right: 5%;
+}
+
+.imagen-warning {
+  display: block;
+  margin: 0 auto;
 }
 
 h1, h2 {
@@ -35,6 +47,61 @@ form {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
+
+.title-container {
+  margin-bottom: 15px;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.audio-form-container{
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+#check-form{
+  height: 100%;
+}
+
+#div1{
+  margin-right: 20px;
+}
+
+#div2{
+  height: 100%;
+}
+
+.checkbox-container {
+  display: grid;
+  grid-template-columns: 180px 210px 260px; 
+  grid-template-rows: repeat(5, auto);
+  gap: 10px;
+  width: fit-content;
+  height: 100%;
+  
+}
+
+.col1.row1 { grid-column: 1; grid-row: 1; }
+.col1.row2 { grid-column: 1; grid-row: 2; }
+
+.col2.row1 { grid-column: 2; grid-row: 1; }
+.col2.row2 { grid-column: 2; grid-row: 2; }
+.col2.row3 { grid-column: 2; grid-row: 3; }
+.col2.row4 { grid-column: 2; grid-row: 4; }
+.col2.row5 { grid-column: 2; grid-row: 5; }
+
+.col3.row1 { grid-column: 3; grid-row: 1; }
+.col3.row2 { grid-column: 3; grid-row: 2; }
+.col3.row3 { grid-column: 3; grid-row: 3; }
+.col3.row4 { grid-column: 3; grid-row: 4; }
+.col3.row5 { grid-column: 3; grid-row: 5; }
+
+.checkbox-container:label {
+  cursor: pointer;
+}
+
+
 
 input[type="file"]{
   padding: 10px;
@@ -136,6 +203,11 @@ pre {
   border-radius: 5px; /* Bordes redondeados */
 }
 
+#attachImagesBtn{
+  display: inline-block;
+  margin-left: 10px;
+}
+
 #downloadBtnPDFInterno[disabled], #downloadBtnPDFInterno2[disabled], #attachImagesBtn[disabled],
 #downloadBtn[disabled], #generalReport[disabled] {
   background-color: #c0c0c0;
@@ -214,6 +286,7 @@ pre {
 #loading-icon {
   color: #3498db; /* Color azul. Puedes cambiarlo según tu diseño. */
   display: none;
+  margin-bottom: 5px;
 }
 
 /* Ícono de completo (check) */
@@ -491,25 +564,26 @@ div label {
 
 
 
-
 /* Estilos generales del formulario */
 #audio-form {
   position: relative;
   font-family: 'Arial', sans-serif;
-  max-width: 400px;
+  height: 110px;
+  max-width: 900px;
   width: 100%;
   margin: 0;
   padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 5px;
-  /*box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);*/
+  border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  flex-direction: column;
+  justify-content: space-between; 
 }
 
 #audio-form label {
   font-size: 16px;
   font-weight: bold;
   display: block;
+  margin-top: 5px;
   margin-bottom: 10px;
 }
 
@@ -525,13 +599,13 @@ div label {
 
 #audio-form #SubmitButton, 
 #audio-form #cancelButton {
-  position: absolute;
-  padding: 10px 20px;
+  position: relative;
+  width: 100px;
+  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
-  vertical-align: middle; /* Alineación vertical */
 }
 
 #audio-form #SubmitButton {
@@ -539,6 +613,7 @@ div label {
   background-color: #3498db;
   color: white;
   margin-left: 10px; /* Separación entre el input y el botón */
+  margin-right: 20px; /* Separación entre el input y el botón */
 }
 
 #audio-form #SubmitButton:hover {
@@ -580,7 +655,7 @@ div label {
   display: inline-block;
 }
 
-#facturacion, #logout, #verificacion, #admin, #configuracion{
+#facturacion, #logout, #verificacion, #admin, #configuracion, #datajson, #reportes{
   padding: 13px 13px;
   font-size: 16px;
   border: none;
@@ -591,7 +666,7 @@ div label {
   width: 200px; 
 }
 
-#facturacion:hover, #logout:hover, #verificacion:hover, #admin:hover, #configuracion:hover {
+#facturacion:hover, #logout:hover, #verificacion:hover, #admin:hover, #configuracion:hover, #datajson:hover, #reportes:hover {
   padding: 13px 13px;
   font-size: 16px;
   border: none;
@@ -602,7 +677,7 @@ div label {
   width: 200px; 
 }
 
-#admin i.fas, #facturacion i.fas, #logout i.fas, #verificacion i.fas, #admin i.fas, #configuracion i.fas {
+#admin i.fas, #facturacion i.fas, #logout i.fas, #verificacion i.fas, #admin i.fas, #configuracion i.fas, #datajson i.fas, #reportes i.fas {
   margin-right: 10px; /* Esto añadirá un margen a la derecha del ícono */
 }
 
@@ -700,4 +775,123 @@ div label {
 
 #grupoVendedor{
   margin-left: 10px;
+}
+
+
+/*Calendario*/
+.hidden {
+  display: none;
+}
+
+.container, select {
+  flex: 1; /* tomar el espacio restante */
+}
+
+#date-picker1, #date-picker2 {
+  font-size: 16px;  /* Haz el texto más grande */
+  height: 20px;    /* Altura del campo de entrada */
+  width: 196px;    /* Ancho del campo de entrada */
+}
+
+
+#autoResizeTextarea1{
+  padding-left: 10px; 
+  width: 39%;
+  min-height: 0px;
+  height: 18px;
+  vertical-align: middle;
+  resize: none;
+}
+
+#autoResizeTextarea2{
+  padding-left: 10px; 
+  width: 90%;
+  min-height: 10px;
+  height: 55px;
+  box-sizing: border-box;
+  resize: vertical;
+  vertical-align: middle;
+}
+
+.textarea-label {
+  /* Aquí puedes añadir estilos específicos para corregir la alineación */
+  /*display: flex;
+  /*align-items: center;*/
+}
+
+#readonlyTextarea {
+  background-color: #f1f1f1;
+}
+
+.main-container {
+  display: flex;
+}
+
+.form-container1 {
+  margin-right: 10px; /* Ajusta este valor según el espacio que quieras */
+  margin-bottom: 10px; /* Ajusta este valor según el espacio que quieras */
+}
+
+.form-container2 {
+  margin-bottom: 10px; /* Ajusta este valor según el espacio que quieras */
+}
+
+.form-container1, .form-container2 {
+  flex: 1;  /* Ocupan igual espacio. Puedes ajustar según tus necesidades. */
+  padding: 15px;  /* Espaciado interno. Puedes ajustar según tus necesidades. */
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.form-group, .form-group2 {
+  display: flex;
+  align-items: center; /* Centrar verticalmente los elementos dentro del contenedor flex */
+  margin-bottom: 10px;
+}
+
+.form-group2, .form-group3 {
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.form-group label {
+  flex: 0 0 250px;  /* Ancho fijo para labels. Ajusta según tus necesidades. */
+}
+
+.form-group label, #autoResizeTextarea1, #autoResizeTextarea2 {
+  margin: 0;
+  padding: 10;
+  line-height: 15px;  /* Debería coincidir con la altura del textarea */
+}
+
+.hidden {
+  display: none;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
+#datepicker{
+  margin-bottom: 10px;
+}
+
+#datepicker, datepicker2 {
+  font-size: 36px;
+  width: 250px; 
+  padding: 10px;
+}
+
+.flatpickr-input {
+  font-size: 18px;
+  width: 250px;
+  padding: 5px 10px;
+}
+
+
+.required {
+  color: red;
 }

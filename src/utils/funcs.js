@@ -77,7 +77,9 @@ async function processPrompt(role, text, part1, part2, audioFileName ,operation)
     addData(textCost(model, data, audioFileName, operation));
     return extractJSON(data.choices[0].message.content);
 }
-*/
+//////
+
+
 
 let useGpt35 = true; // Variable para alternar entre GPT-3.5 y GPT-4
 
@@ -1538,7 +1540,8 @@ async function analizarTextos(audioFiles, auditor, grupo, motivo, asesor, tipoCa
                 setListboxValue("listBox2", previousSelections.listBox2);
                 setListboxValue("listBox3", previousSelections.listBox3);
             }
-            */
+            /////
+            
            const linkId = "1";
            
             mostrarResultadosFeedback(linkId, "modalFeedbackInterno", "modalBodyFeedbackInterno", resultados,auditor,grupo, motivo, asesor,tipoCampana, audioFile.name, textoTransformado.duration);
@@ -1944,8 +1947,8 @@ function createReportTable(table, resultados, nombreAuditor, grupoVendedor, moti
 
     td.appendChild(imageElement);    
     tr.appendChild(td);
-    table.appendChild(tr);*/
-
+    table.appendChild(tr);/////
+    
     rowsData.forEach(rowData => {
         const tr = document.createElement('tr');
 
@@ -2602,7 +2605,8 @@ function extractJSON(text) {
 document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
   });
-*/
+/////
+
 
 function textCost(model, data, audioFileName, operation){
     
@@ -2724,4 +2728,6 @@ module.exports = {
     textCost,
     audioCost,
     addData
-  };*/
+  };
+  
+*/

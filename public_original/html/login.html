@@ -2,9 +2,14 @@
 <html>
 <head>
     <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/public/css/mobile.min.css"> 
     <link rel="stylesheet" type="text/css" href="/public/css/login-styles.min.css">
 </head>
 <body>
+    <div id="mobile-warning">
+        <h1>No disponible para versión móvil, solo web</h1>
+        <img class="imagen-warning" src="/public/img/logo.svg" alt="Descripción de la imagen">
+      </div>
     <img class="imagen-derecha" src="/public/img/logo.svg" alt="Descripción de la imagen">
     <div class="login-form">
         <h2>Login</h2>
@@ -15,5 +20,6 @@
         </form>
         <a id="forgot-password-link" href="/forgot-password">Forgot Password?</a>
     </div>
+    <script src="/public/js/mobile.js" charset="UTF-8"></script>
 </body>
 </html>

@@ -53,13 +53,14 @@ exports.login = (req, res) => {
             console.log('Authentication Successful!', session);
             accessToken = session.getAccessToken().getJwtToken();
             gvars.tkn = accessToken;
-            //res.json({ accessToken: accessToken });
+            gvars.username = cognitoUser.getUsername();
   
             const idToken = session.getIdToken().getJwtToken();
             const decodedToken = jwt.decode(idToken);
-            const fullName = decodedToken.name;
-            gvars.auditor = fullName;
-  
+            gvars.auditor = decodedToken.name;
+            gvars.group = decodedToken['cognito:groups'][0];
+            gvars.email = decodedToken.email;
+
             res.redirect('/auditoria');
         },
         onFailure: (err) => {
@@ -137,4 +138,7 @@ cognitoUser.confirmPassword(req.body.code, req.body.newPassword, {
         res.redirect('/confirm-password');
     }
 });
+
+
+
 };
