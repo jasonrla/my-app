@@ -6,6 +6,18 @@ const { error } = require('console');
 const mp3Duration = require('mp3-duration');
 const fs = require('fs');
 
+function addLog(message, level = "INFO") {
+    const timestamp = new Date().toISOString(); // Genera un timestamp en formato ISO
+    const logEntry = {
+        timestamp: timestamp,
+        level: level,
+        message: message
+    };
+    
+    gvars.logs.entries.push(logEntry);
+    console.log(gvars.logs);
+}
+
 function currentDate() {
     const date = new Date();
     
@@ -99,12 +111,12 @@ function procesarAudio(nombreAudio, transcripcionTexto, duracion, durationInSeco
         durationInSeconds: durationInSeconds
     };
     console.log("se guardo en transcripciones");
-    console.log(gvars.transcripciones);
+    addLog(`Se guardo la transcripción del audio: ${nombreAudio}`);
 }
 
 function obtenerDetallesAudio(nombreAudio) {
     if (gvars.transcripciones.hasOwnProperty(nombreAudio)) {
-        console.log("se encontró audio en gvars.transcripciones")
+        addLog(`Se encontró la transcripción del audio: ${nombreAudio}`);
         return {
             transcripcion: gvars.transcripciones[nombreAudio].transcripcion,
             duracion: gvars.transcripciones[nombreAudio].duracion,
@@ -129,12 +141,12 @@ function guardarAnalisisTexto(nombreAudio, tipo, valor, comentario, otrosValores
         comentario: comentario
     };
     console.log("se guardo en textosAnalizados");
-    console.log(gvars.textosAnalizados);
+    addLog(`Se guardo el "${tipo}" en textosAnalizados`);
 }
 
 function obtenerDetallesTexto(nombreAudio, tipo) {
     if (gvars.textosAnalizados[nombreAudio] && gvars.textosAnalizados[nombreAudio][tipo]) {
-        console.log("se encontró audio en gvars.textosAnalizados")
+        addLog(`Se encontró detalles de "${tipo}" del audio: ${nombreAudio}`);
         return gvars.textosAnalizados[nombreAudio][tipo];
     } else {
         return null; // o cualquier valor que quieras retornar en caso de que el audio o el tipo no existan
@@ -146,6 +158,8 @@ function obtenerDetallesTexto(nombreAudio, tipo) {
 async function audioToText(audioFile) {
 
     if(gvars.prodEnv){
+
+        addLog("audioToText", "INFO");
 
         let texto = ""; let durationFormat, durationInSeconds;
 
@@ -166,12 +180,15 @@ async function audioToText(audioFile) {
                     durationInSeconds = result.durationInSeconds;
                     console.log("durationFormat:", durationFormat);
                     console.log("durationInSeconds:", durationInSeconds);
+                    addLog(`Audio File: ${audioFile.originalname}: `+{"durationFormat": durationFormat,"durationInSeconds": durationInSeconds},"INFO");
                 } else {
                 console.log("Result es undefined o null");
+                addLog("Result es undefined o null","ERROR");
                 }
             })
             .catch(err => {
             console.log(`Error: ${err.message}`);
+            addLog(`Error: ${err.message}`,"ERROR");
             });
 
             console.log("audioToText");
@@ -200,6 +217,7 @@ async function audioToText(audioFile) {
                 
                 if(!response.ok){
                     console.log("Error al transformar el audio: " + audioFile.originalname);
+                    addLog(`Error al transformar el audio: : ${audioFile.originalname}`,"ERROR");
                     return {"error": true, "response": response};
                 }
 
@@ -207,6 +225,7 @@ async function audioToText(audioFile) {
                 
                 console.log("Transformando audio");
                 console.log(transcripcion);
+                addLog(`Transcripción: ${transcripcion}`,"INFO");
 
                 texto = transcripcion.text;   
                 fs.unlinkSync(audioFile.path);
@@ -217,6 +236,7 @@ async function audioToText(audioFile) {
 
             } catch (error) {
                 console.error('Error:', error);
+                addLog(`Error: ${err.message}`,"ERROR");
             }
 
         }
@@ -471,6 +491,7 @@ function addData(jsonObject) {
     }
 
     console.log(gvars.invoice);
+    addLog(`Add data to Invoice ${gvars.invoice}`, "INFO");
 }
 
 function textCost(model, data, audioFileName, operation, duracion){
@@ -526,6 +547,22 @@ function textCost(model, data, audioFileName, operation, duracion){
         "totalCost_USD": costUSD.toFixed(gvars.decimals),
         "totalCost_PEN": (costUSD.toFixed(gvars.decimals) * gvars.TC).toFixed(gvars.decimals)
     });
+
+    addLog(`Calcular costo de analizar texto: `+{
+        "operation": operation,
+        "duracion": duracion,
+        "date": currentDate(),
+        "audioName": audioFileName,
+        "model": model,
+        "context": context,
+        "inputTokens": inputTokens,
+        "outputTokens": outputTokens,
+        "inputCost": input,
+        "outputCost": output,
+        "totalTokens": inputTokens + outputTokens,
+        "totalCost_USD": costUSD.toFixed(gvars.decimals),
+        "totalCost_PEN": (costUSD.toFixed(gvars.decimals) * gvars.TC).toFixed(gvars.decimals)
+    },"INFO")
 
     return {
         "operation": operation,
@@ -1582,5 +1619,6 @@ module.exports = {
     getColumnLetter,
     transformDateFormat,
     audioToText,
-    promedioSimple
+    promedioSimple,
+    addLog
 };

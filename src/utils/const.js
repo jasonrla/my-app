@@ -22,9 +22,13 @@ TC: 3.8,
 decimals: 8, 
 prodEnv: true, //true (incluye data dummy en "transcripciones", BORRAR)
 
+logs: {
+  entries: []
+},
+
 textosAnalizados:{
   'cariola_audioprueba_5.mp3': {
-/*    respaldo: {
+    /*respaldo: {
       valor: '0',
       comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
     },*/

@@ -3,7 +3,7 @@ const path = require('path');
 require('dotenv').config();
 const app = express();
 const gvars = require('../utils/const.js');
-const { analizarTextos, puntuacion, currentDate, convertDateFormat, calcularPromedio, getColumnLetter, transformDateFormat, audioToText, promedioSimple} = require('../utils/functions.js');
+const { analizarTextos, puntuacion, currentDate, convertDateFormat, calcularPromedio, getColumnLetter, transformDateFormat, audioToText, promedioSimple, addLog} = require('../utils/functions.js');
 
 const http = require('http');
 const socketIo = require('socket.io');
