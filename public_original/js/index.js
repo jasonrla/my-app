@@ -292,7 +292,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
   // Crear la fila "Facturación"
   const billingRow = document.createElement('tr');
   const billingCell = document.createElement('th');
-  billingCell.colSpan = 6;
+  billingCell.colSpan = 7;
   billingCell.appendChild(document.createTextNode("Facturación"));
   billingCell.style.fontSize = "22px"; // Tamaño de letra más grande
   billingCell.style.fontWeight = "bold"; // Texto en negrita
@@ -302,7 +302,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
   // Crear la fila "Detalle"
   const row1 = document.createElement('tr');
   const rowCell1 = document.createElement('th');
-  rowCell1.colSpan = 6;
+  rowCell1.colSpan = 7;
   rowCell1.style.background = "none"; // Sin fondo
   row1.appendChild(rowCell1);
   thead.appendChild(row1);
@@ -322,7 +322,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
 
   const dateValueCell = document.createElement('td');
   dateValueCell.appendChild(document.createTextNode(response.date)); //////////////////////////
-  dateValueCell.colSpan =  5;
+  dateValueCell.colSpan =  6;
   dateValueCell.style.textAlign = 'left';
   //dateValueCell.fontSize = "16px";
   row0.appendChild(dateValueCell);
@@ -342,7 +342,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
 
   const totalUSDValueCell = document.createElement('td');
   totalUSDValueCell.appendChild(document.createTextNode(grandTotalUSD.toFixed(decimals)));
-  totalUSDValueCell.colSpan =  5;
+  totalUSDValueCell.colSpan =  6;
   totalUSDValueCell.style.textAlign = 'left';
   //totalUSDValueCell.fontSize = "16px";
   row2.appendChild(totalUSDValueCell);
@@ -362,7 +362,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
 
   const totalPENValueCell = document.createElement('td');
   totalPENValueCell.appendChild(document.createTextNode(grandTotalPEN.toFixed(decimals)));
-  totalPENValueCell.colSpan =  5;
+  totalPENValueCell.colSpan =  6;
   totalPENValueCell.style.textAlign = 'left';
   //totalPENValueCell.fontSize = "16px";
   row3.appendChild(totalPENValueCell);
@@ -372,14 +372,14 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
   // Crear una fila en blanco
   const blankRow = document.createElement('tr');
   const blankCell = document.createElement('th');
-  blankCell.colSpan = 6;
+  blankCell.colSpan = 7;
   blankCell.style.background = "none"; // Sin fondo
   blankRow.appendChild(blankCell);
   thead.appendChild(blankRow);
 
   // Crear header
   const headerRow = document.createElement('tr');
-  ["Audio", "Duración", "Operación", "Total Tokens", "Total USD", "Total PEN"].forEach(text => {
+  ["Audio", "Duración", "Fecha", "Operación", "Total Tokens", "Total USD", "Total PEN"].forEach(text => {
     const th = document.createElement('th');
     th.appendChild(document.createTextNode(text));
     headerRow.appendChild(th);
@@ -412,9 +412,15 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
         firstRow = false;
       }
       
-      ["operation", "totalTokens", "totalCost_USD", "totalCost_PEN"].forEach(key => {
+      ["date", "operation", "totalTokens", "totalCost_USD", "totalCost_PEN"].forEach(key => {
         const cell = document.createElement('td');
         cell.appendChild(document.createTextNode(record[key]));
+        
+        if (key === 'date') {
+          cell.style.textAlign = 'center';
+        }
+        row.appendChild(cell);
+
         if (key === 'operation') {
           cell.style.textAlign = 'left'; // Alineación a la izquierda para la columna "Operación"
         }
@@ -436,7 +442,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
       totalRow.className = 'bold-row';
 
       const totalLabelCell = document.createElement('td');
-      totalLabelCell.colSpan = 2;
+      totalLabelCell.colSpan = 3;
       totalLabelCell.appendChild(document.createTextNode('Sub-Total'));
       totalRow.appendChild(totalLabelCell);
 
@@ -460,7 +466,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
       grandTotalRow.className = 'bold-row';
 
       const grandTotalLabelCell = document.createElement('td');
-      grandTotalLabelCell.colSpan = 4;
+      grandTotalLabelCell.colSpan = 5;
       grandTotalLabelCell.appendChild(document.createTextNode('Total'));
       grandTotalRow.appendChild(grandTotalLabelCell);
 

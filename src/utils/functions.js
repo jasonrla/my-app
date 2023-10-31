@@ -514,6 +514,7 @@ function textCost(model, data, audioFileName, operation, duracion){
     console.log({
         "operation": operation,
         "duracion": duracion,
+        "date": currentDate(),
         "audioName": audioFileName,
         "model": model,
         "context": context,
@@ -529,6 +530,7 @@ function textCost(model, data, audioFileName, operation, duracion){
     return {
         "operation": operation,
         "duracion": duracion,
+        "date": currentDate(),
         "audioName": audioFileName,
         "model":model,
         "context": context,
@@ -549,7 +551,8 @@ function audioCost(fileName, duration ,seconds){
     console.log({
         "operation": "Audio a texto",
         "audioName": fileName,
-        "duration": duration,
+        "duracion": duration,
+        "date": currentDate(),
         "totalTokens": "-",
         "totalCost_USD": costUSD.toFixed(gvars.decimals),
         "totalCost_PEN": (costUSD.toFixed(gvars.decimals) * gvars.TC).toFixed(gvars.decimals)
@@ -557,7 +560,8 @@ function audioCost(fileName, duration ,seconds){
     return {
         "operation": "Audio a texto",
         "audioName": fileName,
-        "duration": duration,
+        "duracion": duration,
+        "date": currentDate(),
         "totalTokens": "-",
         "totalCost_USD": costUSD.toFixed(gvars.decimals),
         "totalCost_PEN": (costUSD.toFixed(gvars.decimals) * gvars.TC).toFixed(gvars.decimals)
