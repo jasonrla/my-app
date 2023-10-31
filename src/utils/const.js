@@ -22,6 +22,375 @@ TC: 3.8,
 decimals: 8, 
 prodEnv: true, //true (incluye data dummy en "transcripciones", BORRAR)
 
+textosAnalizados:{
+  'cariola_audioprueba_5.mp3': {
+/*    respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },*/
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer opciones más económicas y apoyar económicamente al cliente."
+    },
+    saludo_institucional: {
+      valor: 10,
+      comentario: "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, incluye las palabras clave mencionadas ('natural', 'medicinal', 'productos') en su presentación."
+    },
+    empatia_simpatia: {
+      valor: 10,
+      comentario: 'El vendedor mostró empatía y simpatía de manera excepcional. Demostró preocupación por el cliente y ofreció opciones más accesibles de acuerdo a su presupuesto.'
+    },
+    preguntas_subjetivas: {
+      valor: 7,
+      comentario: 'El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas de dolor de cabeza e insomnio, pero no mencionó ejemplos específicos.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: 10,
+      comentario: 'El vendedor se enfoca en la enfermedad del cliente desde el inicio de la conversación y ofrece diferentes opciones de productos que podrían ayudar con los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida del cliente.'
+    },
+    tono_voz: {
+      valor: 10,
+      comentario: 'El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación.'
+    },
+    dato_duro: {
+      valor: '0',
+      comentario: 'El vendedor no da a conocer información sobre la patología o dolencia del cliente'
+    },
+    testimonio: {
+      valor: '0',
+      comentario: 'El vendedor no menciona ningún testimonio al cliente.'
+    },
+    solucion_beneficios: {
+      valor: 10,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: '0',
+      comentario: 'El vendedor no realizó ninguna de las preguntas mencionadas y se enfocó en ofrecer diferentes paquetes de productos.'
+    }
+  },
+  'cariola_audioprueba_4.mp3': {
+    respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer opciones más económicas y apoyar económicamente al cliente."
+    },
+    saludo_institucional: {
+      valor: 10,
+      comentario: "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, incluye las palabras clave mencionadas ('natural', 'medicinal', 'productos') en su presentación."
+    },
+    empatia_simpatia: {
+      valor: 10,
+      comentario: 'El vendedor mostró empatía y simpatía de manera excepcional. Demostró preocupación por el cliente y ofreció opciones más accesibles de acuerdo a su presupuesto.'
+    },
+    preguntas_subjetivas: {
+      valor: 7,
+      comentario: 'El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas de dolor de cabeza e insomnio, pero no mencionó ejemplos específicos.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: 10,
+      comentario: 'El vendedor se enfoca en la enfermedad del cliente desde el inicio de la conversación y ofrece diferentes opciones de productos que podrían ayudar con los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida del cliente.'
+    },
+    tono_voz: {
+      valor: 10,
+      comentario: 'El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación.'
+    },
+    dato_duro: {
+      valor: '0',
+      comentario: 'El vendedor no da a conocer información sobre la patología o dolencia del cliente'
+    },
+    testimonio: {
+      valor: '0',
+      comentario: 'El vendedor no menciona ningún testimonio al cliente.'
+    },
+    solucion_beneficios: {
+      valor: 10,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: '0',
+      comentario: 'El vendedor no realizó ninguna de las preguntas mencionadas. Se enfocó en ofrecer diferentes paquetes y precios.'
+    }
+  },
+  'cariola_audioprueba_3.mp3': {
+    respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer opciones más económicas y apoyar económicamente al cliente."
+    },
+    saludo_institucional: {
+      valor: 10,
+      comentario: "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, incluye las palabras clave mencionadas ('natural', 'medicinal', 'productos') en su presentación."
+    },
+    empatia_simpatia: {
+      valor: 10,
+      comentario: 'El vendedor mostró empatía y simpatía de manera excepcional. Demostró preocupación por el cliente y ofreció opciones más accesibles de acuerdo a su presupuesto.'
+    },
+    preguntas_subjetivas: {
+      valor: 7,
+      comentario: 'El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas de dolor de cabeza e insomnio, pero no mencionó ejemplos específicos.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: 10,
+      comentario: 'El vendedor se enfoca en la enfermedad del cliente desde el inicio de la conversación y ofrece diferentes opciones de productos que podrían ayudar con los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida del cliente.'
+    },
+    tono_voz: {
+      valor: 10,
+      comentario: 'El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación.'
+    },
+    dato_duro: {
+      valor: '0',
+      comentario: 'El vendedor no da a conocer información sobre la patología o dolencia del cliente'
+    },
+    testimonio: {
+      valor: '0',
+      comentario: 'El vendedor no menciona ningún testimonio al cliente.'
+    },
+    solucion_beneficios: {
+      valor: 10,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: '0',
+      comentario: 'El vendedor no realizó ninguna de las preguntas mencionadas y se enfocó en ofrecer los productos de la empresa.'
+    }
+  },
+  'cariola_audioprueba_2.mp3': {
+    respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer opciones más económicas y apoyar económicamente al cliente."
+    },
+    saludo_institucional: {
+      valor: 10,
+      comentario: "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, incluye las palabras clave mencionadas ('natural', 'medicinal', 'productos') en su presentación."
+    },
+    empatia_simpatia: {
+      valor: 10,
+      comentario: 'El vendedor mostró empatía y simpatía de manera excepcional. Demostró preocupación por el cliente y ofreció opciones más accesibles de acuerdo a su presupuesto.'
+    },
+    preguntas_subjetivas: {
+      valor: 7,
+      comentario: 'El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas de dolor de cabeza e insomnio, pero no mencionó ejemplos específicos.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: 10,
+      comentario: 'El vendedor se enfoca en la enfermedad del cliente desde el inicio de la conversación y ofrece diferentes opciones de productos que podrían ayudar con los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida del cliente.'
+    },
+    tono_voz: {
+      valor: 10,
+      comentario: 'El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación.'
+    },
+    dato_duro: {
+      valor: '0',
+      comentario: 'El vendedor no da a conocer información sobre la patología o dolencia del cliente'
+    },
+    testimonio: {
+      valor: '0',
+      comentario: 'El vendedor no menciona ningún testimonio al cliente.'
+    },
+    solucion_beneficios: {
+      valor: 10,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: '0',
+      comentario: 'El vendedor no realizó ninguna de las preguntas mencionadas y se enfocó en ofrecer diferentes paquetes de productos.'
+    }
+  },
+  'cariola_audioprueba_6.mp3': {
+    respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer opciones más económicas y apoyar económicamente al cliente."
+    },
+    saludo_institucional: {
+      valor: 10,
+      comentario: "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, incluye las palabras clave mencionadas ('natural', 'medicinal', 'productos') en su presentación."
+    },
+    empatia_simpatia: {
+      valor: 10,
+      comentario: 'El vendedor mostró empatía y simpatía de manera excepcional. Demostró preocupación por el cliente y ofreció opciones más accesibles de acuerdo a su presupuesto.'
+    },
+    preguntas_subjetivas: {
+      valor: 7,
+      comentario: 'El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas de dolor de cabeza e insomnio, pero no mencionó ejemplos específicos.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: 10,
+      comentario: 'El vendedor se enfoca en la enfermedad del cliente desde el inicio de la conversación y ofrece diferentes opciones de productos que podrían ayudar con los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida del cliente.'
+    },
+    tono_voz: {
+      valor: 10,
+      comentario: 'El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación.'
+    },
+    dato_duro: {
+      valor: '0',
+      comentario: 'El vendedor no da a conocer información sobre la patología o dolencia del cliente'
+    },
+    testimonio: {
+      valor: '0',
+      comentario: 'El vendedor no menciona ningún testimonio al cliente.'
+    },
+    solucion_beneficios: {
+      valor: 10,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: 5,
+      comentario: 'El vendedor se enfocó en ofrecer diferentes paquetes de productos y en el precio, pero no realizó ninguna de las preguntas solicitadas.'
+    }
+  },
+  'cariola_audioprueba.mp3': {
+    respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer opciones más económicas y apoyar económicamente al cliente."
+    },
+    saludo_institucional: {
+      valor: 10,
+      comentario: "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, incluye las palabras clave mencionadas ('natural', 'medicinal', 'productos') en su presentación."
+    },
+    empatia_simpatia: {
+      valor: 10,
+      comentario: 'El vendedor mostró empatía y simpatía de manera excepcional. Demostró preocupación por el cliente y ofreció opciones más accesibles de acuerdo a su presupuesto.'
+    },
+    preguntas_subjetivas: {
+      valor: 7,
+      comentario: 'El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas de dolor de cabeza e insomnio, pero no mencionó ejemplos específicos.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: 10,
+      comentario: 'El vendedor se enfoca en la enfermedad del cliente desde el inicio de la conversación y ofrece diferentes opciones de productos que podrían ayudar con los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida del cliente.'
+    },
+    tono_voz: {
+      valor: 10,
+      comentario: 'El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación.'
+    },
+    dato_duro: {
+      valor: '0',
+      comentario: 'El vendedor no da a conocer información sobre la patología o dolencia del cliente'
+    },
+    testimonio: {
+      valor: '0',
+      comentario: 'El vendedor no menciona ningún testimonio al cliente.'
+    },
+    solucion_beneficios: {
+      valor: 10,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: '0',
+      comentario: 'El vendedor no realizó ninguna de las preguntas mencionadas y se enfocó en ofrecer diferentes paquetes de productos.'
+    }
+  }
+},
+
 transcripciones: {
   'cariola_audioprueba.mp3': {
     transcripcion: 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy? Hola, Judith. He estado sintiéndome un poco mal últimamente. Me duele la cabeza y tengo insomnio. ¿Tienes algo que pueda ayudar? Claro, mucho gusto. ¿Con qué me comunico? Con Jason López. Mucho gusto, Jason. Lamento escuchar que te sientas un poco mal. Tenemos varias opciones que te podrían ayudar para esta situación. Tenemos un paquete premium que incluye la variedad de medicamentos y suplementos para todos los sistemas que deseas tratar. Este paquete cuesta 219 dólares con 95. ¿Te interesaría? Eso suena bastante caro. ¿Tienen algo más accesible? Entiendo. Entiendo tus preocupaciones acerca del precio. Mira, también tenemos un paquete estándar que tiene un costo de 199 con 95 dólares. ¿Todavía tienes algunos inconvenientes con este costo? ¿Qué opinas sobre el producto que te estoy ofreciendo? Bueno, sigue siendo un poco alto para mi presupuesto. ¿Hay algo más económico? Claro, mira, comprendo la situación. No te preocupes. Te vamos a poder apoyar económicamente. También tenemos actualmente un paquete básico de 169 con 95 dólares. Este paquete incluye todos los medicamentos que requieren tus síntomas actuales. ¿Te gustaría esta opción? Eso suena más razonable. Creo que iré con el paquete básico. Excelente elección, Jason. Mira, ahora necesitamos, antes de procesar esta compra, los datos de tu tarjeta de crédito para poder seguir con la atención. Claro, la tarjeta es Visa y el número es 1234-5678-9012-3456. La fecha de vencimiento es 06-25 y el código de seguridad es 789. Bien, perfecto, Jason. Gracias por la información. Antes de poder finalizar, quiero aclararte que este paquete básico incluye tres frascos de producto VitalCure de distintos cantidades, que son de 60 cápsulas cada frasco, y la otra opción es de 30 cápsulas. El monto que se cobrará de tu tarjeta será $169.95. Los productos naturales recuerda que están diseñados para poder mejorar y aliviar la calidad de vida de nuestros pacientes. Entiendo, gracias por la información. De nada, ha sido un placer ayudarte. En breve nuestro equipo de verificación se comunicará contigo para poder confirmar la orden ingresada. ¿Hay algo más en que te puedo apoyar? No, eso sería todo. Gracias. Muy bien, gracias por elegir nuestros productos. Cariola, esperamos que te sientas mejor pronto. Tenga un excelente día.',

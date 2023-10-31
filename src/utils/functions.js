@@ -117,6 +117,32 @@ function obtenerDetallesAudio(nombreAudio) {
 }
 
 
+
+function guardarAnalisisTexto(nombreAudio, tipo, valor, comentario, otrosValores = {}) {
+    if (!gvars.textosAnalizados[nombreAudio]) {
+        gvars.textosAnalizados[nombreAudio] = {};
+    }
+    
+    gvars.textosAnalizados[nombreAudio][tipo] = {
+        ...otrosValores,
+        valor: valor,
+        comentario: comentario
+    };
+    console.log("se guardo en textosAnalizados");
+    console.log(gvars.textosAnalizados);
+}
+
+function obtenerDetallesTexto(nombreAudio, tipo) {
+    if (gvars.textosAnalizados[nombreAudio] && gvars.textosAnalizados[nombreAudio][tipo]) {
+        console.log("se encontró audio en gvars.textosAnalizados")
+        return gvars.textosAnalizados[nombreAudio][tipo];
+    } else {
+        return null; // o cualquier valor que quieras retornar en caso de que el audio o el tipo no existan
+    }
+}
+
+
+
 async function audioToText(audioFile) {
 
     if(gvars.prodEnv){
@@ -250,7 +276,7 @@ const selectModel = (numTokens) => {
     }
 };
 
-const callOpenAI = async (model, role, text ,part1, part2, audioFileName, operation) => {
+const callOpenAI = async (model, role, text ,part1, part2, audioFileName, operation, duracion) => {
 
     console.log("callOpenAI");
 
@@ -280,7 +306,7 @@ const callOpenAI = async (model, role, text ,part1, part2, audioFileName, operat
   
         if (response.ok) {
           const jsonData = await response.json();
-          addData(textCost(model, jsonData, audioFileName, operation));
+          addData(textCost(model, jsonData, audioFileName, operation, duracion));
           console.log(jsonData.choices[0].message.content);
           return extractJSON(jsonData.choices[0].message.content);
         } else {
@@ -295,7 +321,7 @@ const callOpenAI = async (model, role, text ,part1, part2, audioFileName, operat
       }
 };
 
-async function processPrompt (role, text ,part1, part2, audioFileName, operation){
+async function processPrompt (role, text ,part1, part2, audioFileName, operation, duracion){
     try {
       const numTokens = countTokens(text);
       const model = selectModel(numTokens);
@@ -333,7 +359,7 @@ async function processPrompt (role, text ,part1, part2, audioFileName, operation
         }
       }
   
-      const response = await callOpenAI(model, role, text ,part1, part2, audioFileName, operation);
+      const response = await callOpenAI(model, role, text ,part1, part2, audioFileName, operation, duracion);
       if(response.error){
         console.log("error in process Prompt");
         return response;
@@ -353,7 +379,7 @@ async function processPrompt (role, text ,part1, part2, audioFileName, operation
       console.error(error);
     };
 };
-
+/*
 async function processPrompt2(role, text, part1, part2, audioFileName, operation) {
     
     let data;
@@ -422,7 +448,7 @@ async function processPrompt2(role, text, part1, part2, audioFileName, operation
     console.log(data.choices[0].message.content);
 
     return extractJSON(data.choices[0].message.content);
-}
+}*/
 
 function extractJSON(text) {
     const regex = /{[\s\S]*?}/; // Esta regex busca el contenido entre llaves { ... }
@@ -447,7 +473,7 @@ function addData(jsonObject) {
     console.log(gvars.invoice);
 }
 
-function textCost(model, data, audioFileName, operation){
+function textCost(model, data, audioFileName, operation, duracion){
 
     let input, output, context, inputTokens, outputTokens;
 
@@ -487,6 +513,7 @@ function textCost(model, data, audioFileName, operation){
 
     console.log({
         "operation": operation,
+        "duracion": duracion,
         "audioName": audioFileName,
         "model": model,
         "context": context,
@@ -501,6 +528,7 @@ function textCost(model, data, audioFileName, operation){
 
     return {
         "operation": operation,
+        "duracion": duracion,
         "audioName": audioFileName,
         "model":model,
         "context": context,
@@ -542,27 +570,36 @@ function randomValueFromArray() {
     return arr[randomIndex];
 }
 
-async function saludoInstitucional(text, audioFileName){
+async function saludoInstitucional(text, audioFileName, duracion){
 
     if(gvars.prodEnv){
 
         let valor, comentario, parsedData;
-        const result = await Promise.all([processPrompt(gvars.pemp_role, text, gvars.pemp_part1, gvars.pemp_part2, audioFileName, "Saludo Institucional")]);
-        console.log("result");
-        console.log(result);
 
-        try{
-            parsedData = JSON.parse(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "saludo_institucional");
+
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+            
+            const result = await Promise.all([processPrompt(gvars.pemp_role, text, gvars.pemp_part1, gvars.pemp_part2, audioFileName, "Saludo Institucional", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+            
+            guardarAnalisisTexto(audioFileName, "saludo_institucional", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
 
-        //parsedData = JSON.parse(result);
-
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
-        
         return{
             "valor": valor,
             "comentario": comentario,
@@ -577,23 +614,35 @@ async function saludoInstitucional(text, audioFileName){
     }
 }
 
-async function empatiaSimpatia(text, audioFileName){
+async function empatiaSimpatia(text, audioFileName, duracion){
     
     if(gvars.prodEnv){
         let valor, comentario, parsedData;
-        const result = await Promise.all([processPrompt(gvars.emsi_role, text, gvars.emsi_part1, gvars.emsi_part2, audioFileName, "Empatia/Simpatia")]);
-        console.log("result");
-        console.log(result);
 
-        try{
-            parsedData = JSON.parse(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "empatia_simpatia");
+
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+                
+            const result = await Promise.all([processPrompt(gvars.emsi_role, text, gvars.emsi_part1, gvars.emsi_part2, audioFileName, "Empatia/Simpatia", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+            
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+
+            guardarAnalisisTexto(audioFileName, "empatia_simpatia", valor, comentario);
+
         }
-        catch(e){
-            return result;
-        }
-        
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
 
         return {
             "valor": valor,
@@ -608,42 +657,71 @@ async function empatiaSimpatia(text, audioFileName){
     }
 }
 
-async function precalificacion(text, audioFileName){
+async function precalificacion(text, audioFileName, duracion){
 
     if(gvars.prodEnv){
     
-        let valor, comentario, parsedData;
-        const result = await Promise.all([processPrompt(gvars.prec_role, text, gvars.prec_part1, gvars.prec_part2, audioFileName, "Precalificación")]);
-        
-        try{
-            console.log("result");
-            console.log(result);
+        let valor, comentario, parsedData, edad, peso, estatura, tipoTrabajo, otrasEnfermedades, tratamientosQueConsume, productosTomaActualmente;
 
+        let detalles = obtenerDetallesTexto(audioFileName, "precalificacion");
+
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+            edad = detalles.edad;
+            if(detalles.peso) { peso = detalles.peso;}
+            if(detalles.estatura) { estatura = detalles.estatura;}
+            if(detalles.tipoTrabajo) { tipoTrabajo = detalles.tipoTrabajo;}
+            if(detalles.otrasEnfermedades) { otrasEnfermedades = detalles.otrasEnfermedades;}
+            if(detalles.tratamientosQueConsume) { tratamientosQueConsume = detalles.tratamientosQueConsume;}
+            if(detalles.productosTomaActualmente) { productosTomaActualmente = detalles.productosTomaActualmente;}
+        } 
+            
+        else {
+                
+            const result = await Promise.all([processPrompt(gvars.prec_role, text, gvars.prec_part1, gvars.prec_part2, audioFileName, "Precalificación", duracion)]);
+            
             try{
-                parsedData = JSON.parse(result);
+                console.log("result");
+                console.log(result);
+
+                try{
+                    parsedData = JSON.parse(result);
+                }
+                catch(e){
+                    return result;
+                }
+            
+                ({valor, edad, peso, estatura, tipoTrabajo, otrasEnfermedades, tratamientosQueConsume, productosTomaActualmente, comentario} = parsedData);
+                valor = valor ? parseInt(valor) : "0";
+
+                guardarAnalisisTexto(audioFileName, "precalificacion", valor, comentario, {
+                    "edad": edad,
+                    "peso": peso,
+                    "estatura": estatura,
+                    "tipoTrabajo": tipoTrabajo,
+                    "otrasEnfermedades": otrasEnfermedades,
+                    "tratamientosQueConsume": tratamientosQueConsume,
+                    "productosTomaActualmente": productosTomaActualmente
+                });
             }
             catch(e){
-                return result;
-            }
-        
-            ({valor, edad, peso, estatura, tipoTrabajo, otrasEnfermedades, tratamientosQueConsume, productosTomaActualmente, comentario} = parsedData);
-            valor = valor ? parseInt(valor) : "0";
+                console.error(e)
+            }    
+        }
 
-            return{
-                "valor": valor,
-                "comentario": comentario,
-                "edad": edad,
-                "peso": gvars.peso,
-                "estatura": estatura,
-                "tipoTrabajo": tipoTrabajo,
-                "otrasEnfermedades": otrasEnfermedades,
-                "tratamientosQueConsume": tratamientosQueConsume,
-                "productosTomaActualmente": productosTomaActualmente
-            };
-        }
-        catch(e){
-            console.error(e)
-        }
+        return{
+            "valor": valor,
+            "comentario": comentario,
+            "edad": edad,
+            "peso": peso,
+            "estatura": estatura,
+            "tipoTrabajo": tipoTrabajo,
+            "otrasEnfermedades": otrasEnfermedades,
+            "tratamientosQueConsume": tratamientosQueConsume,
+            "productosTomaActualmente": productosTomaActualmente
+        };
+
     }
     else{    
         return{
@@ -660,27 +738,37 @@ async function precalificacion(text, audioFileName){
     }
 }
 
-async function preguntasSubjetivas(text, audioFileName){
+async function preguntasSubjetivas(text, audioFileName, duracion){
         
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.preSub_role, text, gvars.preSub_part1, gvars.preSub_part2, audioFileName, "Preguntas subjetivas")]);
-        
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "preguntas_subjetivas");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+
+            const result = await Promise.all([processPrompt(gvars.preSub_role, text, gvars.preSub_part1, gvars.preSub_part2, audioFileName, "Preguntas subjetivas", duracion)]);
+            
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+            
+            guardarAnalisisTexto(audioFileName, "preguntas_subjetivas", valor, comentario);
+
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
-        
         return{
             "valor": valor,
             "comentario": comentario
@@ -694,25 +782,35 @@ async function preguntasSubjetivas(text, audioFileName){
     }
 }
 
-async function etiquetaEnf(text, audioFileName){
+async function etiquetaEnf(text, audioFileName, duracion){
     
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.etenf_role, text, gvars.etenf_part1, gvars.etenf_part2, audioFileName, "Etiqueta enfermedad")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "etiqueta_enfermedad");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+
+            const result = await Promise.all([processPrompt(gvars.etenf_role, text, gvars.etenf_part1, gvars.etenf_part2, audioFileName, "Etiqueta enfermedad", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+
+            guardarAnalisisTexto(audioFileName, "etiqueta_enfermedad", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
 
         return{
             "valor": valor,
@@ -727,26 +825,36 @@ async function etiquetaEnf(text, audioFileName){
     }
 }
 
-async function enfocEnf(text, audioFileName){
+async function enfocEnf(text, audioFileName, duracion){
 
     if(gvars.prodEnv){
 
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.enfenf_role, text, gvars.enfenf_part1, gvars.enfenf_part2, audioFileName, "Enfoque enfermedad")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "enfoque_enfermedad");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+                
+            const result = await Promise.all([processPrompt(gvars.enfenf_role, text, gvars.enfenf_part1, gvars.enfenf_part2, audioFileName, "Enfoque enfermedad", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+            
+            guardarAnalisisTexto(audioFileName, "enfoque_enfermedad", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
-        
+
         return {
             "valor": valor,
             "comentario": comentario
@@ -760,26 +868,36 @@ async function enfocEnf(text, audioFileName){
     }
 }
 
-async function tonoVoz(text, audioFileName){
+async function tonoVoz(text, audioFileName, duracion){
         
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.tonoVoz_role, text, gvars.tonoVoz_part1, gvars.tonoVoz_part2, audioFileName, "Tono de voz")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "tono_voz");
 
-        try{
-            parsedData = JSON.parse(result);
-        }
-        catch(e){
-            return result;
-        } 
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
-        
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+
+            const result = await Promise.all([processPrompt(gvars.tonoVoz_role, text, gvars.tonoVoz_part1, gvars.tonoVoz_part2, audioFileName, "Tono de voz", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            } 
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+            
+            guardarAnalisisTexto(audioFileName, "tono_voz", valor, comentario);
+        }   
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -793,26 +911,36 @@ async function tonoVoz(text, audioFileName){
     }
 }
 
-async function conocimientoPatol(text, audioFileName){
+async function conocimientoPatol(text, audioFileName, duracion){
         
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.conPatol_role, text, gvars.conPatol_part1, gvars.conPatol_part2, audioFileName, "Conoc. patología")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "conocimiento_patologia");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+
+            const result = await Promise.all([processPrompt(gvars.conPatol_role, text, gvars.conPatol_part1, gvars.conPatol_part2, audioFileName, "Conoc. patología", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+            
+            guardarAnalisisTexto(audioFileName, "conocimiento_patologia", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
-        
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -826,26 +954,36 @@ async function conocimientoPatol(text, audioFileName){
     }
 }
 
-async function datoDuro(text, audioFileName){
+async function datoDuro(text, audioFileName, duracion){
         
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.datoDuro_role, text, gvars.datoDuro_part1, gvars.datoDuro_part2, audioFileName, "Dato duro")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "dato_duro");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+                
+            const result = await Promise.all([processPrompt(gvars.datoDuro_role, text, gvars.datoDuro_part1, gvars.datoDuro_part2, audioFileName, "Dato duro", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+            
+            guardarAnalisisTexto(audioFileName, "dato_duro", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
-        
+
         return{
             "valor": valor,
             "comentario": comentario
@@ -859,25 +997,35 @@ async function datoDuro(text, audioFileName){
     }
 }
 
-async function testimonio(text, audioFileName){
+async function testimonio(text, audioFileName, duracion){
 
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.testi_role, text, gvars.testi_part1, gvars.testi_part2, audioFileName, "Testimonio")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "testimonio");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+                    
+            const result = await Promise.all([processPrompt(gvars.testi_role, text, gvars.testi_part1, gvars.testi_part2, audioFileName, "Testimonio", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+
+            guardarAnalisisTexto(audioFileName, "testimonio", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
 
         return{
             "valor": valor,
@@ -892,25 +1040,35 @@ async function testimonio(text, audioFileName){
     }
 }
 
-async function solucionBeneficios(text, audioFileName){
+async function solucionBeneficios(text, audioFileName, duracion){
         
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.solBen_role, text, gvars.solBen_part1, gvars.solBen_part2, audioFileName, "Solución beneficios")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "solucion_beneficios");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+                        
+            const result = await Promise.all([processPrompt(gvars.solBen_role, text, gvars.solBen_part1, gvars.solBen_part2, audioFileName, "Solución beneficios", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+
+            guardarAnalisisTexto(audioFileName, "solucion_beneficios", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
 
         return{
             "valor": valor,
@@ -925,26 +1083,36 @@ async function solucionBeneficios(text, audioFileName){
     }
 }
 
-async function respaldo(text, audioFileName){
+async function respaldo(text, audioFileName, duracion){
     
     if(gvars.prodEnv){
         
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.resp_role, text, gvars.resp_part1, gvars.resp_part2, audioFileName, "Respaldo")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "respaldo");
 
-        try{
-            parsedData = JSON.parse(result);
-        }
-        catch(e){
-            return result;
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+                
+            const result = await Promise.all([processPrompt(gvars.resp_role, text, gvars.resp_part1, gvars.resp_part2, audioFileName, "Respaldo", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+            
+            guardarAnalisisTexto(audioFileName, "respaldo", valor, comentario);
         }
 
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
-        
         return{
             "valor": valor,
             "comentario": comentario
@@ -958,25 +1126,35 @@ async function respaldo(text, audioFileName){
     }
 }
 
-async function cierreVenta(text, audioFileName){
+async function cierreVenta(text, audioFileName, duracion){
 
     if(gvars.prodEnv){
 
         let valor, comentario, parsedData;
         
-        const result = await Promise.all([processPrompt(gvars.cierre_role, text, gvars.cierre_part1, gvars.cierre_part2, audioFileName, "Cierre de venta")]);
-        console.log("result");
-        console.log(result);
+        let detalles = obtenerDetallesTexto(audioFileName, "cierre_venta");
 
-        try{
-            parsedData = JSON.parse(result);
+        if (detalles) {
+            valor = detalles.valor;
+            comentario = detalles.comentario;
+        } else {
+                
+            const result = await Promise.all([processPrompt(gvars.cierre_role, text, gvars.cierre_part1, gvars.cierre_part2, audioFileName, "Cierre de venta", duracion)]);
+            console.log("result");
+            console.log(result);
+
+            try{
+                parsedData = JSON.parse(result);
+            }
+            catch(e){
+                return result;
+            }
+                
+            ({valor, comentario} = parsedData);
+            valor = valor ? parseInt(valor) : "0";
+
+            guardarAnalisisTexto(audioFileName, "cierre_venta", valor, comentario);
         }
-        catch(e){
-            return result;
-        }
-             
-        ({valor, comentario} = parsedData);
-        valor = valor ? parseInt(valor) : "0";
 
         return{
             "valor": valor,
@@ -991,7 +1169,7 @@ async function cierreVenta(text, audioFileName){
     }
 }
 
-async function comunicacionEfectiva(text, audioFileName){
+async function comunicacionEfectiva(text, audioFileName, duracion){
 
     return{
         "valor": randomValueFromArray(),
@@ -999,7 +1177,7 @@ async function comunicacionEfectiva(text, audioFileName){
     };
 }
 
-async function conocimientoTratamiento(text, audioFileName){
+async function conocimientoTratamiento(text, audioFileName, duracion){
 
     return{
         "valor": randomValueFromArray(),
@@ -1007,7 +1185,7 @@ async function conocimientoTratamiento(text, audioFileName){
     };
 }
 
-async function rebateObjeciones(text, audioFileName){
+async function rebateObjeciones(text, audioFileName, duracion){
 
     return{
         "valor": randomValueFromArray(),
@@ -1069,49 +1247,49 @@ async function analizarTextos(reqBody) {
     for (let num of gvars.selectedProcesses) {
         switch(num) {
             case "1":
-                resultados1 = await saludoInstitucional(transcripcion, audioFileName);
-                resultados2 = await empatiaSimpatia(transcripcion, audioFileName);
+                resultados1 = await saludoInstitucional(transcripcion, audioFileName, duracion);
+                resultados2 = await empatiaSimpatia(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[0](transcripcion, audioFileName), funciones[1](transcripcion, audioFileName)]);
                 break;
             case "2":
-                resultados3 =  await precalificacion(transcripcion, audioFileName);
-                resultados4 = await preguntasSubjetivas(transcripcion, audioFileName);
+                resultados3 =  await precalificacion(transcripcion, audioFileName, duracion);
+                resultados4 = await preguntasSubjetivas(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[2](transcripcion, audioFileName), funciones[3](transcripcion, audioFileName)]);
                 break;
             case "3":
-                resultados5 = await etiquetaEnf(transcripcion, audioFileName);
-                resultados6 = await enfocEnf(transcripcion, audioFileName);
-                resultados7 = await tonoVoz(transcripcion, audioFileName);
-                resultados8 = await conocimientoPatol(transcripcion, audioFileName);
-                resultados9 = await datoDuro(transcripcion, audioFileName);
+                resultados5 = await etiquetaEnf(transcripcion, audioFileName, duracion);
+                resultados6 = await enfocEnf(transcripcion, audioFileName, duracion);
+                resultados7 = await tonoVoz(transcripcion, audioFileName, duracion);
+                resultados8 = await conocimientoPatol(transcripcion, audioFileName, duracion);
+                resultados9 = await datoDuro(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[4](transcripcion, audioFileName), funciones[5](transcripcion, audioFileName), funciones[6](transcripcion, audioFileName), funciones[7](transcripcion, audioFileName), funciones[8](transcripcion, audioFileName)]);
                 break;
             case "4":
-                resultados10 = await testimonio(transcripcion, audioFileName);
+                resultados10 = await testimonio(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[9](transcripcion, audioFileName)]);
                 break;
             case "5":
-                resultados11 = await solucionBeneficios(transcripcion, audioFileName);
+                resultados11 = await solucionBeneficios(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[10](transcripcion, audioFileName)]);
                 break;
             case "6":
-                resultados12 = await respaldo(transcripcion, audioFileName);
+                resultados12 = await respaldo(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[11](transcripcion, audioFileName)]);
                 break;
             case "7":
-                resultados13 = await cierreVenta(transcripcion, audioFileName);
+                resultados13 = await cierreVenta(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[12](transcripcion, audioFileName)]);
                 break;
             case "8":
-                resultados14 = await comunicacionEfectiva(transcripcion, audioFileName);
+                resultados14 = await comunicacionEfectiva(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[13](transcripcion, audioFileName)]);
                 break;
             case "9":
-                resultados15 = await conocimientoTratamiento(transcripcion, audioFileName);
+                resultados15 = await conocimientoTratamiento(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[14](transcripcion, audioFileName)]);
                 break;
             case "10":
-                resultados16 = await rebateObjeciones(transcripcion, audioFileName);
+                resultados16 = await rebateObjeciones(transcripcion, audioFileName, duracion);
                 //promesas.push(...[funciones[15](transcripcion, audioFileName)]);
                 break;
         }

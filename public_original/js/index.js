@@ -395,7 +395,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
     let totalPEN = 0;
     const rowSpanValue = records.length + 1;
 
-    records.forEach(record => {
+    records.forEach(record => { // Recorrer los registros de cada audio
       const row = document.createElement('tr');
       
       if (firstRow) {
@@ -406,7 +406,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
 
         const durationCell = document.createElement('td');
         durationCell.rowSpan = rowSpanValue;
-        durationCell.appendChild(document.createTextNode(record.duration));
+        durationCell.appendChild(document.createTextNode(record.duracion));
         row.appendChild(durationCell);
 
         firstRow = false;
@@ -420,15 +420,15 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
         }
         row.appendChild(cell);
 
-      if (key === 'totalCost_USD') {
-        totalUSD += parseFloat(record[key]);
-      }
-      if (key === 'totalCost_PEN') {
-        totalPEN += parseFloat(record[key]);
-      }
-    });
+        if (key === 'totalCost_USD') {
+          totalUSD += parseFloat(record[key]);
+        }
+        if (key === 'totalCost_PEN') {
+          totalPEN += parseFloat(record[key]);
+        }
+      });
 
-    tbody.appendChild(row);
+      tbody.appendChild(row);
     });
 
     // Add the Total row
