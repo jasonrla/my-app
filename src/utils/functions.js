@@ -230,7 +230,7 @@ async function audioToText(audioFile) {
                 texto = transcripcion.text;   
                 fs.unlinkSync(audioFile.path);
 
-                addData(audioCost(audioFile.originalname, durationFormat, durationInSeconds));
+                addData(audioCost(audioFile.originalname, durationFormat, durationInSeconds, gvars.auditor));
 
                 procesarAudio(audioFile.originalname, texto, durationFormat, durationInSeconds)
 
@@ -326,7 +326,7 @@ const callOpenAI = async (model, role, text ,part1, part2, audioFileName, operat
   
         if (response.ok) {
           const jsonData = await response.json();
-          addData(textCost(model, jsonData, audioFileName, operation, duracion));
+          addData(textCost(model, jsonData, audioFileName, operation, duracion, gvars.auditor));
           console.log(jsonData.choices[0].message.content);
           return extractJSON(jsonData.choices[0].message.content);
         } else {
@@ -494,7 +494,7 @@ function addData(jsonObject) {
     addLog(`Add data to Invoice ${gvars.invoice}`, "INFO");
 }
 
-function textCost(model, data, audioFileName, operation, duracion){
+function textCost(model, data, audioFileName, operation, duracion, username){
 
     let input, output, context, inputTokens, outputTokens;
 
@@ -535,6 +535,7 @@ function textCost(model, data, audioFileName, operation, duracion){
     console.log({
         "operation": operation,
         "duracion": duracion,
+        "username": username,
         "date": currentDate(),
         "audioName": audioFileName,
         "model": model,
@@ -551,6 +552,7 @@ function textCost(model, data, audioFileName, operation, duracion){
     addLog(`Calcular costo de analizar texto: `+{
         "operation": operation,
         "duracion": duracion,
+        "username": username,
         "date": currentDate(),
         "audioName": audioFileName,
         "model": model,
@@ -567,6 +569,7 @@ function textCost(model, data, audioFileName, operation, duracion){
     return {
         "operation": operation,
         "duracion": duracion,
+        "username": username,
         "date": currentDate(),
         "audioName": audioFileName,
         "model":model,
@@ -581,13 +584,14 @@ function textCost(model, data, audioFileName, operation, duracion){
     }
 }
 
-function audioCost(fileName, duration ,seconds){
+function audioCost(fileName, duration ,seconds, username){
     const roundedSeconds = Math.ceil(seconds);
     let costUSD = roundedSeconds/60 * gvars.whisperCost;
 
     console.log({
         "operation": "Audio a texto",
         "audioName": fileName,
+        "username": username,
         "duracion": duration,
         "date": currentDate(),
         "totalTokens": "-",
@@ -597,6 +601,7 @@ function audioCost(fileName, duration ,seconds){
     return {
         "operation": "Audio a texto",
         "audioName": fileName,
+        "username": username,
         "duracion": duration,
         "date": currentDate(),
         "totalTokens": "-",

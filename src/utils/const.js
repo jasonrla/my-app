@@ -1,32 +1,79 @@
 module.exports = {
 
+
+//VARIABLES POR SESIÓN
+
 tkn:"",
-
 model: "", 
-quantityTokensPerMin: 40000, 
+
 accumlativeTokens: 0, 
-
-cost35I4: 0.0015,  // per 1000 tokens
-cost35O4: 0.002, 
-cost35I16: 0.003, 
-cost35O16: 0.004, 
-
-cost4I8: 0.03, 
-cost4O8: 0.06, 
-cost4I32: 0.06, 
-cost4O32: 0.12, 
-
-whisperCost: 0.006,  // per minute (rounded to the nearest second)
-
-TC: 3.8, 
-decimals: 8, 
-prodEnv: true, //true (incluye data dummy en "transcripciones", BORRAR)
 
 logs: {
   entries: []
 },
 
 textosAnalizados:{
+  'cariola_audioprueba_5_JUDI.mp3': {
+    /*respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },*/
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer opciones más económicas y apoyar económicamente al cliente."
+    },
+    saludo_institucional: {
+      valor: 10,
+      comentario: "El vendedor se presenta de manera formal e institucional al decir 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy?'. Además, incluye las palabras clave mencionadas ('natural', 'medicinal', 'productos') en su presentación."
+    },
+    empatia_simpatia: {
+      valor: 10,
+      comentario: 'El vendedor mostró empatía y simpatía de manera excepcional. Demostró preocupación por el cliente y ofreció opciones más accesibles de acuerdo a su presupuesto.'
+    },
+    preguntas_subjetivas: {
+      valor: 7,
+      comentario: 'El vendedor realizó al menos 4 preguntas subjetivas, como preguntar sobre los síntomas de dolor de cabeza e insomnio, pero no mencionó ejemplos específicos.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: 10,
+      comentario: 'El vendedor se enfoca en la enfermedad del cliente desde el inicio de la conversación y ofrece diferentes opciones de productos que podrían ayudar con los síntomas mencionados. Además, menciona que los productos naturales están diseñados para mejorar la calidad de vida del cliente.'
+    },
+    tono_voz: {
+      valor: 10,
+      comentario: 'El vendedor muestra preocupación por la enfermedad del cliente y utiliza un tono de voz claro y directo al ofrecerle diferentes opciones de paquetes que podrían ayudarlo.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al ofrecer diferentes opciones de paquetes que podrían ayudar en su situación.'
+    },
+    dato_duro: {
+      valor: '0',
+      comentario: 'El vendedor no da a conocer información sobre la patología o dolencia del cliente'
+    },
+    testimonio: {
+      valor: '0',
+      comentario: 'El vendedor no menciona ningún testimonio al cliente.'
+    },
+    solucion_beneficios: {
+      valor: 10,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento que le proporciona al cliente y el contexto tiene mucha coherencia con la dolencia del cliente y sus síntomas.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: '0',
+      comentario: 'El vendedor no realizó ninguna de las preguntas mencionadas y se enfocó en ofrecer diferentes paquetes de productos.'
+    }
+  },
   'cariola_audioprueba_5.mp3': {
     /*respaldo: {
       valor: '0',
@@ -433,9 +480,6 @@ transcripciones: {
   }
 },
 
-fontH: "18px", 
-font: "13px", 
-fontC: "12px", 
 
 linkIDCounter: 0, 
 linkSelections: {}, 
@@ -446,14 +490,15 @@ email: "",
 username: "",
 role: "",
 data: [], 
-invoice: {}, 
-selectedProcesses: [],
 fechaCal: "", 
 aName: "", 
-
-dataToExport: [],
-
 nombreUsuario: "", 
+selectedProcesses: [],
+dataToExport: [],
+ 
+//VARIABLES COMUNES
+
+invoice: {}, 
 
 peso1: 10, 
 peso2: 20, 
@@ -461,7 +506,30 @@ peso3: 10,
 peso4: 5, 
 peso5: 25, 
 peso6: 10, 
-peso7: 20, 
+peso7: 20,
+
+fontH: "18px", 
+font: "13px", 
+fontC: "12px", 
+
+quantityTokensPerMin: 40000, 
+
+cost35I4: 0.0015,  // per 1000 tokens
+cost35O4: 0.002, 
+cost35I16: 0.003, 
+cost35O16: 0.004, 
+
+cost4I8: 0.03, 
+cost4O8: 0.06, 
+cost4I32: 0.06, 
+cost4O32: 0.12, 
+
+whisperCost: 0.006,  // per minute (rounded to the nearest second)
+
+TC: 3.8, 
+decimals: 8, 
+prodEnv: true, //true (incluye data dummy en "transcripciones", BORRAR)
+
 
 //VERIFICACION
 

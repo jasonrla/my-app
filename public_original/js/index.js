@@ -292,7 +292,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
   // Crear la fila "Facturación"
   const billingRow = document.createElement('tr');
   const billingCell = document.createElement('th');
-  billingCell.colSpan = 7;
+  billingCell.colSpan = 8;
   billingCell.appendChild(document.createTextNode("Facturación"));
   billingCell.style.fontSize = "22px"; // Tamaño de letra más grande
   billingCell.style.fontWeight = "bold"; // Texto en negrita
@@ -302,7 +302,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
   // Crear la fila "Detalle"
   const row1 = document.createElement('tr');
   const rowCell1 = document.createElement('th');
-  rowCell1.colSpan = 7;
+  rowCell1.colSpan = 8;
   rowCell1.style.background = "none"; // Sin fondo
   row1.appendChild(rowCell1);
   thead.appendChild(row1);
@@ -322,7 +322,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
 
   const dateValueCell = document.createElement('td');
   dateValueCell.appendChild(document.createTextNode(response.date)); //////////////////////////
-  dateValueCell.colSpan =  6;
+  dateValueCell.colSpan =  7;
   dateValueCell.style.textAlign = 'left';
   //dateValueCell.fontSize = "16px";
   row0.appendChild(dateValueCell);
@@ -342,7 +342,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
 
   const totalUSDValueCell = document.createElement('td');
   totalUSDValueCell.appendChild(document.createTextNode(grandTotalUSD.toFixed(decimals)));
-  totalUSDValueCell.colSpan =  6;
+  totalUSDValueCell.colSpan =  7;
   totalUSDValueCell.style.textAlign = 'left';
   //totalUSDValueCell.fontSize = "16px";
   row2.appendChild(totalUSDValueCell);
@@ -362,7 +362,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
 
   const totalPENValueCell = document.createElement('td');
   totalPENValueCell.appendChild(document.createTextNode(grandTotalPEN.toFixed(decimals)));
-  totalPENValueCell.colSpan =  6;
+  totalPENValueCell.colSpan =  7;
   totalPENValueCell.style.textAlign = 'left';
   //totalPENValueCell.fontSize = "16px";
   row3.appendChild(totalPENValueCell);
@@ -372,14 +372,14 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
   // Crear una fila en blanco
   const blankRow = document.createElement('tr');
   const blankCell = document.createElement('th');
-  blankCell.colSpan = 7;
+  blankCell.colSpan = 8;
   blankCell.style.background = "none"; // Sin fondo
   blankRow.appendChild(blankCell);
   thead.appendChild(blankRow);
 
   // Crear header
   const headerRow = document.createElement('tr');
-  ["Audio", "Duración", "Fecha", "Operación", "Total Tokens", "Total USD", "Total PEN"].forEach(text => {
+  ["User", "Audio", "Duración", "Fecha", "Operación", "Total Tokens", "Total USD", "Total PEN"].forEach(text => {
     const th = document.createElement('th');
     th.appendChild(document.createTextNode(text));
     headerRow.appendChild(th);
@@ -393,12 +393,20 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
     let firstRow = true;
     let totalUSD = 0;
     let totalPEN = 0;
+    console.log(records.username);
+    console.log(audioName);
+    console.log(records);
     const rowSpanValue = records.length + 1;
 
     records.forEach(record => { // Recorrer los registros de cada audio
       const row = document.createElement('tr');
       
       if (firstRow) {
+        const userCell = document.createElement('td');
+        userCell.rowSpan = rowSpanValue;
+        userCell.appendChild(document.createTextNode(record.username));
+        row.appendChild(userCell);
+
         const audioNameCell = document.createElement('td');
         audioNameCell.rowSpan = rowSpanValue;
         audioNameCell.appendChild(document.createTextNode(audioName));
@@ -466,7 +474,7 @@ async function mostrarResultadosFacturacion(modalUsed, modalBodyUsed, accessToke
       grandTotalRow.className = 'bold-row';
 
       const grandTotalLabelCell = document.createElement('td');
-      grandTotalLabelCell.colSpan = 5;
+      grandTotalLabelCell.colSpan = 6;
       grandTotalLabelCell.appendChild(document.createTextNode('Total'));
       grandTotalRow.appendChild(grandTotalLabelCell);
 
