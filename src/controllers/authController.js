@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 require('dotenv').config();
 const gvars = require('../utils/const.js');
+const { addLog } = require('../utils/functions.js');
 
 const poolData = {
     UserPoolId: process.env.UserPoolId,
@@ -14,6 +15,7 @@ let accessToken = "";
 
 exports.getLoginPage = (req, res) => {
     gvars.tkn = "";
+    addLog("Login.html se muestra en el cliente", "INFO");
     res.sendFile(path.join(__dirname, '..', '..', 'public', 'html', 'login.html'));
 };
 
@@ -24,10 +26,12 @@ exports.logout = (req, res) => {
     if (cognitoUser) {
         cognitoUser.signOut();
         gvars.tkn = "";
+        addLog(`Usuario ${gvars.username} se desconectó exitosamente`, "INFO");
         console.log('Usuario desconectado exitosamente');
         // Puedes redirigir al usuario a la página de inicio de sesión u otra página de tu elección
         res.redirect('/');
     } else {
+        addLog(`Ningún usuario autenticado`, "INFO");
         console.log('Ningún usuario autenticado');
         gvars.tkn = "";
         // Puedes redirigir al usuario a la página de inicio de sesión si no hay usuario autenticado
@@ -62,8 +66,11 @@ exports.login = (req, res) => {
             gvars.email = decodedToken.email;
 
             res.redirect('/auditoria');
+
+            addLog(`Usuario ${gvars.username} autenticado exitosamente`, "INFO");
         },
         onFailure: (err) => {
+            addLog(`Error en autenticación`, "ERROR");
             console.error('Authentication failed', err);
             res.redirect('/');
         },
