@@ -15,23 +15,28 @@ let accessToken = "";
 
 exports.getLoginPage = (req, res) => {
     gvars.tkn = "";
-    addLog("Login.html se muestra en el cliente", "INFO");
+    addLog(null, "Login.html se muestra en el cliente", "INFO");
     res.sendFile(path.join(__dirname, '..', '..', 'public', 'html', 'login.html'));
 };
 
 exports.logout = (req, res) => {
-    // Obtén el usuario actual autenticado
     const cognitoUser = userPool.getCurrentUser();
-
+    const user = req.session.username;
     if (cognitoUser) {
-        cognitoUser.signOut();
-        gvars.tkn = "";
-        addLog(`Usuario ${gvars.username} se desconectó exitosamente`, "INFO");
-        console.log('Usuario desconectado exitosamente');
-        // Puedes redirigir al usuario a la página de inicio de sesión u otra página de tu elección
-        res.redirect('/');
+        req.session.destroy(function(err) {
+        if (err) {
+            console.log(err);
+            res.send("Error al cerrar sesión");
+        } else {
+            cognitoUser.signOut();
+            gvars.tkn = "";
+            addLog(req.session, `Usuario ${user} se desconectó exitosamente`, "INFO");//gvars.username} se desconectó exitosamente`, "INFO");
+            console.log('Usuario desconectado exitosamente');
+            res.redirect('/');
+        }
+});
     } else {
-        addLog(`Ningún usuario autenticado`, "INFO");
+        addLog(null, `Ningún usuario autenticado`, "INFO");
         console.log('Ningún usuario autenticado');
         gvars.tkn = "";
         // Puedes redirigir al usuario a la página de inicio de sesión si no hay usuario autenticado
@@ -57,20 +62,24 @@ exports.login = (req, res) => {
             console.log('Authentication Successful!', session);
             accessToken = session.getAccessToken().getJwtToken();
             gvars.tkn = accessToken;
-            gvars.username = cognitoUser.getUsername();
+            req.session.username = cognitoUser.getUsername();
+            //gvars.username = cognitoUser.getUsername();
   
             const idToken = session.getIdToken().getJwtToken();
             const decodedToken = jwt.decode(idToken);
-            gvars.auditor = decodedToken.name;
-            gvars.group = decodedToken['cognito:groups'][0];
-            gvars.email = decodedToken.email;
+            req.session.auditor = decodedToken.name;
+            //gvars.auditor = decodedToken.name;
+            req.session.group = decodedToken['cognito:groups'][0];
+            //gvars.group = decodedToken['cognito:groups'][0];
+            req.session.email = decodedToken.email;
+            //gvars.email = decodedToken.email;
 
             res.redirect('/auditoria');
 
-            addLog(`Usuario ${gvars.username} autenticado exitosamente`, "INFO");
+            addLog(req.session, `Usuario ${req.session.username} autenticado exitosamente`, "INFO");//gvars.username} autenticado exitosamente`, "INFO");
         },
         onFailure: (err) => {
-            addLog(`Error en autenticación`, "ERROR");
+            addLog(null, `Error en autenticación`, "ERROR");
             console.error('Authentication failed', err);
             res.redirect('/');
         },
@@ -149,3 +158,4 @@ cognitoUser.confirmPassword(req.body.code, req.body.newPassword, {
 
 
 };
+

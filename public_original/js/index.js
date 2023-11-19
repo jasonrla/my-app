@@ -257,12 +257,7 @@ async function exportTableToExcel(tableElement, accessToken) {
 
 function generateFacturacion(audioFiles, accessToken){
   if (audioFiles.length == 0) {
-    Swal.fire({
-      title: 'Error!',
-      text: 'No ha procesado ningun audio',
-      icon: 'error',
-      confirmButtonText: 'Entendido'
-    })
+    alert("error", "No ha procesado ningun audio");
     return;
   }
   else{
@@ -901,30 +896,13 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
       const numberOfImages = imageInput.files.length;
 
       if (numberOfImages===0){
-          Swal.fire({
-              title: 'Error!',
-              text: 'No selecciono ninguna imagen',
-              icon: 'error',
-              confirmButtonText: 'Entendido'
-            })
+          alert("error", "No se adjuntaron imagenes.");
       }
       else if(numberOfImages===1){
-          Swal.fire({
-              title: 'Éxito!',
-              text: "Se adjunto 1 imagen.",
-              icon: 'success',
-              confirmButtonText: 'OK'
-          });
-          //imageInput.value = '';
+          alert("success", "Se adjuntó 1 imagen.");
       }
       else{
-          Swal.fire({
-              title: 'Éxito!',
-              text:  "Se adjuntaron " + numberOfImages+ " imagenes.",
-              icon: 'success',
-              confirmButtonText: 'OK'
-          });
-          //imageInput.value = '';
+          alert("success", "Se adjuntaron " + numberOfImages + " imagenes.");
       }
 
   });
@@ -945,15 +923,43 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
 
 }
 
-async function generateGeneralReport(audioFiles, accessToken){
-  if (audioFiles.length == 0) {
+function alert(type, message){
+  if(type == "success"){
+    Swal.fire({
+      title: 'Éxito!',
+      text:  message,
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
+  }
+  else if(type == "error"){
     Swal.fire({
       title: 'Error!',
-      text: 'No ha procesado ningun audio',
+      text: message,
       icon: 'error',
       confirmButtonText: 'Entendido'
     })
-    return;
+  } else if (type === "confirm") {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: message,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, estoy seguro',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed && onConfirm) {
+        onConfirm();
+      }
+    });
+  }
+}
+
+async function generateGeneralReport(audioFiles, accessToken){
+  if (audioFiles.length == 0) {
+    alert("error", "No ha procesado ningun audio");
   }
   else{
 
@@ -1097,6 +1103,98 @@ function ocultarOpciones(userRole){
   }
 }
 
+let respAudio;
+
+async function processAudio(audioFile, auditor, tipoCampanaMasDialer, accessToken){
+  let transcripcion = "";
+  let duracion = "";
+  let audioFileName = "";
+
+  audioFileName = prod ? audioFile.name : "Audio file name test";
+  
+  showLoadingIcon('Procesando audio: ' + audioFileName);
+
+  const formData1 = new FormData();
+  formData1.append('audioFile', audioFile);
+  
+  const requestOptions1 = {
+    method: 'POST',
+    headers: {'Authorization': `Bearer ${accessToken}`},
+    body: formData1
+  };
+
+  let data = {};
+  respAudio = await fetch('/transformar-audio', requestOptions1);
+
+  if ("error" in respAudio){
+    console.log("Error al analizar audio: "+audioFileName);
+    console.log(resp);
+    return { continue: true, data: null };
+  }
+
+  data = await respAudio.json()
+
+  console.log(data);
+
+  transcripcion = data.text;
+  duracion = data.duracion;
+
+  console.log(duracion);
+  
+  showLoadingIcon('Analizando texto: ' + audioFileName);
+
+  const payload = {
+    'audioFileName': audioFileName,
+    'auditor': auditor,
+    'grupo_vendedor': grupoVendedor(),
+    'motivo': obtenerMotivo(),
+    'nombre_vendedor': obtenerNombreVendedor(),
+    'tipo_campana': tipoCampanaMasDialer,
+    'transcripcion': transcripcion,
+    'duracion': duracion
+  }
+
+  let response = {};
+  const resp = await fetchApi('/analizar-textos', accessToken, "POST", payload);
+
+  if (resp.error) {
+    console.log("Error al analizar textos del audio: "+audioFileName);
+    console.log(resp);
+    return { continue: true, data: null };
+  }
+
+  response = resp;
+  console.log("response");
+  console.log(response);
+  return { continue: false, data: response };
+}
+
+function createCell(text, row, isEditable = false, additionalClasses = []) {
+  const td = document.createElement('td');
+  if (isEditable) {
+    td.setAttribute('contenteditable', 'true');
+    additionalClasses.forEach(cls => td.classList.add(cls));
+  }
+  if (typeof text === 'function') {
+    td.appendChild(text());
+  } else {
+    td.textContent = text;
+  }
+  row.appendChild(td);
+}
+
+// Función auxiliar para crear un enlace
+function createLink(text, clickHandler) {
+  const link = document.createElement('a');
+  link.href = "#";
+  link.textContent = text;
+  link.addEventListener('click', function(event) {
+    event.preventDefault();
+    clickHandler();
+  });
+  return link;
+}
+
 let auditor = "";
 
 document.addEventListener('DOMContentLoaded', async function() {
@@ -1117,7 +1215,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   });
 
   document.addEventListener('click', function(event) {
-    var sidebar = document.getElementById('sidebar');
+    let sidebar = document.getElementById('sidebar');
     if (!sidebar.contains(event.target)) {
       // Contrae la barra lateral aquí
       sidebar.style.width = "20px";
@@ -1296,8 +1394,6 @@ document.addEventListener('DOMContentLoaded', async function() {
       });
       return selectedBoxes;
   }
-
-
   
   audioForm.addEventListener('submit', async function(event) {
 
@@ -1308,7 +1404,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     await fetchApi('/reset-values', accessToken);  
 
     statusMessage.textContent = '';
-    document.getElementById('linksContainer').innerHTML = '';
+
+    //document.getElementById('linksContainer').innerHTML = ''; BORRA TABLA ACTUAL
 
     if(prod){
       audioFiles = Array.from(document.getElementById('audioFile').files); 
@@ -1318,53 +1415,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     if (tipoCampana == ""){
-      Swal.fire({
-        title: 'Error!',
-        text: 'Seleccione un tipo de campaña',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "Seleccione un tipo de campaña");
     }
     else if (tipoCampanaAuditoria() == "Reorden" && obtenerDialer() == "Seleccione una opción"){
-      Swal.fire({
-        title: 'Error!',
-        text: 'Seleccione un dialer',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "Seleccione un dialer");
     }
     else if (obtenerNombreVendedor() == "Seleccione un vendedor"){
-      Swal.fire({
-        title: 'Error!',
-        text: 'Seleccione un vendedor',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "Seleccione un vendedor");
     }
     else if (obtenerMotivo() == "Seleccione un motivo"){
-      Swal.fire({
-        title: 'Error!',
-        text: 'Seleccione un motivo',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "Seleccione un motivo");
     }
     else if (audioFiles.length == 0) {
-      Swal.fire({
-        title: 'Error!',
-        text: 'No ha cargado ningun audio',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "No se ha subido ningun audio");
       return;
     }
     else if (checks.length == 0) {
-      Swal.fire({
-        title: 'Error!',
-        text: 'No ha seleccionado ningun proceso',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "No ha seleccionado ningun proceso");
       return;
     }
     else {
@@ -1383,172 +1450,71 @@ document.addEventListener('DOMContentLoaded', async function() {
 
       const linksContainer = document.getElementById('linksContainer');
 
-      const table = document.createElement('table');
-      table.classList.add('custom-audio-table');
+      let table = linksContainer.querySelector('table');
 
-      linksContainer.appendChild(table);
-      
-      const thead = document.createElement('thead');
-      table.appendChild(thead);
-      
-      const headerRow = document.createElement('tr');
-      thead.appendChild(headerRow);
-      
-      const th1 = document.createElement('th');
-      th1.textContent = 'Fecha de procesamiento';
-      headerRow.appendChild(th1);
-      
-      const th2 = document.createElement('th');
-      th2.textContent = 'Nombre de audio';
-      headerRow.appendChild(th2); 
-      
-      const th3 = document.createElement('th');
-      th3.textContent = 'Duración';
-      headerRow.appendChild(th3); 
+      if(!table){
+        table = document.createElement('table');
+        table.classList.add('custom-audio-table');
+        table.id = 'general-table';
 
-      const th4 = document.createElement('th');
-      th4.textContent = 'Resultado';
-      headerRow.appendChild(th4); 
+        linksContainer.appendChild(table);
+        
+        const thead = document.createElement('thead');
+        table.appendChild(thead);
+        
+        const headerRow = document.createElement('tr');
+        thead.appendChild(headerRow);
+        
+        const headers = ["Fecha de procesamiento", "Nombre de audio", "Duración", "Resultado", "Transcripción"];
+        if (userRole === 'user') { headers.push("Reporte"); }
+        if (userRole === 'admin') { headers.push("Reporte Feedback"); }
+        headers.push("Status");
 
-      const th5 = document.createElement('th');
-      th5.textContent = 'Transcripción';
-      headerRow.appendChild(th5); 
-
-      const th6 = document.createElement('th');
-      th6.textContent = 'Reporte 1';
-      headerRow.appendChild(th6); 
-
-      if(userRole === "admin"){
-        const th7 = document.createElement('th');
-        th7.textContent = 'Reporte 2';
-        headerRow.appendChild(th7);
+        headers.forEach(header => {
+          const th = document.createElement('th');
+          th.textContent = header;
+          headerRow.appendChild(th);
+        });
       }
-
+      
       const tbody = document.createElement('tbody');
       table.appendChild(tbody);
 
-      let respAudio;
-
       for (const audioFile of audioFiles) {
 
-        let transcripcion = "";
-        let duracion = "";
-        let audioFileName = "";
+        let response;
+        const resultado = await processAudio(audioFile, auditor, tipoCampanaMasDialer, accessToken);
+        if (resultado.continue) { continue; } else{ response = resultado.data; }
 
-        audioFileName = prod ? audioFile.name : "Audio file name test";
-        
-        showLoadingIcon('Procesando audio: ' + audioFileName);
-
-        const formData1 = new FormData();
-        formData1.append('audioFile', audioFile);
-        
-        const requestOptions1 = {
-          method: 'POST',
-          headers: {'Authorization': `Bearer ${accessToken}`},
-          body: formData1
-        };
-
-        let data = {};
-        respAudio = await fetch('/transformar-audio', requestOptions1);
-
-        if ("error" in respAudio){
-          console.log("Error al analizar audio: "+audioFileName);
-          console.log(resp);
-          continue;
-        }
-
-        data = await respAudio.json()
-        transcripcion = data.text;
-        duracion = data.duracion;
-        
-        showLoadingIcon('Analizando texto: ' + audioFileName);
-
-        const payload = {
-          'audioFileName': audioFileName,
-          'auditor': auditor,
-          'grupo_vendedor': grupoVendedor(),
-          'motivo': obtenerMotivo(),
-          'nombre_vendedor': obtenerNombreVendedor(),
-          'tipo_campana': tipoCampanaMasDialer,
-          'transcripcion': transcripcion,
-          'duracion': duracion
-        }
-
-        let response = {};
-        const resp = await fetchApi('/analizar-textos', accessToken, "POST", payload);
-
-        if (resp.error) {
-          console.log("Error al analizar textos del audio: "+audioFileName);
-          console.log(resp);
-          continue;
-        }
-    
-        response = resp;
-        
         const row = document.createElement('tr');
         tbody.appendChild(row);
 
-        const tdAudioDate = document.createElement('td');
-        tdAudioDate.textContent = response.Fecha_Audio;
-        row.appendChild(tdAudioDate);
+        createCell(response.Fecha_Audio, row);
+        createCell(response.Nombre_Audio, row);
+        createCell(response.Duracion, row);
+        createCell(response.Resumen, row, true, ['editable-field']);
 
-        const tdName = document.createElement('td');
-        tdName.textContent = response.Nombre_Audio;
-        row.appendChild(tdName);
+        createCell(() => createLink('Ver', () => {
+          mostrarTextoTransformado(response.Transcripcion, response.Nombre_Audio, accessToken);
+          document.getElementById('modalTextoTransformado-content').scrollTop = 0;
+        }), row);
 
-        const tdDuration = document.createElement('td');
-        tdDuration.textContent = response.Duracion;
-        row.appendChild(tdDuration);
-
-        const tdResult = document.createElement('td');
-        tdResult.textContent = response.Resumen; 
-        tdResult.setAttribute('contenteditable', 'true');
-        tdResult.classList.add('editable-field');
-        row.appendChild(tdResult);
-
-        const tdTextLink = document.createElement('td');
-        const textLink = document.createElement('a');
-        textLink.href = "#";
-        textLink.innerText = `Ver`;
-        textLink.onclick = function(event) {
-            event.preventDefault();
-            mostrarTextoTransformado(response.Transcripcion, response.Nombre_Audio, accessToken);
-            document.getElementById('modalTextoTransformado-content').scrollTop = 0;
-        }
-        tdTextLink.appendChild(textLink);
-        row.appendChild(tdTextLink);
-
-        const td2 = document.createElement('td');
-        const link = document.createElement('a');
-        link.href = '#';
-        link.innerText = `Ver`;
-        link.onclick = function(event) {
-            event.preventDefault();
+        if(userRole === "user") {
+          createCell(() => createLink('Ver', () => {
             mostrarResultados("modal", "modalBody", response, accessToken);
             document.getElementById('modalContent').scrollTop = 0;
+          }), row);
         }
-        td2.appendChild(link);
-        row.appendChild(td2);
 
-        if(userRole === "admin"){
-          const tdReporte2 = document.createElement('td');
-          const link2 = document.createElement('a');
-          link2.href = '#';
-          link2.innerText = `Ver`;
-          //link2.setAttribute('id', (linkIDCounter++).toString());
-          
-          link2.onclick = function(event) {
-              event.preventDefault();
-              //resetModal();
-        
-              const linkId = "1";
-            
-              mostrarResultadosFeedback(linkId, "modalFeedbackInterno", "modalBodyFeedbackInterno", response, accessToken);
-              document.getElementById('modalFeedbackInterno-content').scrollTop = 0;
-          }
-          tdReporte2.appendChild(link2);
-          row.appendChild(tdReporte2);
+        if(userRole === "admin") {
+          createCell(() => createLink('Ver', () => {
+            const linkId = "1";
+            mostrarResultadosFeedback(linkId, "modalFeedbackInterno", "modalBodyFeedbackInterno", response, accessToken);
+            document.getElementById('modalFeedbackInterno-content').scrollTop = 0;
+          }), row);
         }
+
+        createCell("Por revisar", row);
 
         await fetchApi('/set-data-to-export', accessToken, "POST", response);
         
@@ -1563,18 +1529,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
       statusMessage.textContent = "";
       document.getElementById('complete-icon').style.display = 'none';
-      Swal.fire({
-        title: 'Éxito!',
-        text: 'Proceso terminado.',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
       submitButton.style.display = 'inline-block';
       cancelButton.style.display = 'none';
-
       showCompleteIcon();
-    }  
 
+      alert("success", "Procesamiento completado");
+    }  
+    
   }); //submit
 
   document.getElementById('downloadBtn').addEventListener('click', async function() {
@@ -1582,26 +1543,15 @@ document.addEventListener('DOMContentLoaded', async function() {
     const tableElement = document.getElementById('hiddenTable');
 
     if (audioFiles.length == 0) {
-      Swal.fire({
-        title: 'Error!',
-        text: 'No se ha procesado ningun audio',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "No se ha procesado ningun audio");
       return;
     }
     else if (!tableElement && audioFiles.length != 0) {
       console.error('La tabla no se encontró en el DOM');
-      Swal.fire({
-        title: 'Error!',
-        text: 'Por favor espere a que se procesen todos los archivos de audio',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      })
+      alert("error", "Por favor espere a que se procesen todos los archivos de audio");
       return;
     }
     
-    console.log(tableElement);
     exportTableToExcel(tableElement, accessToken);
   });
 
@@ -1616,6 +1566,21 @@ document.addEventListener('DOMContentLoaded', async function() {
     const a = document.createElement('a');
     a.setAttribute('href', url);
     a.setAttribute('download', 'Data_'+date.currentDate+'.json');
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('logs').addEventListener('click', async function() {
+    const data = await fetchApi('/get-logs', accessToken);  
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const date = await fetchApi('/get-current-date', accessToken);
+    
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'Logs_'+date.currentDate+'.json');
     a.click();
     URL.revokeObjectURL(url);
   });
@@ -1704,19 +1669,8 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     
   document.getElementById('cancelButton').addEventListener('click', function() {
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Esta acción no puede deshacerse.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, estoy seguro',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            location.reload();
-        }
+    alert("confirm", "Esta acción no puede deshacerse.", function() {
+      location.reload();
     });
   });
 

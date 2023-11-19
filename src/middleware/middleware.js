@@ -34,7 +34,8 @@ const verifyAccessToken = (req, res, next) => {
         //req.user = user;
         const userRole = user['cognito:groups'] ? user['cognito:groups'][0] : null;
         req.user = { ...user, role: userRole };
-        gvars.role = userRole;
+        req.session.role = userRole;
+        //gvars.role = userRole;
         next();
     });
 };

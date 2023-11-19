@@ -71,6 +71,8 @@ router.get('/get-invoice-data', verifyAccessToken, checkRole(admin), auditoriaCo
 
 router.post('/set-selected-processes', verifyAccessToken, checkRole(admin, user), auditoriaController.setSelectedProcesses);
 
-router.get('/reset-values', verifyAccessToken, checkRole(admin), auditoriaController.resetValues);
+router.get('/reset-values', verifyAccessToken, checkRole(admin, user), auditoriaController.resetValues);
+
+router.get('/get-logs', verifyAccessToken, checkRole(admin, user), auditoriaController.getLogs);
 
 module.exports = router;

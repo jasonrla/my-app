@@ -13,6 +13,8 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="/public/js/index.js" charset="UTF-8"></script>
+  <script src="/public/js/mobile.js" charset="UTF-8"></script>
 </head>
 <body>
   <div id="mobile-warning">
@@ -34,6 +36,9 @@
       </li>
       <li>
         <button id="datajson"><i class="fa fa-download"></i>Data JSON</button>
+      </li>
+      <li>
+        <button id="logs"><i class="fa fa-download"></i>Logs</button>
       </li>
       <li>
         <button id="admin"><i class="fas fa-user-shield"></i>Admin site</button>
@@ -157,7 +162,8 @@
     <div id="modalContent">
       <button onclick="closeModal()" class="close-button">×</button>
       <button id="downloadBtnPDFModal">Exportar a PDF</button>
-      <h2>Reporte 1</h2>
+      <button id="enviarParaFeedback">Enviar para Feedback</button>
+      <h2>Reporte</h2>
       <div id="modalBody"></div> <!--aqui se agrega la tabla-->
       <br>
       <button id="downloadBtnPDFModal2">Exportar a PDF</button>
@@ -276,8 +282,7 @@
     </div>
   </div>
   </div>
-  <script src="/public/js/index.js" charset="UTF-8"></script>
-  <script src="/public/js/mobile.js" charset="UTF-8"></script>
+  
 </body>
 </html>
 

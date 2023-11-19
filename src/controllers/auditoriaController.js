@@ -3,7 +3,8 @@ const path = require('path');
 require('dotenv').config();
 const app = express();
 const gvars = require('../utils/const.js');
-const { analizarTextos, puntuacion, currentDate, convertDateFormat, calcularPromedio, getColumnLetter, transformDateFormat, audioToText, promedioSimple, addLog} = require('../utils/functions.js');
+const { analizarTextos, puntuacion, currentDate, convertDateFormat, calcularPromedio, getColumnLetter, transformDateFormat, audioToText, promedioSimple, addLog, executeQuery} = require('../utils/functions.js');
+const pool = require('../database/db.js');
 
 const http = require('http');
 const socketIo = require('socket.io');
@@ -33,8 +34,8 @@ exports.getEnv = (req, res) => {
 
 exports.getAuditorName = (req, res) => {
     const data = {
-        "auditor": gvars.auditor, 
-        "role": gvars.role
+        "auditor": req.session.auditor,//gvars.auditor, 
+        "role": req.session.role, //gvars.role
     }
     res.json(data);
 };
@@ -104,6 +105,9 @@ exports.getListBoxLideres = async (req, res) => {
         "Zully Soto": "",
         "Roberto Perez": ""
     };
+
+    await executeQuery(req.session, 'SELECT * FROM configuraciones.prompts WHERE process = $1', ['saludo_institucional'])
+
     res.json(data);
 };
 
@@ -218,8 +222,10 @@ exports.excelOptions = async (req, res) => {
 };
 
 exports.setAudioData = async (req, res) => {
-    gvars.fechaCal = currentDate()
-    gvars.aName = req.body.aName
+    req.session.fechaCal = currentDate()
+    //gvars.fechaCal = currentDate()
+    req.session.aName = req.body.aName
+    //gvars.aName = req.body.aName
     res.json({
         "success": "ok"
     })
@@ -227,8 +233,9 @@ exports.setAudioData = async (req, res) => {
 
 exports.getAudioData = async (req, res) => {
     res.json({
-        "fechaCal": convertDateFormat(gvars.fechaCal),
-        "aName": gvars.aName
+        "fechaCal": convertDateFormat(req.session.fechaCal),//gvars.fechaCal),
+        "aName": req.session.aName
+        //"aName": gvars.aName
     });
 };
 
@@ -246,7 +253,8 @@ exports.getDate = async (req, res) => {
 
 
 exports.setDataToExport = async (req, res) => {
-    gvars.dataToExport.push(req.body);
+    req.session.dataToExport.push(req.body);
+    //gvars.dataToExport.push(req.body);
     res.json({
         "success": "ok"
     });
@@ -254,7 +262,7 @@ exports.setDataToExport = async (req, res) => {
 
 exports.getDataToExport = async (req, res) => {
     res.json({
-        "dataToExport": gvars.dataToExport,
+        "dataToExport": req.session.dataToExport,//gvars.dataToExport,
     });
 };
 
@@ -323,7 +331,7 @@ exports.getDataToExportExcel = async (req, res) => {
     };
 
     const data = {
-        "dataToExport": gvars.dataToExport,
+        "dataToExport": req.session.dataToExport,//gvars.dataToExport,
     };
 
     data.dataToExport = data.dataToExport.map(item => {
@@ -479,8 +487,10 @@ exports.getRowsData = async (req, res) => {
     
     const response = req.body;
 
-    gvars.fechaCal = currentDate();
-    gvars.aName = response.Nombre_Audio;
+    req.session.fechaCal = currentDate();
+    //gvars.fechaCal = currentDate();
+    req.session.aName = response.Nombre_Audio;
+    //gvars.aName = response.Nombre_Audio;
 
     const rowsData = [        
         {fontSize: gvars.fontH, header: true, cells: [{text: "Acta Calibracion Cariola", colSpan: 10, centered: true, colour3: true}]},
@@ -489,7 +499,7 @@ exports.getRowsData = async (req, res) => {
         {fontSize: gvars.font, cells: [{text: " ", colSpan: 9},{text: "Resultado Calibración", centered: true, colour: true, bold: true, width: true}]},
         {fontSize: gvars.font, cells: [{text: "Auditor:", colour2: true, bold: true}, {text: response.Auditor, colSpan: 8},{text: response.Resultado_Calibracion, centered: true, colour: true, bold: true, width: true}]},
   
-        {fontSize: gvars.font, cells: [{text: "Fecha de Calibración:", colour2: true, bold: true}, {text: gvars.fechaCal, colSpan: 9}]},
+        {fontSize: gvars.font, cells: [{text: "Fecha de Calibración:", colour2: true, bold: true}, {text: req.session.fechaCal, colSpan: 9}]},//gvars.fechaCal, colSpan: 9}]},
   
         {fontSize: gvars.font, cells: [{text: " ", colSpan: 8},{text: "Etapas de la Venta", colour2: true, bold: true, width: true},{text: response.Etapas_Venta, centered: true, width: true}]},
         {fontSize: gvars.font, cells: [{text: "Grupo:", colour2: true, bold: true}, {text: response.Grupo, colSpan: 7},{text: "Habilidades Comerciales", colour2: true, bold: true},{text: response.Habil_comerciales, centered: true}]},
@@ -646,10 +656,12 @@ exports.getGeneralReportRows = async (req, res) => {
     resultados = req.body.resultados_nuevo;
     data = req.body.data.dataToExport;
 
-    gvars.fechaCal = currentDate();
-    gvars.aName = data[0].Nombre_Audio;
+    req.session.fechaCal = currentDate();
+    //gvars.fechaCal = currentDate();
+    req.session.aName = data[0].Nombre_Audio;
+    //gvars.aName = data[0].Nombre_Audio;
 
-    const [auditor, fechaCalibracion, grupo, motivoAuditoria, nombreAsesor, tipoCampana] = [data[0].Auditor, gvars.fechaCal, data[0].Grupo, data[0].Motivo, data[0].Asesor, data[0].Tipo_de_Campana];
+    const [auditor, fechaCalibracion, grupo, motivoAuditoria, nombreAsesor, tipoCampana] = [data[0].Auditor, req.session.fechaCal, data[0].Grupo, data[0].Motivo, data[0].Asesor, data[0].Tipo_de_Campana];//gvars.fechaCal, data[0].Grupo, data[0].Motivo, data[0].Asesor, data[0].Tipo_de_Campana];
     const [saludo, simpatiaEmpatia] = [getValor(resultados, "saludo_institucional"), getValor(resultados, "simpatia_empatia")];
     const [percalificacion, preguntasSubjetivas] = [getValor(resultados, "precalificacion"), getValor(resultados, "preguntas_subjetivas")];
     const [etiqueta, enfoque, tono, conocimiento, datoDuro] = [getValor(resultados, "etiqueta_enfermedad"), getValor(resultados, "enfocarse_enfermedad"), getValor(resultados, "tono_voz"), getValor(resultados, "conocimiento_patologia"), getValor(resultados, "dato_duro")];
@@ -877,7 +889,7 @@ exports.transformarAudio = async (req, res) => {
         return res.status(400).json({error: 'No se envió ningún archivo.'});
     }
 
-    const resultado = await audioToText(file);
+    const resultado = await audioToText(req.session, file);
     
     if("error" in resultado){
         console.log("Error en transformar audio");
@@ -889,7 +901,7 @@ exports.transformarAudio = async (req, res) => {
 
 exports.analizarTextos = async (req, res) => {
     
-    const resultado = await analizarTextos(req.body);
+    const resultado = await analizarTextos(req.session,req.body);
 
     if("error" in resultado){
         console.log("Error en analizar textos");
@@ -981,6 +993,11 @@ exports.setSelectedProcesses = async (req, res) => {
 };
 
 exports.resetValues = async (req, res) => {
-    gvars.dataToExport = [];
+    req.session.dataToExport = [];
+    //gvars.dataToExport = [];
     res.json({"status": "ok"});
+};
+
+exports.getLogs = async (req, res) => {
+    res.json(gvars.logs);
 };

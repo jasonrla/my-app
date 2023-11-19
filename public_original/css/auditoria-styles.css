@@ -655,7 +655,7 @@ div label {
   display: inline-block;
 }
 
-#facturacion, #logout, #verificacion, #admin, #configuracion, #datajson, #reportes{
+#facturacion, #logout, #verificacion, #admin, #configuracion, #datajson, #reportes, #logs{
   padding: 13px 13px;
   font-size: 16px;
   border: none;
@@ -666,7 +666,7 @@ div label {
   width: 200px; 
 }
 
-#facturacion:hover, #logout:hover, #verificacion:hover, #admin:hover, #configuracion:hover, #datajson:hover, #reportes:hover {
+#facturacion:hover, #logout:hover, #verificacion:hover, #admin:hover, #configuracion:hover, #datajson:hover, #reportes:hover, #logs:hover {
   padding: 13px 13px;
   font-size: 16px;
   border: none;
@@ -677,7 +677,7 @@ div label {
   width: 200px; 
 }
 
-#admin i.fas, #facturacion i.fas, #logout i.fas, #verificacion i.fas, #admin i.fas, #configuracion i.fas, #datajson i.fas, #reportes i.fas {
+#admin i.fas, #facturacion i.fas, #logout i.fas, #verificacion i.fas, #admin i.fas, #configuracion i.fas, #datajson i.fas, #reportes i.fas, #logs i.fas {
   margin-right: 10px; /* Esto añadirá un margen a la derecha del ícono */
 }
 
