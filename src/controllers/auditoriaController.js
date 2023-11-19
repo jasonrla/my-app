@@ -53,7 +53,21 @@ exports.getListBoxVendedores = async (req, res) => {
         "Belkis Barrios": "C4",
         "Yeruli Aquino": "C4",
         "Yasmeli Nieves": "GCC",
-        "Sonia Nataly Rodriguez": "GCC"
+        "Sonia Nataly Rodriguez": "GCC",
+        "Carlos Cieza": "C3",
+        "Fanny Juarez": "C3",
+        "Angela La Torre Leyva": "C3",
+        "Teresa Herrera": "C3",
+        "Virginia Cordero": "C3",
+        "Lorena Yanina Rodríguez": "C3",
+        "Emma Cosme": "C3",
+        "Fernando Bejarano St": "C3",
+        "Yusmey Rodriguez": "C1",
+        "Odalys Rodriguez": "C1",
+        "Maria Luisa Amaris": "C1",
+        "Ivelisse Chabebee": "C1",
+        "Mariluz Arango": "C1",
+        "Maria Vasquez": "C1"
     };
     res.json(data);
 };
