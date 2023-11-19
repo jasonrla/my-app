@@ -106,7 +106,7 @@ exports.getListBoxLideres = async (req, res) => {
         "Roberto Perez": ""
     };
 
-    await executeQuery(req.session, 'SELECT * FROM configuraciones.prompts WHERE process = $1', ['saludo_institucional'])
+    //await executeQuery(req.session, 'SELECT * FROM configuraciones.prompts WHERE process = $1', ['saludo_institucional'])
 
     res.json(data);
 };

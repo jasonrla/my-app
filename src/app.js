@@ -12,7 +12,7 @@ const port = 3000;
 
 // Configuración del middleware de sesión
 app.use(session({
-    secret: process.env.secret,
+    secret: process.env.secretNumber,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false } // Usa 'true' solo si estás sirviendo tu sitio en HTTPS
