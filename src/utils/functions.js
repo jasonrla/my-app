@@ -2,7 +2,7 @@
 const { Logger } = require('aws-amplify');
 const gvars = require('../utils/const.js');
 const FormData = require('form-data');
-const { error } = require('console');
+const { error, log } = require('console');
 const mp3Duration = require('mp3-duration');
 const fs = require('fs');
 const pool = require('../database/db.js');
@@ -93,10 +93,11 @@ function puntuacion(...numeros) {
     return promedio;
 }
 
-function getAudioDuration(audioFile) {
+function getAudioDuration(session, audioFile) {
     return new Promise((resolve, reject) => {
       const audioFilePath = audioFile.path;
-  
+      addLog(session,audioFilePath,"ERROR");
+
       mp3Duration(audioFilePath, function(err, duration) {
         if (err) {
           reject(err);
@@ -115,7 +116,8 @@ function getAudioDuration(audioFile) {
         const formattedSeconds = String(seconds).padStart(2, '0');
   
         const formattedDuration = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-  
+        addLog(session,formattedDuration,"ERROR");
+
         resolve({
           "durationFormat": formattedDuration,
           "durationInSeconds": roundedDuration // Utiliza la duración redondeada
@@ -192,7 +194,7 @@ async function audioToText(session, audioFile) {
         } else {
 
             //let durationFormat, durationInSeconds;
-            getAudioDuration(audioFile)
+            getAudioDuration(session, audioFile)
             .then(result => {
                 
                 if (result) {  
@@ -200,6 +202,7 @@ async function audioToText(session, audioFile) {
                     durationInSeconds = result.durationInSeconds;
                     console.log("durationFormat:", durationFormat);
                     console.log("durationInSeconds:", durationInSeconds);
+
                     addLog(session,`Audio File: ${audioFile.originalname}: `+{"durationFormat": durationFormat,"durationInSeconds": durationInSeconds},"INFO");
                 } else {
                 console.log("Result es undefined o null");
@@ -225,12 +228,13 @@ async function audioToText(session, audioFile) {
                 },
                 body: formData
             };
+            addLog(session,requestOptions,"ERROR");
 
             let transcripcion;
 
             try {
                 const response = await fetch('https://api.openai.com/v1/audio/transcriptions', requestOptions);
-                
+                addLog(session,response,"ERROR");
                 if(!response.ok){
                     console.log("Error al transformar el audio: " + audioFile.originalname);
                     addLog(session,`Error al transformar el audio: : ${audioFile.originalname}`,"ERROR");
