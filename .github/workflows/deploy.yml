@@ -16,7 +16,7 @@ jobs:
     - name: Add SSH key to known hosts
       run: |
         mkdir -p ~/.ssh
-        ssh-keyscan -H 100.27.28.9 >> ~/.ssh/known_hosts
+        ssh-keyscan -H 35.171.162.171 >> ~/.ssh/known_hosts
       
     - name: Setup SSH Keys
       run: |
@@ -25,4 +25,4 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        ssh -i ec2.pem ec2-user@100.27.28.9 "cd my-app && git stash && git pull origin main"
+        ssh -i ec2.pem ec2-user@35.171.162.171 "cd my-app && git stash && git pull origin main"
