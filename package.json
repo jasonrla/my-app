@@ -1,4 +1,9 @@
 {
+    "name": "my-app",
+    "version": "1.0.0",
+    "engines": {
+        "node": "16.20.2"
+    },
     "dependencies": {
         "amazon-cognito-identity-js": "^6.3.6",
         "aws-amplify": "^5.3.11",

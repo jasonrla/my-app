@@ -177,6 +177,7 @@ function obtenerDetallesTexto(session, nombreAudio, tipo) {
 }
 
 
+//***** audioToText works with node version 16.20.2 *******
 
 async function audioToText(session, audioFile) {
 
@@ -258,7 +259,7 @@ async function audioToText(session, audioFile) {
                 texto = transcripcion.text;   
                 fs.unlinkSync(audioFile.path);
 
-                addData(audioCost(session, audioFile.originalname, durationFormat, durationInSeconds, session.auditor));//gvars.auditor));
+                addData(session, audioCost(session, audioFile.originalname, durationFormat, durationInSeconds, session.auditor));//gvars.auditor));
 
                 procesarAudio(audioFile.originalname, texto, durationFormat, durationInSeconds)
 
@@ -316,7 +317,7 @@ const countTokens = (text) => {
 
 const selectModel = (numTokens) => {
     if (numTokens < 4000) {
-      return "gpt-3.5-turbo";
+      return "gpt-3.5-turbo-16k";
     } else if (numTokens >= 4000 && numTokens < 16000) {
       return "gpt-3.5-turbo-16k";
     } else {
