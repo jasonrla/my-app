@@ -482,12 +482,12 @@ transcripciones: {
     transcripcion: 'Buenas, le habla Lucia de las medicinas naturales, hoy reviste el historial, ah veo que tiene una orden mamá, si, si ya tengo una orden, ah ok pues yo te voy a hablar cuando te llegue ok papi, ok gracias, nada. Papi mira, el producto de mi corazón, lo que te deben animar a ti es que te vuelvas a crecer, que te pongas bien activo y potente, ahora, el producto vale los 5% de salud para otro cuerpo, sin embargo tu lo vas a decidir emocionalmente y eso va a ir al rey, tu tienes precio de mi corazón, yo no quiero que usted se quede sin la salud física y sexual, ok, así que vamos por ello. Papi? Papi?  Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi? Papi?',
     duracion: '00:09:10',
     durationInSeconds: 550
-  },
+  }/*,
   '10102 - 090723_DVTA.mp3': {
     transcripcion: 'Buenas. Buenos días. Me encanta saludarle, le hablo a Lucía de las medicinas naturales. Oh, qué bueno, ¿cómo está? Hoy reviste el historial de tu tratamiento anterior del armigel y me interesa saber cómo te ha ido. No, pues ya no sé ni cuándo tomé eso. El Prost-Med, mi amor. Sí, pero lo que quiero decir es que ya no sé ni cuándo fue eso. Hace un tiempo, pero lo tomaste. ¿Cuál es la condición de salud que tú padeces? Son muchas. Cuéntame. Empezaste con la diabetes a tu joven. Ok, yo tengo ya 14 años tratando pacientes con problemas de diabetes, esa es mi especialidad. ¿Ah, sí? Correcto. ¿Tu diabetes es tipo 1 o diabetes tipo 2? Tipo 2. Ok. ¿Te inyectas insulina o tomas meformin? Las dos. ',
     duracion: '00:09:06',
     durationInSeconds: 1550
-  }
+  }*/
 },
 
 

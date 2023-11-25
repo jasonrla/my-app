@@ -5,6 +5,8 @@ const app = express();
 const gvars = require('../utils/const.js');
 const { analizarTextos, puntuacion, currentDate, convertDateFormat, calcularPromedio, getColumnLetter, transformDateFormat, audioToText, promedioSimple, addLog, executeQuery} = require('../utils/functions.js');
 const pool = require('../database/db.js');
+const FormData = require('form-data');
+const fs = require('fs');
 
 const http = require('http');
 const socketIo = require('socket.io');
@@ -902,14 +904,14 @@ exports.transformarAudio = async (req, res) => {
     if (!file && gvars.env) {
         return res.status(400).json({error: 'No se envió ningún archivo.'});
     }
-
+    
     const resultado = await audioToText(req.session, file);
     
     if("error" in resultado){
         console.log("Error en transformar audio");
         return res.status(400).json(resultado);
     }
-
+    
     res.json(resultado);
 }
 

@@ -4,8 +4,9 @@ const gvars = require('../utils/const.js');
 const FormData = require('form-data');
 const { error, log } = require('console');
 const mp3Duration = require('mp3-duration');
-const fs = require('fs');
 const pool = require('../database/db.js');
+const fs = require('fs');
+
 
 async function executeQuery(session, sql, params) {
     const client = await pool.connect();
@@ -25,7 +26,7 @@ async function executeQuery(session, sql, params) {
 }
 
 function addLog(session, message, level = "INFO") {
-    const timestamp = new Date().toISOString(); // Genera un timestamp en formato ISO
+    const timestamp = new Date().toISOString(); 
     let user = "";
     if(session){
         user = "["+session.username+"] ";
@@ -33,11 +34,11 @@ function addLog(session, message, level = "INFO") {
     const logEntry = {
         timestamp: timestamp,
         level: level,
-        message: user + message
+        message: message
     };
     
     gvars.logs.entries.push(logEntry);
-    //console.log(gvars.logs);
+    console.log(logEntry);
 }
 
 function currentDate() {
@@ -96,7 +97,7 @@ function puntuacion(...numeros) {
 function getAudioDuration(session, audioFile) {
     return new Promise((resolve, reject) => {
       const audioFilePath = audioFile.path;
-      addLog(session,audioFilePath,"ERROR");
+      addLog(session,audioFilePath,"GET AUDIO FILE PATH");
 
       mp3Duration(audioFilePath, function(err, duration) {
         if (err) {
@@ -104,7 +105,6 @@ function getAudioDuration(session, audioFile) {
           return;
         }
   
-        // Redondear la duración a segundos enteros más cercanos
         const roundedDuration = Math.round(duration);
   
         const hours = Math.floor(roundedDuration / 3600);
@@ -116,8 +116,9 @@ function getAudioDuration(session, audioFile) {
         const formattedSeconds = String(seconds).padStart(2, '0');
   
         const formattedDuration = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-        addLog(session,formattedDuration,"ERROR");
-
+        addLog(session,formattedDuration,"FORMATTER DURATION");
+        console.log("formattedDuration");
+        console.log(formattedDuration);
         resolve({
           "durationFormat": formattedDuration,
           "durationInSeconds": roundedDuration // Utiliza la duración redondeada
@@ -185,6 +186,7 @@ async function audioToText(session, audioFile) {
 
         let texto = ""; let durationFormat, durationInSeconds;
 
+        console.log(audioFile);
         let detallesAudio1 = obtenerDetallesAudio(session, audioFile.originalname);
 
         if (detallesAudio1) {
@@ -193,10 +195,10 @@ async function audioToText(session, audioFile) {
             durationInSeconds = detallesAudio1.durationInSeconds;
         } else {
 
-            //let durationFormat, durationInSeconds;
-            getAudioDuration(session, audioFile)
-            .then(result => {
-                
+            let result = await getAudioDuration(session, audioFile)
+            addLog(session,result,"RESULT");
+
+            try{
                 if (result) {  
                     durationFormat = result.durationFormat;
                     durationInSeconds = result.durationInSeconds;
@@ -208,18 +210,22 @@ async function audioToText(session, audioFile) {
                 console.log("Result es undefined o null");
                 addLog(session,"Result es undefined o null","ERROR");
                 }
-            })
-            .catch(err => {
+            }catch(e){
             console.log(`Error: ${err.message}`);
-            addLog(session,`Error: ${err.message}`,"ERROR");
-            });
-            
+            addLog(session,`Error: ${err.message}`,"ERROR-1");
+            };
+
+            console.log("audioFile.path:", audioFile.path);
+            console.log("audioFile.originalname:", audioFile.originalname);
+
             const formData = new FormData();
             formData.append('file', fs.createReadStream(audioFile.path),{ 
                 filename: audioFile.originalname,
                 contentType: 'audio/mpeg'
             }); 
             formData.append('model', 'whisper-1');
+
+            console.log("formData:", formData)
 
             const requestOptions = {
                 method: 'POST',
@@ -228,16 +234,18 @@ async function audioToText(session, audioFile) {
                 },
                 body: formData
             };
-            addLog(session,requestOptions,"ERROR");
+
+            console.log("requestOptions:", requestOptions)
 
             let transcripcion;
 
             try {
+    
                 const response = await fetch('https://api.openai.com/v1/audio/transcriptions', requestOptions);
-                addLog(session,response,"ERROR");
+                
                 if(!response.ok){
-                    console.log("Error al transformar el audio: " + audioFile.originalname);
-                    addLog(session,`Error al transformar el audio: : ${audioFile.originalname}`,"ERROR");
+                    console.log("Error al transformar el audio: ", audioFile.originalname);
+                    addLog(session,`Error al transformar el audio: ${audioFile.originalname}`,"ERROR");
                     return {"error": true, "response": response};
                 }
 
@@ -250,13 +258,13 @@ async function audioToText(session, audioFile) {
                 texto = transcripcion.text;   
                 fs.unlinkSync(audioFile.path);
 
-                addData(audioCost(audioFile.originalname, durationFormat, durationInSeconds, session.auditor));//gvars.auditor));
+                addData(audioCost(session, audioFile.originalname, durationFormat, durationInSeconds, session.auditor));//gvars.auditor));
 
                 procesarAudio(audioFile.originalname, texto, durationFormat, durationInSeconds)
 
             } catch (err) {
                 console.error('Error:', err);
-                addLog(session,`Error: ${err.message}`,"ERROR");
+                addLog(session,`Error: ${err.message}`,"ERROR-2");
             }
 
         }
