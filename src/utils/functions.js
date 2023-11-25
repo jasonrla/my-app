@@ -261,7 +261,7 @@ async function audioToText(session, audioFile) {
 
                 addData(session, audioCost(session, audioFile.originalname, durationFormat, durationInSeconds, session.auditor));//gvars.auditor));
 
-                procesarAudio(audioFile.originalname, texto, durationFormat, durationInSeconds)
+                procesarAudio(session, audioFile.originalname, texto, durationFormat, durationInSeconds)
 
             } catch (err) {
                 console.error('Error:', err);
