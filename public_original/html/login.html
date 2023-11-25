@@ -20,38 +20,29 @@
         </form>
         <a id="forgot-password-link" href="/forgot-password">Forgot Password?</a>
     </div>
-    <div id="snackbar">Some text in the Snackbar..</div>
-    <script src="/public/js/mobile.js" charset="UTF-8"></script>
+    <div id="snackbar">Login successful..</div>
+    <script src="/public/js/mobile.bundle.js" charset="UTF-8"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-    // Get the form element
-    var form = document.querySelector('form');
+        var form = document.querySelector('form');
 
-    // Add submit event listener to the form
-    form.addEventListener('submit', function(event) {
-        // Prevent the default form submission
-        event.preventDefault();
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        // Show the snackbar
-        showSnackbar();
+            showSnackbar();
 
-        // Optional: Submit the form after a delay or redirect to another page
-        // This depends on how you want the form to behave after showing the snackbar
-        setTimeout(function() {
-            // Submit the form
-             form.submit();
+            setTimeout(function() {
+                form.submit();
 
-            // Or redirect to another page
-            // window.location.href = 'some-other-page.html';
-        }, 500); // Adjust the timeout to match the snackbar display duration
+            }, 500);
+        });
     });
-});
 
-function showSnackbar() {
-    var snackbar = document.getElementById("snackbar");
-    snackbar.className = "show";
-    setTimeout(function() { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
-}
+    function showSnackbar() {
+        var snackbar = document.getElementById("snackbar");
+        snackbar.className = "show";
+        setTimeout(function() { snackbar.className = snackbar.className.replace("show", ""); }, 3000);
+    }
     </script>
 </body>
 </html>

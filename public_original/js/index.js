@@ -1667,7 +1667,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
   });
 
-    
+
+  document.getElementById('closeModalReport').addEventListener('click', function() {
+    closeModal();
+  });
+
+  document.getElementById('closeModalTextoTransformado').addEventListener('click', function() {
+    closeModalTextoTransformado();
+  });
+  
+  document.getElementById('closeModalFeedbackInterno').addEventListener('click', function() {
+    closeModalFeedbackInterno();
+  });
+
+  document.getElementById('datepicker').addEventListener('click', function() {
+    openCalendar();
+  });
+
+  document.getElementById('closeModalReporteGeneral').addEventListener('click', function() {
+    closeModalmodalReporteGeneral();
+  });
+
+  document.getElementById('closeModalFacturacion').addEventListener('click', function() {
+    closeModalmodalFacturacion();
+  });
+  
+  
   document.getElementById('cancelButton').addEventListener('click', function() {
     alert("confirm", "Esta acción no puede deshacerse.", function() {
       location.reload();

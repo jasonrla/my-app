@@ -63,16 +63,12 @@ exports.login = (req, res) => {
             accessToken = session.getAccessToken().getJwtToken();
             gvars.tkn = accessToken;
             req.session.username = cognitoUser.getUsername();
-            //gvars.username = cognitoUser.getUsername();
   
             const idToken = session.getIdToken().getJwtToken();
             const decodedToken = jwt.decode(idToken);
             req.session.auditor = decodedToken.name;
-            //gvars.auditor = decodedToken.name;
             req.session.group = decodedToken['cognito:groups'][0];
-            //gvars.group = decodedToken['cognito:groups'][0];
             req.session.email = decodedToken.email;
-            //gvars.email = decodedToken.email;
 
             res.redirect('/auditoria');
 

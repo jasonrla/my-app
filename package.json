@@ -27,13 +27,19 @@
     },
     "devDependencies": {
         "clean-css-cli": "^5.6.2",
+        "css-loader": "^6.8.1",
         "html-minifier": "^4.0.0",
+        "html-webpack-plugin": "^5.5.3",
         "javascript-obfuscator": "^4.1.0",
         "mkdirp": "^3.0.1",
-        "terser": "^5.22.0"
+        "style-loader": "^3.3.3",
+        "terser": "^5.22.0",
+        "webpack": "^5.89.0",
+        "webpack-cli": "^5.1.4"
     },
     "scripts": {
         "prepare-folders": "mkdirp public/css public/html public/js",
+        "start": "npm run minify && npx webpack --mode production && node src/app.js",
         "minify": "npm run prepare-folders && npm run minify-css && npm run minify-html && npm run obfuscate-js",
         "minify-css": "node src/utils/minify-css.js",
         "minify-html": "html-minifier --input-dir public_original/html/ --output-dir public/html/ --collapse-whitespace",

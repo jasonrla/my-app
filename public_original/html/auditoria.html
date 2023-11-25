@@ -13,8 +13,8 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="/public/js/index.js" charset="UTF-8"></script>
-  <script src="/public/js/mobile.js" charset="UTF-8"></script>
+  <script src="/public/dist/index.bundle.js" charset="UTF-8"></script>
+  <script src="/public/dist/mobile.bundle.js" charset="UTF-8"></script>
 </head>
 <body>
   <div id="mobile-warning">
@@ -150,7 +150,7 @@
 
   <div id="modalTextoTransformado">
     <div id="modalTextoTransformado-content">
-      <button onclick="closeModalTextoTransformado()" class="close-button">×</button>  
+      <button id="closeModalTextoTransformado" class="close-button">×</button>  
       <button id="downloadBtnPDFTextoTransformado">Exportar a PDF</button>
       <h2>Titulo</h2>
       <div id="modalBodyTextoTransformado">
@@ -160,7 +160,7 @@
 
   <div id="modal">
     <div id="modalContent">
-      <button onclick="closeModal()" class="close-button">×</button>
+      <button id="closeModalReport" class="close-button">×</button>
       <button id="downloadBtnPDFModal">Exportar a PDF</button>
       <button id="enviarParaFeedback">Enviar para Feedback</button>
       <h2>Reporte</h2>
@@ -173,7 +173,7 @@
 
   <div id="modalFeedbackInterno">
     <div id="modalFeedbackInterno-content">
-      <button onclick="closeModalFeedbackInterno()" class="close-button">×</button>  
+      <button id="closeModalFeedbackInterno" class="close-button">×</button>  
       <button id="downloadBtnPDFInterno" disabled>Exportar a PDF</button>
       <h2>Feedback Lider</h2>
       
@@ -183,14 +183,14 @@
           <div class="form-group">
             <label for="date-picker">Fecha:</label>
             <div class="container">
-              <input type="text" id="datepicker" onclick="openCalendar()">
+              <input type="text" id="datepicker">
             </div>
           </div>
 
           <div class="form-group">
             <label for="date-picker">Fecha del Lead: <span class="required">*</span></label>
             <div class="container">
-              <input type="text" id="datepicker2" onclick="openCalendar()" placeholder="MM/DD/YYYY">
+              <input type="text" id="datepicker2" placeholder="MM/DD/YYYY">
             </div>
           </div>
           <div class="form-group">
@@ -261,7 +261,7 @@
 
   <div id="modalReporteGeneral">
     <div id="modalReporteGeneral-content">
-      <button onclick="closeModalmodalReporteGeneral()" class="close-button">×</button>
+      <button id="closeModalReporteGeneral" class="close-button">×</button>
       <button id="downloadBtnPDFGeneral">Exportar a PDF</button>
       <h2>Reporte General</h2>
       <div id="modalBodyReporteGeneral"></div> <!--aqui se agrega la tabla-->
@@ -273,7 +273,7 @@
 
   <div id="modalFacturacion">
     <div id="modalFacturacion-content">
-      <button onclick="closeModalmodalFacturacion()" class="close-button">×</button>
+      <button id="closeModalFacturacion" class="close-button">×</button>
       <button id="downloadBtnPDFFacturacion">Exportar a PDF</button>
       <div id="modalBodymodalFacturacion"></div> <!--aqui se agrega la tabla-->
       <br>
