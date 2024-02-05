@@ -590,7 +590,12 @@ async function createReportTable(table, response, accessToken){
 
               if (cellData.width) {
                 td.classList.add("cell-width");
-            }
+              }
+             
+              if (cellData.editable){
+                td.setAttribute('contenteditable', 'true');
+                td.classList.add('editable-field');
+              }
 
           } else {
               td.textContent = cellData;
@@ -811,13 +816,14 @@ async function mostrarResultadosFeedback(linkId,modalUsed, modalBodyUsed,respons
   let lider = obtenerLider();
   let grupo = obtenerGrupo();
 
-  if (tipoFeedback != "Seleccione una opción" && 
+  //REPORTE FEEDBACK
+  if (/*tipoFeedback != "Seleccione una opción" && 
         asunto != "Seleccione una opción" && 
         actitudVend != "Seleccione una opción" &&
         agente != "Seleccione una opción" &&
         lider != "Seleccione una opción" &&
         grupo != "Seleccione una opción" &&
-        lead != "" &&
+        lead != "" &&*/
         leadDate != "") {
 
     downloadBtnPDFInterno.removeAttribute('disabled'); 
@@ -1023,6 +1029,7 @@ async function mostrarResultadosReporteGeneral(modalUsed, modalBodyUsed, resulta
               if (cellData.bold) {
                   td.classList.add("bold-cell");
               }
+
 
           } else {
               td.textContent = cellData;

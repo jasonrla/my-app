@@ -513,12 +513,12 @@ exports.getRowsData = async (req, res) => {
         {cells: [{text: " ", colSpan: 9},{text: response.Duracion, bold: true, centered: true}]},
   
         {fontSize: gvars.font, cells: [{text: " ", colSpan: 9},{text: "Resultado Calibración", centered: true, colour: true, bold: true, width: true}]},
-        {fontSize: gvars.font, cells: [{text: "Auditor:", colour2: true, bold: true}, {text: response.Auditor, colSpan: 8},{text: response.Resultado_Calibracion, centered: true, colour: true, bold: true, width: true}]},
+        {fontSize: gvars.font, cells: [{text: "Auditor:", colour2: true, bold: true}, {text: response.Auditor, colSpan: 8},{text: response.Resultado_Calibracion, centered: true, colour: true, bold: true, width: true, editable: true}]},
   
         {fontSize: gvars.font, cells: [{text: "Fecha de Calibración:", colour2: true, bold: true}, {text: req.session.fechaCal, colSpan: 9}]},//gvars.fechaCal, colSpan: 9}]},
   
-        {fontSize: gvars.font, cells: [{text: " ", colSpan: 8},{text: "Etapas de la Venta", colour2: true, bold: true, width: true},{text: response.Etapas_Venta, centered: true, width: true}]},
-        {fontSize: gvars.font, cells: [{text: "Grupo:", colour2: true, bold: true}, {text: response.Grupo, colSpan: 7},{text: "Habilidades Comerciales", colour2: true, bold: true},{text: response.Habil_comerciales, centered: true}]},
+        {fontSize: gvars.font, cells: [{text: " ", colSpan: 8},{text: "Etapas de la Venta", colour2: true, bold: true, width: true},{text: response.Etapas_Venta, centered: true, width: true, editable: true}]},
+        {fontSize: gvars.font, cells: [{text: "Grupo:", colour2: true, bold: true}, {text: response.Grupo, colSpan: 7},{text: "Habilidades Comerciales", colour2: true, bold: true},{text: response.Habil_comerciales, centered: true, editable: true}]},
   
         {fontSize: gvars.font, cells: [{text: "Motivo Auditoría:", colour2: true, bold: true}, {text: response.Motivo, colSpan: 9}]},
         {fontSize: gvars.font, cells: [{text: "Nombre Asesor:", colour2: true, bold: true}, {text: response.Asesor, colSpan: 7},{text: "Lead", colour2: true, bold: true},{text: " ", centered: true}]},
@@ -532,50 +532,50 @@ exports.getRowsData = async (req, res) => {
 
     if (gvars.selectedProcesses.includes("1")) {
         rowsData.push(
-            {fontSize: gvars.fontC, rowSpan: 3, cells: [{ text: gvars.peso1+"%", centered: true }, "1. PRESENTACIÓN EMPÁTICA", "SALUDO INSTITUCIONAL", {text: response.Saludo_institucional, colSpan: 2, centered: true},{text: response.Saludo_institucional_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, cells: ["SIMPATÍA / EMPATÍA", {text: response.Simpatia_empatia, colSpan: 2, centered: true},{text: response.Simpatia_empatia_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Pres_Empatica, colSpan: 2, centered: true},{text: " ", colSpan: 7}]}
+            {fontSize: gvars.fontC, rowSpan: 3, cells: [{ text: gvars.peso1+"%", centered: true }, "1. PRESENTACIÓN EMPÁTICA", "SALUDO INSTITUCIONAL", {text: response.Saludo_institucional, colSpan: 2, centered: true, editable: true},{text: response.Saludo_institucional_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, cells: ["SIMPATÍA / EMPATÍA", {text: response.Simpatia_empatia, colSpan: 2, centered: true, editable: true},{text: response.Simpatia_empatia_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Pres_Empatica, colSpan: 2, centered: true, editable: true},{text: " ", colSpan: 7}]}
         );
     };
     if(gvars.selectedProcesses.includes("2")) {
         rowsData.push(
-            {fontSize: gvars.fontC, rowSpan: 3, cells: [{ text: gvars.peso2+"%", centered: true }, "2. CALIFICACION", "PRECALIFICACION", {text: response.Precalificacion, colSpan: 2, centered: true},{text: response.Precalificacion_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, cells: ["PREGUNTAS SUBJETIVAS", {text: response.Preguntas_subjetivas, colSpan: 2, centered: true},{text: response.Preguntas_subjetivas_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Calificacion, colSpan: 2, centered: true},{text: " ", colSpan: 7}]}
+            {fontSize: gvars.fontC, rowSpan: 3, cells: [{ text: gvars.peso2+"%", centered: true }, "2. CALIFICACION", "PRECALIFICACION", {text: response.Precalificacion, colSpan: 2, centered: true, editable: true},{text: response.Precalificacion_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, cells: ["PREGUNTAS SUBJETIVAS", {text: response.Preguntas_subjetivas, colSpan: 2, centered: true, editable: true},{text: response.Preguntas_subjetivas_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Calificacion, colSpan: 2, centered: true, editable: true},{text: " ", colSpan: 7}]}
         );
     };
     if(gvars.selectedProcesses.includes("3")) {
         rowsData.push(
-            {fontSize: gvars.fontC, rowSpan:6, cells: [{ text: gvars.peso3+"%", centered: true }, "3. PANORAMA OSCURO", "EL VENDEDOR ETIQUETA CON UNA ENFERMEDAD AL CLIENTE Y EXPLICA LA GRAVEDAD QUE PUEDE EMPEORAR DE FORMA PERSONALIZADA", {text: response.Etiqueta_Enfermedad, colSpan: 2, centered: true},{text: response.Etiqueta_Enfermedad_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, cells: ["ENFOCARSE EN LA ENFERMEDAD IDENTIFICADA EN LA CALIFICACIÓN", {text: response.Enfocarse_enfermedad, colSpan: 2, centered: true},{text: response.Enfocarse_enfermedad_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, cells: ["TONO DE VOZ (PREOCUPA AL CLIENTE / PACIENTE)", {text: response.Tono_voz, colSpan: 2, centered: true},{text: response.Tono_voz_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, cells: ["CONOCIMIENTO DE LA PATOLOGÍA", {text: response.Conocimiento_patologia, colSpan: 2, centered: true},{text: response.Conocimiento_patologia_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, cells: ["DATO DURO", {text: response.Dato_duro, colSpan: 2, centered: true},{text: response.Dato_duro_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_PanOscuro, colSpan: 2, centered: true},{text: " ", colSpan: 7}]},
+            {fontSize: gvars.fontC, rowSpan:6, cells: [{ text: gvars.peso3+"%", centered: true }, "3. PANORAMA OSCURO", "EL VENDEDOR ETIQUETA CON UNA ENFERMEDAD AL CLIENTE Y EXPLICA LA GRAVEDAD QUE PUEDE EMPEORAR DE FORMA PERSONALIZADA", {text: response.Etiqueta_Enfermedad, colSpan: 2, centered: true, editable: true},{text: response.Etiqueta_Enfermedad_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, cells: ["ENFOCARSE EN LA ENFERMEDAD IDENTIFICADA EN LA CALIFICACIÓN", {text: response.Enfocarse_enfermedad, colSpan: 2, centered: true, editable: true},{text: response.Enfocarse_enfermedad_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, cells: ["TONO DE VOZ (PREOCUPA AL CLIENTE / PACIENTE)", {text: response.Tono_voz, colSpan: 2, centered: true, editable: true},{text: response.Tono_voz_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, cells: ["CONOCIMIENTO DE LA PATOLOGÍA", {text: response.Conocimiento_patologia, colSpan: 2, centered: true, editable: true},{text: response.Conocimiento_patologia_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, cells: ["DATO DURO", {text: response.Dato_duro, colSpan: 2, centered: true, editable: true},{text: response.Dato_duro_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_PanOscuro, colSpan: 2, centered: true, editable: true},{text: " ", colSpan: 7}]},
         );
     };
     if(gvars.selectedProcesses.includes("4")) {
         rowsData.push(
-            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso4+"%", centered: true }, "4. TESTIMONIO", "SE MENCIONA ALGUNA REFERENCIA QUE HAYA TOMADO EL TRATAMIENTO Y LE HAYA FUNCIONADO", {text: response.Testimonio, colSpan: 2, centered: true},{text: response.Testimonio_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Testimonio, colSpan: 2, centered: true},{text: " ", colSpan: 7}]},
+            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso4+"%", centered: true }, "4. TESTIMONIO", "SE MENCIONA ALGUNA REFERENCIA QUE HAYA TOMADO EL TRATAMIENTO Y LE HAYA FUNCIONADO", {text: response.Testimonio, colSpan: 2, centered: true, editable: true},{text: response.Testimonio_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Testimonio, colSpan: 2, centered: true, editable: true},{text: " ", colSpan: 7}]},
         );
     };
     if(gvars.selectedProcesses.includes("5")) {
         rowsData.push(
-            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso5+"%", centered: true }, "5. SOLUCIÓN / BENEFICIOS", "SE REALIZA UN MATCH ENTRE LA CALIFICACIÓN Y LOS BENEFICIOS DEL TRATAMIENTO", {text: response.Solucion_beneficios, colSpan: 2, centered: true},{text: response.Solucion_beneficios_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_SolBeneficios, colSpan: 2, centered: true},{text: " ", colSpan: 7}]},    
+            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso5+"%", centered: true }, "5. SOLUCIÓN / BENEFICIOS", "SE REALIZA UN MATCH ENTRE LA CALIFICACIÓN Y LOS BENEFICIOS DEL TRATAMIENTO", {text: response.Solucion_beneficios, colSpan: 2, centered: true, editable: true},{text: response.Solucion_beneficios_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_SolBeneficios, colSpan: 2, centered: true, editable: true},{text: " ", colSpan: 7}]},    
         );
     };
     if(gvars.selectedProcesses.includes("6")) {
         rowsData.push( 
-            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso6+"%", centered: true }, "6. RESPALDO", "SE UTILIZA LA MATRIZ DE VALOR (TRAYECTORIA, CALIDAD, PROFESIONALISMO Y SERVICIO)", {text: response.Respaldo, colSpan: 2, centered: true},{text: response.Respaldo_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Respaldo, colSpan: 2, centered: true},{text: " ", colSpan: 7}]},
+            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso6+"%", centered: true }, "6. RESPALDO", "SE UTILIZA LA MATRIZ DE VALOR (TRAYECTORIA, CALIDAD, PROFESIONALISMO Y SERVICIO)", {text: response.Respaldo, colSpan: 2, centered: true, editable: true},{text: response.Respaldo_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_Respaldo, colSpan: 2, centered: true, editable: true},{text: " ", colSpan: 7}]},
      );
     };
     if(gvars.selectedProcesses.includes("7")) {
         rowsData.push(
-            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso7+"%", centered: true }, "7. CIERRE DE VENTA", "TOMA EL MOMENTO ADECUADO PARA ORDENAR LA FORMA DE PAGO", {text: response.Cierre_venta, colSpan: 2, centered: true},{text: response.Cierre_venta_comentario, colSpan: 5}]},
-            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_CierreVenta, colSpan: 2, centered: true},{text: " ", colSpan: 7}]},
+            {fontSize: gvars.fontC, rowSpan:2, cells: [{ text: gvars.peso7+"%", centered: true }, "7. CIERRE DE VENTA", "TOMA EL MOMENTO ADECUADO PARA ORDENAR LA FORMA DE PAGO", {text: response.Cierre_venta, colSpan: 2, centered: true, editable: true},{text: response.Cierre_venta_comentario, colSpan: 5, editable: true}]},
+            {fontSize: gvars.fontC, resultRow: true, cells: [{text: "Resultado", bold: true}, {text: response.ResFinal_CierreVenta, colSpan: 2, centered: true, editable: true},{text: " ", colSpan: 7}]},
         );
     };
 
@@ -585,18 +585,18 @@ exports.getRowsData = async (req, res) => {
 
     if(gvars.selectedProcesses.includes("8")) {
         rowsData.push(
-            {fontSize: gvars.fontC, cells: ["", {text: "COMUNICACION EFECTIVA", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Comunicacion_efectiva, colSpan: 2, centered: true},{text: response.Comunicacion_efectiva_comentario, colSpan: 5}]},            
+            {fontSize: gvars.fontC, cells: ["", {text: "COMUNICACION EFECTIVA", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Comunicacion_efectiva, colSpan: 2, centered: true, editable: true},{text: response.Comunicacion_efectiva_comentario, colSpan: 5, editable: true}]},            
         );
     };
     if(gvars.selectedProcesses.includes("9")) {
         rowsData.push(
-            {fontSize: gvars.fontC, cells: ["", {text: "CONOCIMIENTO DEL TRATAMIENTO", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Concimiento_tratamiento, colSpan: 2, centered: true},{text: response.Concimiento_tratamiento_comentario, colSpan: 5}]},
+            {fontSize: gvars.fontC, cells: ["", {text: "CONOCIMIENTO DEL TRATAMIENTO", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Concimiento_tratamiento, colSpan: 2, centered: true, editable: true},{text: response.Concimiento_tratamiento_comentario, colSpan: 5, editable: true}]},
 
         );
     };
     if(gvars.selectedProcesses.includes("10")) {
         rowsData.push(
-            {fontSize: gvars.fontC, cells: ["", {text: "REBATE DE POSIBLES OBJECIONES", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Rebate_objeciones, colSpan: 2, centered: true},{text: response.Rebate_objeciones_comentario, colSpan: 5}]},        
+            {fontSize: gvars.fontC, cells: ["", {text: "REBATE DE POSIBLES OBJECIONES", colour: true, bold: false}, {text: "Puntuación:", bold: true, colour2: true},{text: response.Rebate_objeciones, colSpan: 2, centered: true, editable: true},{text: response.Rebate_objeciones_comentario, colSpan: 5, editable: true}]},        
         );
     };
 

@@ -13,6 +13,67 @@ logs: {
 },
 
 textosAnalizados:{
+  'lead 736 - 020524.mp3': {
+    respaldo: {
+      valor: '0',
+      comentario: 'El vendedor no habla sobre la Trayectoria, Servicio, Calidad ni Profesionalismo de la empresa durante la conversación.'
+    },
+    cierre_venta: {
+      valor: 10,
+      comentario: "El vendedor encontró el momento adecuado para finalizar la venta y realizó el cobro al cliente. Además, utilizó el tipo de cierre 'Amarre invertido' al ofrecer un frasco gratis para probar el producto."
+    },
+    saludo_institucional: {
+      valor: 7,
+      comentario: "El vendedor se presenta de manera formal e institucional al saludar al cliente. Sin embargo, no menciona las palabras clave mencionadas en la referencia. Se sugiere incluir las palabras clave en la introducción para cumplir con los requisitos."
+    },
+    empatia_simpatia: {
+      valor: 5,
+      comentario: 'El vendedor muestra simpatía al preguntar por el nombre, lugar de residencia y edad del cliente. Sin embargo, no muestra empatía al no demostrar comprensión o preocupación por las necesidades o problemas del cliente.'
+    },
+    preguntas_subjetivas: {
+      valor: 10,
+      comentario: 'El vendedor realiza varias preguntas subjetivas relacionadas con la potencia sexual y la testosterona, como por ejemplo: ¿cómo está esa vida sexual?, ¿cómo están esos músculos?, ¿cómo está esa fuerza?, ¿cómo está esa vitalidad? Además, menciona ejemplos de los efectos de la testosterona baja en el cuerpo.'
+    },
+    etiqueta_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor no etiqueta al cliente con ninguna enfermedad durante la conversación.'
+    },
+    enfoque_enfermedad: {
+      valor: '0',
+      comentario: 'El vendedor se enfoca en mencionar los beneficios de la testosterona y el tratamiento, pero no se enfoca en la enfermedad del cliente ni menciona cosas relacionadas a ella.'
+    },
+    tono_voz: {
+      valor: 5,
+      comentario: 'El vendedor menciona la importancia de mantener niveles adecuados de testosterona para la salud física y sexual del cliente, pero su tono de voz no es muy claro ni directo en manifestar preocupación por la enfermedad del cliente.'
+    },
+    conocimiento_patologia: {
+      valor: 7,
+      comentario: 'El vendedor demuestra conocimiento sobre la patología asociada a los síntomas del cliente al explicar que la testosterona es una hormona producida por los testículos que afecta tanto la parte física como la sexual. También menciona los síntomas de tener la testosterona baja y cómo el tratamiento de testosterona puede ayudar a mejorarlos.'
+    },
+    dato_duro: {
+      valor: '5',
+      comentario: 'El vendedor menciona la patología de la testosterona baja y explica los efectos en la parte física y sexual del cliente.'
+    },
+    testimonio: {
+      valor: '7',
+      comentario: 'El vendedor menciona el testimonio de otros clientes que han obtenido buenos resultados con el tratamiento de testosterona. Sin embargo, no parece influir directamente en la decisión de compra del cliente.'
+    },
+    solucion_beneficios: {
+      valor: 7,
+      comentario: 'El vendedor da a conocer los beneficios del tratamiento de la testosterona, pero el contexto de la conversación no tiene mucha coherencia con la dolencia del cliente y sus síntomas. Además, el vendedor no responde de manera clara a la solicitud del cliente de probar el producto.'
+    },
+    precalificacion: {
+      edad: 'NP',
+      peso: 'NP',
+      estatura: 'NP',
+      tipoTrabajo: 'NP',
+      otrasEnfermedades: 'NP',
+      tratamientosQueConsume: 'NP',
+      productosTomaActualmente: 'NP',
+      valor: '5',
+      comentario: 'El vendedor se enfocó en explicar los beneficios de la testosterona y el producto que ofrecen, pero no realizó ninguna de las preguntas solicitadas.'
+    }
+  },
   'cariola_audioprueba_5_JUDI.mp3': {
     /*respaldo: {
       valor: '0',
@@ -443,6 +504,11 @@ textosAnalizados:{
 },
 
 transcripciones: {
+  'lead 736 - 020524.mp3': {
+    transcripcion: 'Hola, buenas tardes, nos llamó usted, se comunicó con nuestro centro de tratamiento para la potencia sexual y la testosterona, mi señor. Sí, ahí está bien, que la testosterona, no sé para qué sirve, ¿no es para el ejercicio viejo? No, la testosterona es una hormona, la hormona que producen los testículos del hombre que le ayudan para la parte física pero también para la parte sexual, si usted tiene la testosterona baja no responde sexualmente, ¿ok?, y también en la parte física para los músculos, para los huesos, para la circulación, para el cabello, es la hormona que producen los testículos del hombre, la testosterona, ¿ok?, ¿cuál es su nombre y apellido, mi señor? Rubén López. Mucho gusto Rubén, ¿cómo está usted?, ¿de dónde vive?, ¿de dónde nos llama? Me regala su código postal, 47274, ¿y cómo supo de nosotros?, cuénteme, lo miré en Facebook, y cuénteme, ¿qué edad tiene usted de joven?, ¿cómo?, ¿qué edad tiene?, se le oye la voz muy joven, no, pues ya tengo 40, ya tengo 40, no diga apenas, tengo 40, si eres un muchachito, imagínate tú, ay Dios mío, que se le oye yo que tengo 50, de 40, aquí todos, ¿ah?, ¿tú quieres que yo me ponga a llorar?, ¿eh?, yo creo que es joven, cuéntame querido, ¿cómo está esa vida sexual?, ¿cómo está?, ¿cómo están esos músculos?, ¿cómo está esa fuerza?, ¿cómo está esa vitalidad? Pues bien, pero siempre es como cansado, por eso que ya, a ver, a lo mejor, si va, como quiero ir al gimnasio y eso, y para lo mejor, para que, sí, es que cuando te sientes cansado es porque tienes la hormona de la testosterona baja, ¿ok?, la testosterona como te digo es la hormona que producen los testículos del hombre y es la que te da fuerza física y fuerza sexual también, cuando se te baja la testosterona te vas a sentir cansado, vas a empezar a sentirte como down, a veces te da insomnio, te puede dar insomnio, te puede dar caída de cabello, manchas en la piel y también te bajan las erecciones más blandas, llegas muy rápido al orgasmo, pierdes como fuerza y vigor en el pene, en la producción de esperma, ¿ok?, entonces te ayuda para los músculos y para los huesos inclusive porque muchas veces al hombre le empiezan a doler los huesos cuando tiene la testosterona baja, ¿ok?, y cuando, bueno, las personas por ejemplo que son de homosexuales también se les baja mucho la testosterona, ¿ok?, pero la testosterona es importante mantenerla para tú mantenerte físicamente fuerte y sexualmente potente, ¿ok?, para eso es testosterona y testosterona es nuestro tratamiento estrella, es un tratamiento que no tiene químicos ni efectos secundarios ni colaterales y nuestro centro está certificado y aprobado por la FDA, testosterona está hecho para aumentar testosterona, la testosterona, vas a tener vitalidad y energía, los músculos marcados que no te pongas flácido, blando, aguado, ¿entiendes?, te va a dar fuerza, te va a dar erecciones más duras, más potentes, que demores en el acto sexual y puedas complacer mejor a la pared y disfrutar tú mejor, ¿ok?, te da más resistencia porque puedes hasta repetir, los efectos te demoran hasta dos horas cuando tengas la relación y vas a sentir el miembro con un poco más de tamaño y de grosor por la misma potencia, ¿ok?, el tratamiento es una cápsula después del desayuno y una después de la cena por 60 días, ¿ok?, y junto con ese tratamiento te damos hoy que estamos de cumpleaños te regalamos un potenciador sexual que es nuestro producto estrella, un Viagra natural se llama, nosotros le decimos repuesta inmediata, es una cápsula que tú te tomas solamente media hora antes de la relación, a los 25 minutos, media hora vas a ver la respuesta, el pene bien duro, bien erecto, bien firme, vas a poder disfrutar a tu pareja, vas a poder repetir, los efectos te demoran hasta dos horas, vas a poder sentir el miembro con un poco más de tamaño y de grosor por la misma potencia y de erección, ¿ok?, entonces lleva dos frascos de Testronix de 60 que son dos cápsulas diarias todos los días y el repuesto inmediato de 60, si tú lo haces tal cual tú vas a ver mejorías inmediatas, desde la primera semana ya empiezas a ver cambios en tus músculos, en tus huesos, en tu vitalidad, ese cansancio desaparece y en la parte sexual pues apenas te tomes la respuesta inmediata también vas a ver mejor respuesta todavía, ¿ok?, y estamos tan seguros de esos resultados que te damos una póliza de un mes de garantía, si tú al mes me dices que persisten los síntomas tú devuelves el tratamiento como lo tengas, la compañía te devuelve todo tu dinero, lo único que te descuenta es el 15% de lo que es manejo y envío, pero todo el que lo hace a pie de la letra es un paciente exitoso así que tú no vas a ser la excepción, ¿ok?, garantizado 100% el tratamiento, tenemos con él 13 años en el mercado y es el número uno en todos los países del mundo, Rubén, ese tratamiento completo que otro día te vale 715, hoy te lo enviamos todo en 179 todo, no pagas ni seguro, ni manejo, ni envío, ni taxe, no tienes que repetirlo, te lo puedes hacer cada dos años, te lo enviamos hoy y lo tienes allá en tu casa para el día 10 de febrero. No, perdón, yo pensé que me lo iban a mandar uno para ver si servía, no, así no. Para ver si servía, ¿cómo así? No entiendo. Sí, para probarlo pues, a ver si funciona. Pero ¿en qué país vives tú que te van a dar para probarlo así? Ahí te dicen que recibes un frasco gratis, te estás regalando el repuesto inmediato, vale 219, pero te están dando gratis en el día de hoy, y cada frasco de Testroni vale 169, tú vas a llevar los dos frascos de Testroni más el repuesto inmediato. Pero ¿en qué país vives tú que aquí en Estados Unidos no te regalan nada? Compras uno y se te regala uno, sí, pero que te den algo gratis así ¿de dónde para yo ir?',
+    duracion: '00:06:41',
+    durationInSeconds: 401
+  },
   'cariola_audioprueba_5_JUDI.mp3': {
     transcripcion: 'Hola, muy buenas tardes. Bienvenido a Productos Naturales Cariola. Mi nombre es Judith. ¿En qué puedo ayudarte hoy? Hola, Judith. He estado sintiéndome un poco mal últimamente. Me duele la cabeza y tengo insomnio. ¿Tienes algo que pueda ayudar? Claro, mucho gusto. ¿Con qué me comunico? Con Jason López. Mucho gusto, Jason. Lamento escuchar que te sientas un poco mal. Tenemos varias opciones que te podrían ayudar para esta situación. Tenemos un paquete premium que incluye la variedad de medicamentos y suplementos para todos los sistemas que deseas tratar. Este paquete cuesta 219 dólares con 95. ¿Te interesaría? Eso suena bastante caro. ¿Tienen algo más accesible? Entiendo. Entiendo tus preocupaciones acerca del precio. Mira, también tenemos un paquete estándar que tiene un costo de 199 con 95 dólares. ¿Todavía tienes algunos inconvenientes con este costo? ¿Qué opinas sobre el producto que te estoy ofreciendo? Bueno, sigue siendo un poco alto para mi presupuesto. ¿Hay algo más económico? Claro, mira, comprendo la situación. No te preocupes. Te vamos a poder apoyar económicamente. También tenemos actualmente un paquete básico de 169 con 95 dólares. Este paquete incluye todos los medicamentos que requieren tus síntomas actuales. ¿Te gustaría esta opción? Eso suena más razonable. Creo que iré con el paquete básico. Excelente elección, Jason. Mira, ahora necesitamos, antes de procesar esta compra, los datos de tu tarjeta de crédito para poder seguir con la atención. Claro, la tarjeta es Visa y el número es 1234-5678-9012-3456. La fecha de vencimiento es 06-25 y el código de seguridad es 789. Bien, perfecto, Jason. Gracias por la información. Antes de poder finalizar, quiero aclararte que este paquete básico incluye tres frascos de producto VitalCure de distintos cantidades, que son de 60 cápsulas cada frasco, y la otra opción es de 30 cápsulas. El monto que se cobrará de tu tarjeta será $169.95. Los productos naturales recuerda que están diseñados para poder mejorar y aliviar la calidad de vida de nuestros pacientes. Entiendo, gracias por la información. De nada, ha sido un placer ayudarte. En breve nuestro equipo de verificación se comunicará contigo para poder confirmar la orden ingresada. ¿Hay algo más en que te puedo apoyar? No, eso sería todo. Gracias. Muy bien, gracias por elegir nuestros productos. Cariola, esperamos que te sientas mejor pronto. Tenga un excelente día.',
     duracion: '00:02:43',
@@ -597,7 +663,7 @@ Precisa solamente a verificar la primera parte de la conversacion. La precisión
 El texto que te indicare se encuentra entre <>. 
 El output que necesito es unicamente un JSON válido con las keys:
 'valor' (calificacion en base a esta escala: 
-0: no existe saludo de ningun tipo por parte del vendedor o lo realizo de forma informal o de forma coloquial
+0: no existe saludo de ningun tipo por parte del vendedor o lo realizo de forma informal o de forma coloquial o se presento de forma apática o déspota
 5: si existe un saludo formal e institucional pero no incluye las palabras clave mencionadas
 7: si existe un saludo formal e institucional y ademas incluye las palabras clave mencionadas
 10: si es un 80% igual a la referencia incluyendo las palabras clave mencionadas
@@ -638,7 +704,8 @@ emsi_part2: ">", //. Usa la escala: '0' si no se muestra ni empatia ni simpatia,
 prec_role: `Eres parte del equipo de auditoria de una empresa que vende productos naturales y medicinales a nivel internacinal. 
 Las ventas se realizan por via telefonica.
 Lo que necesito es que nos ayudes a auditar las transcripciones de las conversaciones de nuestros vendedores.
-Necesito que verifiques si el vendedor le hace al cliente preguntas sobre la siguiente lista:
+Necesito que verifiques si el vendedor le hace al cliente preguntas completa o parcialmente sobre la siguiente lista, es necesario que el vendedor realice las 7 preguntas para obtener una calificación de 10. 
+Las preguntas son:
 1. Edad
 2. Peso (en libras)
 3. Estatura
